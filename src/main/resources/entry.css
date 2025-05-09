@@ -1,0 +1,71 @@
+.root {
+    -fx-background-image: url("Images/entry2.png");
+    -fx-background-size: cover;  /* Makes the image cover the entire scene */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+AnchorPane {
+    -fx-background-color: #F8F9FA; /* Blanc légèrement grisé pour un effet moderne */
+
+}
+/* Base style for TextField, ComboBox, and DatePicker */
+
+TextField,PasswordField{
+    -fx-background-color: #FFFFFF; /* White background */
+    -fx-border-color: #1A237E; /* Dark blue border */
+    -fx-border-radius: 5px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-prompt-text-fill: #9E9E9E; /* Gray placeholder text */
+}
+
+/* Focused state for TextField, ComboBox, and DatePicker */
+
+TextField:focused ,PasswordField:focused{
+    -fx-border-color: #03A9F4; /* Light blue border */
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(3, 169, 244, 0.2), 10, 0, 0, 3); /* Stronger shadow on focus */
+}
+
+Button {
+    -fx-background-color: white; /* Gradient from bright yellow to darker yellow */
+    -fx-text-fill: #E07564; /* Dark blue text */
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-border-color: white;
+    -fx-border-radius: 20px;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-cursor: hand; /* Hand cursor on hover */
+}
+
+/* Button hover effect */
+
+Button:hover {
+    -fx-background-color:white; /* Darker gradient on hover */
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 3); /* Stronger shadow on hover */
+}
+
+/* Button pressed effect */
+
+Button:pressed {
+    -fx-background-color: white; /* Even darker gradient when pressed */
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 4); /* Strongest shadow when pressed */
+}
+
+Text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: #2C3E50;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 20px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

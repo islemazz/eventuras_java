@@ -1,0 +1,181 @@
+/* Root style (applies to the entire scene) */
+.root {
+    -fx-background-image: url("Images/bakc6.png");
+    -fx-background-size: cover;  /* Makes the image cover the entire scene */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+AnchorPane {
+    -fx-background-color: #F8F9FA; /* Blanc légèrement grisé pour un effet moderne */
+
+}
+/* Base style for TextField, ComboBox, and DatePicker */
+
+TextField, ComboBox, DatePicker {
+    -fx-background-color: #FFFFFF; /* White background */
+    -fx-border-color: #1A237E; /* Dark blue border */
+    -fx-border-radius: 5px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-prompt-text-fill: #9E9E9E; /* Gray placeholder text */
+}
+
+/* Focused state for TextField, ComboBox, and DatePicker */
+
+TextField:focused, ComboBox:focused, DatePicker:focused {
+    -fx-border-color: #03A9F4; /* Light blue border */
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(3, 169, 244, 0.2), 10, 0, 0, 3); /* Stronger shadow on focus */
+}
+
+/* ComboBox arrow button styling */
+
+ComboBox .arrow-button {
+    -fx-background-color: #1A237E; /* Dark blue for the arrow button */
+    -fx-background-radius: 0 5px 5px 0; /* Rounded corners on the right side */
+}
+
+ComboBox .arrow {
+    -fx-background-color: white; /* White arrow */
+}
+
+/* DatePicker arrow button styling */
+
+DatePicker .arrow-button {
+    -fx-background-color: #1A237E; /* Dark blue for the arrow button */
+    -fx-background-radius: 0 5px 5px 0; /* Rounded corners on the right side */
+}
+
+DatePicker .arrow {
+    -fx-background-color: white; /* White arrow */
+}
+
+/* Button styling */
+
+Button {
+    -fx-background-color: transparent; /* Gradient from bright yellow to darker yellow */
+    -fx-text-fill: #E07564; /* Dark blue text */
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-border-color: white;
+    -fx-border-radius: 20px;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-cursor: hand; /* Hand cursor on hover */
+}
+
+/* Button hover effect */
+
+Button:hover {
+    -fx-background-color:white; /* Darker gradient on hover */
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 3); /* Stronger shadow on hover */
+}
+
+/* Button pressed effect */
+
+Button:pressed {
+    -fx-background-color: white; /* Even darker gradient when pressed */
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 4); /* Strongest shadow when pressed */
+}
+ImageView{
+    -fx-border-color: white;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 20px;
+}
+
+Text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: #2C3E50;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 20px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+imageEve{
+    -fx-border-radius: 25px;
+}
+ListView {
+    -fx-background-color: #FFFFFF; /* White background for the ListView */
+    -fx-border-color: #E07564; /* Dark blue border */
+    -fx-border-radius: 5px;
+    -fx-padding: 10px; /* Padding inside the ListView */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2); /* Subtle shadow */
+}
+
+ListView .list-view .list-cell {
+    -fx-background-color: transparent; /* Transparent background for list items */
+    -fx-padding: 10px; /* Padding for each item */
+    -fx-font-size: 14px; /* Font size for items */
+    -fx-font-family: "Arial Rounded MT Bold"; /* Consistent font */
+    -fx-text-fill: #2C3E50; /* Dark text color */
+}
+ListView .list-view .list-cell:hover {
+    -fx-background-color: #E3F2FD; /* Light blue on hover */
+}
+
+/* ComboBox arrow button styling */
+ComboBox .arrow-button {
+    -fx-background-color: #E07564; /* Dark blue for the arrow button */
+    -fx-background-radius: 0 5px 5px 0; /* Rounded corners on the right side */
+}
+
+ComboBox .arrow {
+    -fx-background-color: white; /* White arrow */
+}
+
+TextField, ComboBox {
+    -fx-background-color: #FFFFFF; /* White background */
+    -fx-border-color: #E07564; /* Dark blue border */
+    -fx-border-radius: 5px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-prompt-text-fill: #9E9E9E; /* Gray placeholder text */
+}
+
+Label {
+    -fx-text-fill: #2C3E50; /* Dark text color */
+    -fx-font-family: "Arial Rounded MT Bold"; /* Font style */
+    -fx-font-size: 16px; /* Font size */
+    -fx-padding: 5px; /* Padding around the text */
+}
+/* Style for GridPane */
+.grid-pane {
+    -fx-background-color: transparent; /* Keep background transparent to see the root background */
+    -fx-padding: 20px; /* Padding around the GridPane */
+    -fx-hgap: 15px; /* Horizontal gap between columns */
+    -fx-vgap: 15px; /* Vertical gap between rows */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-border-color: #E07564; /* Light border color */
+    -fx-border-width: 1px; /* Border width */
+    -fx-border-radius: 10px; /* Rounded corners */
+}
+
+/* Style for GridPane cells (optional) */
+.grid-pane .grid-cell {
+    -fx-background-color: #FFFFFF; /* White background for cells */
+    -fx-border-color: #E07564; /* Cell border color */
+    -fx-border-width: 1px; /* Border width for cells */
+    -fx-border-radius: 5px; /* Rounded corners for cells */
+    -fx-padding: 10px; /* Padding inside each cell */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 3, 0, 0, 2); /* Subtle shadow */
+}
+
+/* Style for GridPane labels inside the grid */
+.grid-pane .grid-label {
+    -fx-text-fill: #2C3E50; /* Dark text color */
+    -fx-font-family: "Arial Rounded MT Bold"; /* Font style */
+    -fx-font-size: 16px; /* Font size */
+    -fx-padding: 5px; /* Padding around the text */
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionEvents.AfficherEventHOME">
+   <children>
+      <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+      <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+      <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+      <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+      <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+      <ScrollPane fx:id="scrollablePane" layoutX="246.0" layoutY="156.0" prefHeight="511.0" prefWidth="1045.0">
+         <content>
+            <VBox fx:id="eventContainer" prefHeight="489.0" prefWidth="927.0" visible="false" />
+         </content>
+      </ScrollPane>
+      <HBox fx:id="sliderBox" layoutX="282.0" layoutY="156.0" prefHeight="511.0" prefWidth="953.0" visible="false">
+
+      </HBox>
+      <TextField fx:id="searchBar" layoutX="246.0" layoutY="57.0" prefHeight="36.0" prefWidth="778.0" visible="false" />
+
+
+   </children>
+</AnchorPane>

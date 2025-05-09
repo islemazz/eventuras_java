@@ -1,0 +1,93 @@
+One to Many:
+
+import jakarta.persistence.*;
+import java.util.List;
+
+@Entity
+public class Utilisateur {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String nom;
+    
+    @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Commande> commandes;
+
+    // Getters et Setters
+}
+
+
+@Entity
+public class Commande {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String description;
+    
+    @ManyToOne
+    @JoinColumn(name = "utilisateur_id", nullable = false)
+    private Utilisateur utilisateur;
+
+    // Getters et Setters
+}
+
+
+Many to Many:
+
+import jakarta.persistence.*;
+import java.util.List;
+
+@Entity
+public class Etudiant {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String nom;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "etudiant_cours",
+        joinColumns = @JoinColumn(name = "etudiant_id"),
+        inverseJoinColumns = @JoinColumn(name = "cours_id")
+    )
+    private List<Cours> cours;
+
+    // Getters et Setters
+}
+
+
+@Entity
+public class Cours {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    private String nom;
+    
+    @ManyToMany(mappedBy = "cours")
+    private List<Etudiant> etudiants;
+
+    // Getters et Setters
+}
+
+
+@Autowired
+private EtudiantRepository etudiantRepository;
+
+@Autowired
+private CoursRepository coursRepository;
+
+public void inscrireEtudiantAuCours(Long etudiantId, Long coursId) {
+    Etudiant etudiant = etudiantRepository.findById(etudiantId).orElseThrow();
+    Cours cours = coursRepository.findById(coursId).orElseThrow();
+    
+    etudiant.getCours().add(cours);
+    cours.getEtudiants().add(etudiant);
+    
+    etudiantRepository.save(etudiant);
+    coursRepository.save(cours);
+}
+

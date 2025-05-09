@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="731.0" prefWidth="1305.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="gui.GestionPartner.ModifyPartnerController">
+   <children>
+       <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+       <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+       <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+       <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+       <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+   
+       <VBox alignment="CENTER" layoutX="20" layoutY="20" prefWidth="360" spacing="10">
+      <children>
+              <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Modify Partner" />
+      
+              <HBox spacing="10">
+         <children>
+                     <Label prefWidth="80" text="Name:" />
+                     <TextField fx:id="nameField" prefWidth="200" />
+         </children>
+              </HBox>
+      
+              <HBox spacing="10">
+         <children>
+                     <Label prefWidth="80" text="Type:" />
+                     <ChoiceBox fx:id="typeField" prefWidth="200" />
+         </children>
+              </HBox>
+      
+              <HBox spacing="10">
+         <children>
+                     <Label prefWidth="80" text="Contact:" />
+                     <TextField fx:id="contactField" prefWidth="200" />
+         </children>
+              </HBox>
+      
+              <HBox spacing="10">
+         <children>
+                     <Label prefWidth="80" text="Image Path :" />
+                     <TextField fx:id="videoField" prefWidth="200" />
+         </children>
+              </HBox>
+      
+              <Button fx:id="btnUpdate" onAction="#updatePartner" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Update Partner" />
+      </children>
+       </VBox>
+   </children>
+
+</AnchorPane>

@@ -1,0 +1,178 @@
+.root {
+    -fx-font-family: 'Cambria';
+}
+/* Right Sidebar */
+.right-bar {
+    -fx-background-color: #2C3E50; /* Dark blue sidebar */
+    -fx-padding: 20;
+    -fx-background-radius: 20;
+}
+
+/* Event Title */
+.label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+/* Event Card */
+.chosen-fruit-card {
+    -fx-background-color: #3498db; /* Blue card */
+    -fx-background-radius: 20;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 5);
+}
+.search-box{
+    -fx-background-color:#FFFFFF;
+    -fx-background-radius: 100;
+}
+
+.scroll-pane{
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+.search-button{
+    -fx-background-color: #828282;
+    -fx-background-radius: 30;
+}
+
+.right-bar{
+    -fx-background-color: #D3D3D3;
+}
+
+.shadow{
+    -fx-effect: dropShadow(three-pass-box,rgba(0,0,0,0.1), 10.0 , 0.0 , 0.0 ,10.0);
+}
+
+.chosen-fruit-card{
+    -fx-background-color: #0070b7;
+    -fx-background-radius: 30;
+}
+
+.comboBox{
+    -fx-background-color: rgba(255,255,255,0.3);
+    -fx-background-radius: 30;
+}
+
+.add-btn {
+    -fx-background-color: #27ae60; /* Green for add */
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-background-radius: 20;
+    -fx-padding: 10 20;
+}
+.add-btn:hover {
+    -fx-background-color: #219150;
+}
+/* Delete Button */
+.delete-btn {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-background-radius: 20;
+    -fx-padding: 10 20;
+}
+.delete-btn:hover {
+    -fx-background-color: #c0392b;
+}
+
+
+.free-delivery-card{
+    -fx-background-color: #D3D3D3;
+    -fx-background-radius: 30;
+}
+
+.shopping-online-card{
+    -fx-background-color: #BAEAC3;
+    -fx-background-radius: 20;
+}
+
+.fruit-item {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 15px;
+    -fx-border-radius: 15px;
+    -fx-padding: 10px;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1px;
+}
+.shadow {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0, 5);
+}
+#nameLabel {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+#priceLable {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff5733; /* Highlighted price color */
+}
+.fruit-item:hover {
+    -fx-background-color: #f8f8f8;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+    -fx-cursor: hand;
+}
+.add-event-button {
+    -fx-background-color: #007bff;  /* Blue background */
+    -fx-text-fill: white; /* White text */
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 8, 0, 3, 3);
+}
+
+/* Hover effect */
+.add-event-button:hover {
+    -fx-background-color: #0056b3; /* Darker blue */
+}
+
+/* Click effect */
+.add-event-button:pressed {
+    -fx-background-color: #004494;
+}
+.sponsor-button {
+    -fx-background-color: #28a745; /* Green */
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+
+    -fx-cursor: hand;
+}
+
+.sponsor-button:hover {
+    -fx-background-color: #218838;
+}
+
+.sponsor-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+/* ===== Button Styling ===== */
+.add-event-button {
+    -fx-background-color: #007bff; /* Blue color */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+}
+
+.add-event-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* ===== Demande Sponsoring Button ===== */
+.demande-sponsoring-button {
+    -fx-background-color: #28a745; /* Green color */
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+}
+
+.demande-sponsoring-button:hover {
+    -fx-background-color: #218838;
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Label?>
+<AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionEvents.AfficherEvent">
+   <children>
+      <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+      <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+      <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+      <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+      <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+      <VBox layoutX="280.0" layoutY="224.0" prefHeight="466.0" prefWidth="829.0">
+         <children>
+            <HBox fx:id="headerBox" prefHeight="100.0" prefWidth="200.0" spacing="25" />
+            <ListView fx:id="listView" prefHeight="471.0" prefWidth="829.0" />
+         </children>
+      </VBox>
+      <Button fx:id="modify" layoutX="1156.0" layoutY="332.0" mnemonicParsing="false" onAction="#modifierEvent" prefHeight="43.0" prefWidth="112.0" text="Modifier" />
+      <Button fx:id="Supprimer" layoutX="1156.0" layoutY="392.0" mnemonicParsing="false" onAction="#deleteEvent" text="Supprimer" />
+      <TextField fx:id="searchBar" layoutX="277.0" layoutY="176.0" prefHeight="36.0" prefWidth="387.0" />
+      <ComboBox fx:id="filterTypeComboBox" layoutX="673.0" layoutY="176.0" prefHeight="29.0" prefWidth="150.0" promptText="Filter by" />
+      <DatePicker fx:id="datePicker" layoutX="830.0" layoutY="176.0" visible="false" />
+      <ComboBox fx:id="categoryComboBox" layoutX="830.0" layoutY="176.0" visible="false" />
+
+   </children>
+</AnchorPane>

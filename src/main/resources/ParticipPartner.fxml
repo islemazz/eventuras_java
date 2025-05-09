@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionPartner.ParticipantPartnerController">
+   <children>
+      <ScrollPane fx:id="scrollPane" prefHeight="731.0" prefWidth="1305.0">
+          <content>
+              <VBox fx:id="partnerContainer" alignment="CENTER" spacing="10" style="-fx-padding: 20px;">
+            <!-- Partner cards will be dynamically added here -->
+        </VBox>
+          </content>
+         <stylesheets>
+            <URL value="@styles.css" />
+            <URL value="@interface.css" />
+         </stylesheets>
+      </ScrollPane>
+
+   </children>
+</AnchorPane>

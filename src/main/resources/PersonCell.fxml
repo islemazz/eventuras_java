@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17.0.14" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionPartner.PersonCellController">
+   <children>
+      <HBox fx:id="Hbox" layoutX="347.0" layoutY="197.0" prefHeight="241.0" prefWidth="468.0" spacing="20.0">
+         <children>
+            <!-- Field Names -->
+            <Label text="Name:" />
+            <Label fx:id="NameLabel" text="Label" />
+
+            <Label text="Type:" />
+            <Label fx:id="TypeLabel" text="Type" />
+
+            <Label text="Contact Info:" />
+            <Label fx:id="ContactInfoLabel" text="Contact Info" />
+
+            <Label text="Video:" />
+            <Label fx:id="VideoLabel" text="Video" />
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

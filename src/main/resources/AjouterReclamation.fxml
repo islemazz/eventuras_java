@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionReclam.AjouterReclamation">
+   <children>
+      <VBox alignment="CENTER" prefHeight="731.0" prefWidth="1305.0" spacing="10" stylesheets="@AjouterReclamation.css">
+      
+          <Label layoutX="76.0" layoutY="41.0" text="id user" />
+          <TextField fx:id="TFId_user" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="198.0" promptText="id user" />
+          <Label layoutX="72.0" layoutY="117.0" text="id event" />
+          <TextField fx:id="TFId_event" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="38.0" prefWidth="203.0" promptText="id event" />
+          <Label layoutX="73.0" layoutY="171.0" text="description" />
+          <TextField fx:id="TFDescription" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="38.0" prefWidth="203.0" promptText="description" />
+      
+          <ComboBox fx:id="CBSuject" minHeight="-Infinity" minWidth="50.0" prefWidth="150.0">
+    </ComboBox>
+      
+          <!-- <Button fx:id="upload" layoutX="658.0" layoutY="611.0" mnemonicParsing="false" onAction="#uploadImage" prefHeight="40.0" prefWidth="209.0" text="attachment" /> -->
+          <Button fx:id="uploadButton" layoutX="150.0" layoutY="320.0" styleClass="btn" text="Ajouter fichiers" />
+          <ListView fx:id="attachmentListView" layoutX="150.0" layoutY="360.0" maxWidth="300.0" minWidth="105.0" prefHeight="200.0" prefWidth="105.0" />
+          <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+          <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+          <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+          <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+          <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+      
+          <Button fx:id="btnSubmit" onAction="#ajouter" styleClass="btn" text="Ajouter" />
+      </VBox>
+   </children>
+</AnchorPane>

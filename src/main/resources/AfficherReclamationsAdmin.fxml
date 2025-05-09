@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.text.Text?>
+<AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@AfficherReclamation.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionReclam.AfficherReclamationsAdmin">
+
+    <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+    <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+    <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+    <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+    <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+
+
+    <VBox alignment="CENTER" layoutX="516.0" layoutY="140.0" prefHeight="1200.0" prefWidth="900.0" spacing="20" style="-fx-padding: 20;">
+
+        <!-- 🔹 Dashboard Stats -->
+        <HBox spacing="20">
+            <Label fx:id="lblTotal" style="-fx-font-size: 18px;" text="📊 Total: " />
+            <Label fx:id="lblPending" style="-fx-font-size: 18px; -fx-text-fill: #0066ff;" text="📍 En attente: " />
+            <Label fx:id="lblCurrent" style="-fx-font-size: 18px; -fx-text-fill: #afb317;" text="⌛ En cours: " />
+            <Label fx:id="lblResolved" style="-fx-font-size: 18px; -fx-text-fill: green;" text="✅ Résolu: " />
+            <Label fx:id="lblRejected" style="-fx-font-size: 18px; -fx-text-fill: #ca0000;" text="❌ Rejeté: " />
+        </HBox>
+
+        <!-- 🔹 Filter & Actions -->
+        <HBox spacing="10">
+            <Label text="📌 Filtrer par status:" />
+            <ComboBox fx:id="cbFilterStatus" promptText="Select Status" />
+            <Button onAction="#applyFilter" text="Filtrer" />
+
+            <Region fx:id="spacer" HBox.hgrow="ALWAYS" />
+        </HBox>
+
+        <!-- 🔹 Grid Layout for Reclamation Tickets -->
+        <ScrollPane style="-fx-translate-x: -100;" fitToWidth="true" prefHeight="600">
+            <GridPane fx:id="reclamationsGrid" alignment="CENTER" hgap="20" vgap="20">
+                <!-- Tickets will be added dynamically -->
+            </GridPane>
+        </ScrollPane>
+
+        <!-- 🔹 Details Sidebar (Hidden by Default) -->
+        <VBox fx:id="detailsPanel" spacing="10" style="-fx-padding: 10; -fx-border-color: #ccc;" visible="false">
+            <Label style="-fx-font-size: 20px; -fx-font-weight: bold;" text="📝 Reclamation Details" />
+            <Label fx:id="lblUser" text="👤 User: " />
+            <Label fx:id="lblSubject" text="📌 Subject: " />
+            <Label fx:id="lblDescription" text="📄 Description: " />
+
+            <!-- 🔹 Change Status -->
+            <HBox spacing="10">
+                <Label text="⚙️ Status:" />
+                <ComboBox fx:id="cbStatus" promptText="Change Status" />
+                <Button onAction="#handleUpdateStatus" text="Update Status" />
+            </HBox>
+
+            <!-- 🔹 Admin Response -->
+            <Label text="📢 Respond:" />
+            <TextArea fx:id="taResponse" promptText="Write a response..." />
+
+        </VBox>
+
+    </VBox>
+</AnchorPane>
