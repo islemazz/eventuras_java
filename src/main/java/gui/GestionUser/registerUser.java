@@ -3,10 +3,6 @@ package gui.GestionUser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,35 +14,39 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import entities.Role;
 import entities.user;
-import gui.mainController;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import org.mindrot.jbcrypt.BCrypt;
-import services.Crole;
-import utils.MyConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import services.Crole;
 import services.userService;
+import utils.MyConnection;
 
 public class registerUser {
 
     @FXML
     public Text error;
     @FXML
-    public ComboBox<String> role_input;
+    public ComboBox<Role> role_input;
     @FXML
     private ResourceBundle resources;
     @FXML
@@ -115,17 +115,17 @@ public class registerUser {
         try {
             // Fetch roles from the database
             List<Role> roles = croleService.afficherAll();
-            ObservableList<String> roleNames = FXCollections.observableArrayList();
-
+            rolesList.clear();
+            
             // Add roles to the list, except for "admin"
             for (Role role : roles) {
                 if (!role.getRoleName().equalsIgnoreCase("admin")) {
-                    roleNames.add(role.getRoleName());
+                    rolesList.add(role);
                 }
             }
 
             // Set the items in the ComboBox
-            role_input.setItems(roleNames);
+            role_input.setItems(rolesList);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -170,23 +170,18 @@ public class registerUser {
             return;
         }
 
-        // Retrieve role ID
-        String roleName = role_input.getSelectionModel().getSelectedItem();
-        System.out.println("Selected role: " + roleName);
-        int roleId = -1;
-
-        try {
-            roleId = croleService.getRoleIdByName(roleName);
-            System.out.println("Retrieved role ID: " + roleId);
-            if (roleId == -1) {
-                throw new SQLException("Role not found");
-            }
-        } catch (SQLException e) {
+        // Get the selected role
+        Role selectedRole = role_input.getValue();
+        if (selectedRole == null) {
             alert.setTitle("Error");
-            alert.setContentText("Error retrieving role ID: " + e.getMessage());
+            alert.setContentText("Please select a role.");
             alert.showAndWait();
             return;
         }
+        String roleName = selectedRole.getRoleName();
+        int roleId = selectedRole.getRoleId();
+        System.out.println("Selected role: " + roleName);
+        System.out.println("Retrieved role ID: " + roleId);
 
         // Retrieve and validate picture path
         String picturePath = picture_input.getText();
@@ -196,8 +191,6 @@ public class registerUser {
             alert.showAndWait();
             return;
         }
-
-
 
         // Retrieve and validate birthday
         LocalDate selectedDate = birthday_input.getValue();
@@ -213,7 +206,6 @@ public class registerUser {
         // Retrieve other inputs
         String selectedGender = gender_input.getValue();
         int selectedLevel = level_PMR_input.getValue();
-
 
         // Create the user object
         user user = new user(
@@ -248,8 +240,6 @@ public class registerUser {
             return;
         }
 
-
-
         // Show confirmation message
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle("Confirmation");
@@ -257,11 +247,9 @@ public class registerUser {
         confirmationAlert.show();
         try {
             navigateTo("/login.fxml", event);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
     @FXML
     void upload(ActionEvent event) {

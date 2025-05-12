@@ -1,16 +1,22 @@
 package services;
 
-import entities.user;
-import org.mindrot.jbcrypt.BCrypt;
-import utils.MyConnection;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import entities.user;
+import utils.MyConnection;
 
 public class userService implements Iuser<user> {
 
@@ -21,23 +27,20 @@ public class userService implements Iuser<user> {
     //Add user methode
     @Override
     public void addUser(user user) throws SQLException, IOException {
-        // The error is happening because we're trying to use user.getRole() but we should be using the id_role directly
+        // Get role ID from role name
         int roleId = getRoleIdByName(user.getRole());
-    if(roleId==-1){
-        throw new SQLException();
-    }
-        System.out.println("Using role ID: " + roleId);
+        if (roleId == -1) {
+            throw new SQLException("Invalid role: " + user.getRole());
+        }
 
-        // Insert the user into the 'users' table with the role_id
         String query = "INSERT INTO users (user_username, user_email, user_password, user_firstname, user_lastname, " +
-                "user_birthday, user_gender, user_picture, user_phonenumber, user_level,role_id,user_role) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
+                "user_birthday, user_gender, user_picture, user_phonenumber, user_level, role_id, statut) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getEmail());
-            //add hash password here
-            pstmt.setString(3, BCrypt.hashpw( user.getPassword(), BCrypt.gensalt()));  // Consider encrypting here
+            pstmt.setString(3, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
             pstmt.setString(4, user.getFirstname());
             pstmt.setString(5, user.getLastname());
             pstmt.setString(6, user.getBirthday());
@@ -46,7 +49,7 @@ public class userService implements Iuser<user> {
             pstmt.setString(9, user.getPhonenumber());
             pstmt.setInt(10, user.getLevel());
             pstmt.setInt(11, roleId);
-            pstmt.setString(12, getRoleNameById(roleId));
+            pstmt.setInt(12, 1); // 1 for active
 
             pstmt.executeUpdate();
         }
@@ -82,7 +85,6 @@ public class userService implements Iuser<user> {
 
     // Update the getRoleIdByName method to match your actual database schema
     private int getRoleIdByName(String roleName) throws SQLException {
-        // Check your actual table and column names
         String query = "SELECT role_id FROM role WHERE role_name = ?";
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
             pstmt.setString(1, roleName);
@@ -122,13 +124,13 @@ public class userService implements Iuser<user> {
 
     public Map<String, Integer> getRoles() throws SQLException {
         Map<String, Integer> roles = new HashMap<>();
-        String query = "SELECT id_role, user_role FROM role";
+        String query = "SELECT role_id, role_name FROM role";
         try (Connection connection = MyConnection.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                String roleName = resultSet.getString("user_role");
-                int idRole = resultSet.getInt("id_role");
+                String roleName = resultSet.getString("role_name");
+                int idRole = resultSet.getInt("role_id");
                 roles.put(roleName, idRole);
             }
         }
@@ -238,7 +240,7 @@ public class userService implements Iuser<user> {
     @Override
     public List<user> getallUserdata() {
         List<user> list = new ArrayList<>();
-        String query = "SELECT * FROM users";
+        String query = "SELECT u.*, r.role_name FROM users u LEFT JOIN role r ON u.role_id = r.role_id";
         try {
             Statement srt = MyConnection.getInstance().getConnection().createStatement();
             ResultSet rs = srt.executeQuery(query);
@@ -255,8 +257,8 @@ public class userService implements Iuser<user> {
                 user.setPicture(rs.getString("user_picture"));
                 user.setPhonenumber(rs.getString("user_phonenumber"));
                 user.setLevel(rs.getInt("user_level"));
-                user.setRole(rs.getString("user_role"));
-                user.setId_role(rs.getInt("role_id"));  // Added role_id to the user object
+                user.setRole(rs.getString("role_name")); // Get role_name from the joined role table
+                user.setId_role(rs.getInt("role_id"));
 
                 list.add(user);
             }
@@ -290,12 +292,19 @@ public class userService implements Iuser<user> {
                     String userPicture = resultSet.getString("user_picture");
                     String userPhone = resultSet.getString("user_phonenumber");
                     int userLevel = resultSet.getInt("user_level");
-                    String userRole = resultSet.getString("user_role");
+                    int roleId = resultSet.getInt("role_id");
+                    
+                    // Get role name with better error handling
+                    String userRole = getRoleNameById(roleId);
+                    if (userRole == null) {
+                        // If role not found, set a default role and log the issue
+                        System.err.println("Warning: Role not found for role_id: " + roleId + ". Setting default role.");
+                        userRole = "USER"; // Set a default role
+                    }
 
                     return new user(userId, userName, userEmail, userPassword, userFirstname, userLastname, userBirthday, userGender, userPicture, userPhone, userLevel, userRole);
                 } else {
                     return null;
-
                 }
             }
         } catch (SQLException e) {
@@ -404,33 +413,52 @@ public class userService implements Iuser<user> {
 
 
     public user authenticateUser(String email, String password) {
-
-        String query = "SELECT * FROM users WHERE user_email = ? AND user_password = ?";
+        String query = "SELECT * FROM users WHERE user_email = ?";
         try (PreparedStatement ps = cnx.prepareStatement(query)) {
             ps.setString(1, email);
-            ps.setString(2, password);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    // Create and populate the user object
-                    user authenticatedUser = new user();
-                    authenticatedUser.setId(rs.getInt("user_id"));
-                    authenticatedUser.setUsername(rs.getString("user_username"));
-                    authenticatedUser.setEmail(rs.getString("user_email"));
-                    authenticatedUser.setPassword(rs.getString("user_password"));
-                    authenticatedUser.setFirstname(rs.getString("user_firstname"));
-                    authenticatedUser.setLastname(rs.getString("user_lastname"));
-                    authenticatedUser.setBirthday(rs.getString("user_birthday"));
-                    authenticatedUser.setGender(rs.getString("user_gender"));
-                    authenticatedUser.setPicture(rs.getString("user_picture"));
-                    authenticatedUser.setPhonenumber(rs.getString("user_phonenumber"));
-                    authenticatedUser.setLevel(rs.getInt("user_level"));
+                    String storedPassword = rs.getString("user_password");
+                    boolean passwordMatches = false;
+                    
+                    try {
+                        // Try BCrypt first
+                        passwordMatches = BCrypt.checkpw(password, storedPassword);
+                    } catch (IllegalArgumentException e) {
+                        // If BCrypt fails, try MD5
+                        passwordMatches = storedPassword.equals(encrypt(password));
+                    }
 
-                    // Retrieve and set the user's role
-                    String roleName = getRoleNameById(rs.getInt("role_id"));
-                    authenticatedUser.setRole(roleName);
+                    if (passwordMatches) {
+                        // Create and populate the user object
+                        user authenticatedUser = new user();
+                        authenticatedUser.setId(rs.getInt("user_id"));
+                        authenticatedUser.setUsername(rs.getString("user_username"));
+                        authenticatedUser.setEmail(rs.getString("user_email"));
+                        authenticatedUser.setPassword(rs.getString("user_password"));
+                        authenticatedUser.setFirstname(rs.getString("user_firstname"));
+                        authenticatedUser.setLastname(rs.getString("user_lastname"));
+                        authenticatedUser.setBirthday(rs.getString("user_birthday"));
+                        authenticatedUser.setGender(rs.getString("user_gender"));
+                        authenticatedUser.setPicture(rs.getString("user_picture"));
+                        authenticatedUser.setPhonenumber(rs.getString("user_phonenumber"));
+                        authenticatedUser.setLevel(rs.getInt("user_level"));
+                        authenticatedUser.setId_role(rs.getInt("role_id"));
 
-                    return authenticatedUser;
+                        // Get role name from role table
+                        String roleQuery = "SELECT role_name FROM role WHERE role_id = ?";
+                        try (PreparedStatement rolePs = cnx.prepareStatement(roleQuery)) {
+                            rolePs.setInt(1, rs.getInt("role_id"));
+                            try (ResultSet roleRs = rolePs.executeQuery()) {
+                                if (roleRs.next()) {
+                                    authenticatedUser.setRole(roleRs.getString("role_name"));
+                                }
+                            }
+                        }
+
+                        return authenticatedUser;
+                    }
                 }
             }
         } catch (SQLException e) {

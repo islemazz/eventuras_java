@@ -1,8 +1,9 @@
 package gui.GestionUser;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 import entities.user;
-import org.mindrot.jbcrypt.BCrypt;
-import services.userService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,10 +15,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import services.userService;
 import utils.Session;
-
-import java.io.IOException;
-import java.sql.SQLException;
 
 public class loginUser {
 
@@ -56,45 +55,49 @@ public class loginUser {
                 return;
             }
 
-            // Retrieve user from database
-            user user = userService.getUserByEmail(email); // Implement this method in your service
+            // Retrieve user from database using email
+            user user = userService.authenticateUser(email, password);
 
-            // Check if the password matches
-            if (user!=null) {
+            if (user != null) {
+                // Start user session
                 Session.getInstance().startSession(user);
-                System.out.println("User logged in");
-                // Password is correct, store user session
+                System.out.println("User logged in successfully");
+
+                // Store user session
                 UserSession.getInstance(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.getFirstname(),
-                        user.getLastname(),
-                        user.getBirthday(),
-                        user.getGender(),
-                        user.getPicture(),
-                        user.getPhonenumber(),
-                        user.getLevel(),
-                        user.getRole()
+                    user.getId(),
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getFirstname(),
+                    user.getLastname(),
+                    user.getBirthday(),
+                    user.getGender(),
+                    user.getPicture(),
+                    user.getPhonenumber(),
+                    user.getLevel(),
+                    user.getRole()
                 );
 
                 // Redirect based on role
-                switch (user.getRole().toLowerCase()) {
-                    case "admin":
+                String role = user.getRole().toUpperCase(); // Convert to uppercase to match DB format
+                System.out.println("User role: " + role); // Debug log
+                
+                switch (role) {
+                    case "ROLE_ADMIN":
                         loadPage("/adminDashboard.fxml");
                         break;
-                    case "participant":
+                    case "ROLE_PARTICIPANT":
                         loadPage("/participantDashboard.fxml");
                         break;
-                    case "organisateur":
+                    case "ROLE_ORGANISATEUR":
                         loadPage("/organisateurDashboard.fxml");
                         break;
                     default:
-                        showAlert("Error", "Unknown role. Please contact support.");
+                        System.err.println("Unexpected role: " + role); // Debug log
+                        showAlert("Error", "Invalid role configuration. Please contact support.");
                 }
             } else {
-                // Password is incorrect
                 showAlert("Error", "Incorrect email or password. Please try again.");
             }
         } catch (IOException e) {
@@ -102,9 +105,6 @@ public class loginUser {
             showAlert("Error", "An error occurred. Please try again.");
         }
     }
-
-
-
 
     @FXML
     void register_page(ActionEvent event) throws IOException {

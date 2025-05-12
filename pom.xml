@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>20.0.2</version>
+            <version>17.0.2</version>
         </dependency>
 
         <dependency>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>17</version>
+            <version>17.0.2</version>
         </dependency>
 
         <dependency>
@@ -87,6 +87,16 @@
             <version>2.3.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>17.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>17.0.2</version>
+        </dependency>
 
     </dependencies>
     <build>
@@ -100,10 +110,8 @@
                 <configuration>
                     <mainClass>main.MainGUI</mainClass>
                     <options>
-                        <option>--add-exports</option>
-                        <option>javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED</option>
-                        <option>--add-exports</option>
-                        <option>javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED</option>
+                        <option>--add-modules</option>
+                        <option>javafx.controls,javafx.fxml,javafx.web,javafx.media</option>
                     </options>
                 </configuration>
             </plugin>
