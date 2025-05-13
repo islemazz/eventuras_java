@@ -59,7 +59,7 @@ public class UserControllerPartnership {
                     }
                 }
             });
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showAlert("Error", e.getMessage());
         }
     }
@@ -73,11 +73,11 @@ public class UserControllerPartnership {
             return;
         }
         selected.setDescription(description);
-        selected.setContractType(selectedType);
+        selected.setContractType(selectedType != null ? selectedType.toString() : null);
         try {
             partnershipService.update(selected);
             showAlert("Success", "Partnership updated successfully!");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showAlert("Database Error", e.getMessage());
         }
     }
@@ -117,7 +117,7 @@ public class UserControllerPartnership {
                 partnerName.setText(String.valueOf(partnership.getPartnerId()));
 
                 description.setText(partnership.getDescription());
-                contractType.setText(partnership.getContractType().toString());
+                contractType.setText(partnership.getContractType());
                 setGraphic(Hbox);
             }
         }
@@ -140,7 +140,7 @@ public class UserControllerPartnership {
             return;
         }
 
-        String imagePath = "/Images/" + selectedPartnership.getContractType().toString() + ".png";
+        String imagePath = "/Images/" + selectedPartnership.getContractType() + ".png";
         URL imageUrl = getClass().getResource(imagePath);
         if (imageUrl == null) {
             showAlert("Error", "Image not found at: " + imagePath);

@@ -396,4 +396,47 @@ public class editCurrentUser {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    @FXML
+    void goto_dashboard(ActionEvent event) throws IOException {
+        navigateTo("/adminDashboard.fxml", event);
+    }
+
+    @FXML
+    void goto_user(ActionEvent event) throws IOException {
+        navigateTo("/listUser.fxml", event);
+    }
+
+    @FXML
+    void goto_event(ActionEvent event) throws IOException {
+        navigateTo("/listColis.fxml", event);
+    }
+
+    @FXML
+    void goto_forum(ActionEvent event) throws IOException {
+        navigateTo("/listReponses.fxml", event);
+    }
+
+    @FXML
+    void goto_shop(ActionEvent event) throws IOException {
+        navigateTo("/listFactures.fxml", event);
+    }
+
+    @FXML
+    void goto_blog(ActionEvent event) throws IOException {
+        navigateTo("/listTrajets.fxml", event);
+    }
+
+    @FXML
+    void goto_edit(ActionEvent event) throws IOException {
+        navigateTo("/editCurrentuser.fxml", event);
+    }
+
+    @FXML
+    void disconnect(ActionEvent event) throws IOException {
+        // Clear user session
+        UserSession.getInstance().cleanUserSession();
+        // Navigate to login page
+        navigateTo("/login.fxml", event);
+    }
 }

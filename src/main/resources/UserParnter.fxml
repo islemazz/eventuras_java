@@ -33,4 +33,7 @@
 
    <ImageView fx:id="myImage" fitHeight="150.0" fitWidth="450.0" layoutX="419.0" layoutY="572.0" pickOnBounds="true" preserveRatio="true" />
 
+   <!-- Admin Dashboard Button -->
+   <Button fx:id="adminDashboardBtn" layoutX="1041.0" layoutY="534.0" mnemonicParsing="false" onAction="#goToAdminDashboard" prefHeight="48.0" prefWidth="171.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Admin Dashboard" />
+
 </AnchorPane>

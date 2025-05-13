@@ -5,57 +5,68 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane fx:id="SelecPartnership" prefHeight="731.0" prefWidth="1305.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionPartner.AdminPartnershipController">
    <children>
-   
-       <!-- GridPane to organize layout -->
-       <GridPane hgap="10" layoutX="341.0" layoutY="100.0" styleClass="grid-pane" vgap="10">
-      <children>
-              <!-- Title Text -->
-              <Text layoutX="0.0" layoutY="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Partnership" wrappingWidth="310.6015625">
-                  <font>
-                      <Font size="21.0" />
-                  </font>
-              </Text>
-      
-              <!-- ListView (will use an HBox for each row) -->
-              <ListView fx:id="partnershipList" prefHeight="350.0" prefWidth="765.0" GridPane.columnSpan="3" />
-      
-              <!-- Buttons -->
-              <Button fx:id="Ajouter" mnemonicParsing="false" onMouseClicked="#addPartnership" text="Ajouter" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-              <Button fx:id="Supprimer" mnemonicParsing="false" onMouseClicked="#delPartnership" text="Supprimer" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-              <Button fx:id="Modifier" mnemonicParsing="false" onMouseClicked="#setPartnership" text="Modifier" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-      </children>
-         <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
-       </GridPane>
-      <GridPane fx:id="Grid" layoutX="676.0" layoutY="526.0" prefHeight="248.0" prefWidth="200.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-      </GridPane>
+      <VBox spacing="20" styleClass="main-container">
+         <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+         </padding>
+         
+         <!-- Title Section -->
+         <Text styleClass="title-text" text="Partnership Management">
+            <font>
+               <Font size="24.0" />
+            </font>
+         </Text>
+         
+         <!-- Main Content Grid -->
+         <GridPane hgap="20" vgap="20" styleClass="content-grid">
+            <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            
+            <!-- Input Fields -->
+            <Label text="Partner ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <TextField fx:id="partnerIdField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            
+            <Label text="Organizer ID:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <TextField fx:id="organizerIdField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            
+            <Label text="Contract Type:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <ComboBox fx:id="contractTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            
+            <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextArea fx:id="descriptionArea" prefHeight="100.0" prefWidth="200.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            
+            <CheckBox fx:id="signedCheckBox" text="Is Signed" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+         </GridPane>
+         
+         <!-- Partnership List Section -->
+         <VBox spacing="10">
+            <Text styleClass="section-title" text="Partnerships List">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
+            <ListView fx:id="partnershipList" prefHeight="300.0" prefWidth="800.0" styleClass="partnership-list" />
+         </VBox>
+         
+         <!-- Action Buttons -->
+         <HBox spacing="20" alignment="CENTER">
+            <Button fx:id="Ajouter" onMouseClicked="#addPartnership" text="Add Partnership" styleClass="action-button" />
+            <Button fx:id="Modifier" onMouseClicked="#setPartnership" text="Update Partnership" styleClass="action-button" />
+            <Button fx:id="Supprimer" onMouseClicked="#delPartnership" text="Delete Partnership" styleClass="action-button" />
+            <Button fx:id="Dashboard" onMouseClicked="#goToDashboard" text="Dashboard" styleClass="action-button" />
+         </HBox>
+      </VBox>
    </children>
-
 </AnchorPane>

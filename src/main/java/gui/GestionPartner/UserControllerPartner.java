@@ -1,26 +1,40 @@
 package gui.GestionPartner;
 
-import entities.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import entities.ContractType;
+import entities.Partner;
+import entities.PartnerType;
+import entities.Partnership;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.PartnerService;
 import services.PartnershipService;
+import utils.PDFGenerator;
 
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.List;
-
-public class UserControllerPartner {
+public class UserControllerPartner implements Initializable {
 
     private final PartnerService ps = new PartnerService();
     public Button save;
@@ -28,6 +42,18 @@ public class UserControllerPartner {
 
     @FXML
     private ListView<Partner> partnersList;
+
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<PartnerType> typeFilter;
+
+    @FXML
+    private Button searchButton;
+
+    @FXML
+    private Button refreshButton;
 
     String currentPartner;
     @FXML
@@ -44,79 +70,192 @@ public class UserControllerPartner {
     @FXML
     private ImageView myImage;
 
+    @FXML
+    private VBox partnershipForm;
+    @FXML
+    private TextField startDateField;
+    @FXML
+    private TextField endDateField;
+    @FXML
+    private TextField termsField;
+    @FXML
+    private ComboBox<ContractType> contractTypeComboBox;
+    @FXML
+    private Button savePartnershipButton;
+    @FXML
+    private Button generateContractButton;
 
+    private PartnershipService partnershipService;
+    private Partner selectedPartner;
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        partnershipService = new PartnershipService();
 
+        // Initialize partner type filter
+        typeFilter.getItems().addAll(PartnerType.values());
+        
+        // Load partners list
+        try {
+            refreshPartnersList();
+        } catch (SQLException e) {
+            showAlert("Error", "Failed to load partners: " + e.getMessage());
+        }
+        
+        // Set up custom cell factory for the list view
+        partnersList.setCellFactory(listView -> new PartnerCell());
 
+        // Set up search functionality
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            try {
+                handleSearch();
+            } catch (SQLException e) {
+                showAlert("Error", "Failed to search partners: " + e.getMessage());
+            }
+        });
+
+        // Set up partnership form
+        partnershipForm.setVisible(false);
+        partnersList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            selectedPartner = newVal;
+            partnershipForm.setVisible(newVal != null);
+        });
+
+        // Set up save partnership button
+        savePartnershipButton.setOnAction(e -> {
+            try {
+                savePartnership();
+            } catch (SQLException ex) {
+                showAlert("Error", "Failed to save partnership: " + ex.getMessage());
+            }
+        });
+
+        // Set up generate contract button
+        generateContractButton.setOnAction(e -> generateContract());
+    }
 
     @FXML
-    void initialize() {
+    private void handleSearch() throws SQLException {
+        String searchText = searchField.getText().trim();
+        PartnerType selectedType = typeFilter.getValue();
+
+        List<Partner> partners = ps.readAll();
+        partners.removeIf(partner -> {
+            boolean matchesSearch = searchText.isEmpty() || 
+                partner.getName().toLowerCase().contains(searchText.toLowerCase()) ||
+                partner.getDescription().toLowerCase().contains(searchText.toLowerCase()) ||
+                partner.getEmail().toLowerCase().contains(searchText.toLowerCase());
+            
+            boolean matchesType = selectedType == null || partner.getType() == selectedType;
+            
+            return !(matchesSearch && matchesType);
+        });
+
+        partnersList.getItems().setAll(partners);
+    }
+
+    @FXML
+    private void handleRefresh() {
         try {
-
-            // Fetch data from the database
-            List<Partner> partners = ps.readAll();
-            ObservableList<Partner> observableList = FXCollections.observableArrayList(partners);
-            partnersList.setItems(observableList);
-            partnershipTypeComboBox.setItems(FXCollections.observableArrayList(ContractType.values()));
-
-            // Set custom cell factory to display multiple columns
-            partnersList.setCellFactory(listView -> new PartnerCell());
-            partnersList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Partner>(){
-
-                @Override
-                public void changed(ObservableValue<? extends Partner> observableValue, Partner partner, Partner t1) {
-                    currentPartner = partnersList.getSelectionModel().getSelectedItem().getName();
-                    PartnerLabel.setText(currentPartner);
-                    DisplayImage();
-                }
-
-            });
+            refreshPartnersList();
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showAlert("Error", "Failed to refresh partners: " + e.getMessage());
         }
     }
 
-    public void savePartnership(MouseEvent mouseEvent) {
-        String description = descriptionField.getText();
-        ContractType selectedType = partnershipTypeComboBox.getValue();
-        SelectionModel<Partner> selectionModel = partnersList.getSelectionModel();
-        selectionModel.select(partnersList.getSelectionModel().getSelectedIndex());
-        int id = partnersList.getSelectionModel().getSelectedItem().getId();
-        Partnership partnership = new Partnership(1,id,selectedType,description,false);
-        PartnershipService partnershipService = new PartnershipService();
+    private void refreshPartnersList() throws SQLException {
+        List<Partner> partners = ps.readAll();
+        partnersList.getItems().setAll(partners);
+    }
+
+    private void savePartnership() throws SQLException {
+        if (selectedPartner == null) {
+            showAlert("Error", "Please select a partner first", Alert.AlertType.ERROR);
+            return;
+        }
+
         try {
+            ContractType contractType = contractTypeComboBox.getValue();
+            String description = descriptionField.getText();
+            if (contractType == null) {
+                showAlert("Error", "Please select a contract type", Alert.AlertType.ERROR);
+                return;
+            }
+
+            Partnership partnership = new Partnership();
+            partnership.setPartnerId(selectedPartner.getId());
+            partnership.setOrganizerId(1); // Set organizerId as needed
+            partnership.setContractType(contractType.toString());
+            partnership.setDescription(description);
+            partnership.setSigned(false);
+            partnership.setStatus("Pending");
+            partnership.setCreatedAt(LocalDateTime.now());
+            partnership.setSignedContractFile(null);
+            partnership.setSignedAt(null);
+
             partnershipService.create(partnership);
-            showAlert("Success", "Partnership saved successfully!");
-        } catch (SQLException e) {
-            showAlert("Database Error", e.getMessage());
+            showAlert("Success", "Partnership created successfully", Alert.AlertType.INFORMATION);
+            clearPartnershipForm();
+        } catch (Exception e) {
+            showAlert("Error", "Invalid input: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void clearPartnershipForm() {
+        startDateField.clear();
+        endDateField.clear();
+        termsField.clear();
+        contractTypeComboBox.setValue(null);
+    }
+
+    private void showAlert(String title, String message) {
+        showAlert(title, message, Alert.AlertType.ERROR);
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void generateContract() {
+        if (selectedPartner == null) {
+            showAlert("Error", "Please select a partner first", Alert.AlertType.ERROR);
+            return;
+        }
+
+        try {
+            PDFGenerator.generateContract(
+                selectedPartner.getName(),
+                selectedPartner.getEmail(),
+                selectedPartner.getPhone(),
+                selectedPartner.getAddress()
+            );
+            showAlert("Success", "Contract generated successfully", Alert.AlertType.INFORMATION);
+        } catch (Exception e) {
+            showAlert("Error", "Failed to generate contract: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     // Custom ListCell Class to Display Multiple Columns
     static class PartnerCell extends ListCell<Partner> {
-        @FXML
-        private HBox Hbox;
-        @FXML
-        private Label NameLabel;
-        @FXML
-        private Label TypeLabel;
-        @FXML
-        private Label ContactInfoLAbel;
-
-
+        private final HBox content;
+        private final Label nameLabel;
+        private final Label typeLabel;
+        private final Label emailLabel;
+        private final Label ratingLabel;
 
         public PartnerCell() {
-            // Create HBox and Labels manually
-            Hbox = new HBox(20); // 20px spacing between columns
-            NameLabel = new Label();
-            TypeLabel = new Label();
-            ContactInfoLAbel = new Label();
+            content = new HBox(10);
+            nameLabel = new Label();
+            typeLabel = new Label();
+            emailLabel = new Label();
+            ratingLabel = new Label();
 
-
-            Hbox.getChildren().addAll(NameLabel, TypeLabel, ContactInfoLAbel);
+            nameLabel.setStyle("-fx-font-weight: bold;");
+            ratingLabel.setStyle("-fx-text-fill: #FF9800;");
+            content.getChildren().addAll(nameLabel, typeLabel, emailLabel, ratingLabel);
         }
 
         @Override
@@ -126,55 +265,21 @@ public class UserControllerPartner {
                 setText(null);
                 setGraphic(null);
             } else {
-                // Set text values for each column
-                NameLabel.setText(partner.getName());
-                TypeLabel.setText(partner.getType().toString());
-                ContactInfoLAbel.setText(partner.getContactInfo());
-
-
-                setGraphic(Hbox);
+                nameLabel.setText(partner.getName());
+                typeLabel.setText(partner.getType().toString());
+                emailLabel.setText(partner.getEmail());
+                ratingLabel.setText(String.format("★ %.1f (%d)", partner.getRating(), partner.getRatingCount()));
+                setGraphic(content);
             }
         }
-
-
     }
-    @FXML
-    private void generateContract() {
-        Partner selectedPartner = partnersList.getSelectionModel().getSelectedItem();
-
-        if (selectedPartner == null) {
-            showAlert("No Partner Selected", "Please select a partner from the list.");
-            return;
-        }
-
-        String partnerName = selectedPartner.getName();
-        PartnerType partnerType = selectedPartner.getType();
-        String contactInfo = selectedPartner.getContactInfo();
-        String description = descriptionField.getText(); // Get the partner's description
-        String logoPath = selectedPartner.getImagePath(); // Get the path to the logo image
-
-        Stage stage = (Stage) partnersList.getScene().getWindow();
-        PDFGenerator.generateContract(partnerName, partnerType, contactInfo, description, stage);
-
-        showAlert("Success", "Contract for " + partnerName + " generated successfully!");
-    }
-
-
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 
     @FXML
     private void DisplayImage() {
         Partner selectedPartner = partnersList.getSelectionModel().getSelectedItem();
 
         if (selectedPartner == null) {
-            showAlert("No Partner Selected", "Please select a partner from the list.");
+            showAlert("No Partner Selected", "Please select a partner from the list.", Alert.AlertType.ERROR);
             return;
         }
 
@@ -183,7 +288,7 @@ public class UserControllerPartner {
 
         URL imageUrl = getClass().getResource(imagePath);
         if (imageUrl == null) {
-            showAlert("Error", "Image not found at: " + imagePath);
+            showAlert("Error", "Image not found at: " + imagePath, Alert.AlertType.ERROR);
             return;
         }
 
@@ -191,9 +296,17 @@ public class UserControllerPartner {
         myImage.setImage(image);
     }
 
-
-
-
-
-
+    @FXML
+    private void goToAdminDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminDashboard.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            showAlert("Error", "Failed to load admin dashboard: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
 }

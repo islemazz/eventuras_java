@@ -1,10 +1,17 @@
 package gui.GestionPartner;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.List;
+
 import entities.Partner;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,12 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import services.PartnerService;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.List;
 
 public class ParticipantPartnerController {
 
@@ -31,7 +32,12 @@ public class ParticipantPartnerController {
 
     @FXML
     public void initialize() {
-        loadAllPartners(); // Charger tous les partenaires au démarrage
+        try {
+            loadAllPartners(); // Charger tous les partenaires au démarrage
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de base de données", 
+                "Erreur lors du chargement des partenaires : " + e.getMessage());
+        }
     }
 
     // Méthode pour créer une carte de partenaire sous forme de VBox
@@ -83,33 +89,31 @@ public class ParticipantPartnerController {
     }
 
     // Méthode pour charger tous les partenaires
-    private void loadAllPartners() {
-        try {
-            List<Partner> partners = partnerService.readAll();
+    private void loadAllPartners() throws SQLException {
+        List<Partner> partners = partnerService.readAll();
 
-            // Nettoyer le VBox avant d'ajouter les nouvelles cartes
-            partnerContainer.getChildren().clear();
+        // Nettoyer le VBox avant d'ajouter les nouvelles cartes
+        partnerContainer.getChildren().clear();
 
-            for (Partner partner : partners) {
-                VBox partnerCard = createPartnerCard(partner);
-                partnerContainer.getChildren().add(partnerCard);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Partner partner : partners) {
+            VBox partnerCard = createPartnerCard(partner);
+            partnerContainer.getChildren().add(partnerCard);
         }
     }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     Scene scene;
     Stage stage;
 
-
-
     //display last 3 events in the home sectio
-
-
 
     public void goToTickets(ActionEvent event) throws IOException {
 
     }
-
-
 }

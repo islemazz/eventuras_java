@@ -144,6 +144,27 @@ public class adminDashboard {
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }
+
+    public void goto_partners(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminPartner.fxml"));
+        Parent root = loader.load();
+
+        // Switch to the Partners scene
+        stage = (Stage) events.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
+    public void goto_partnerships(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminPartnership.fxml"));
+        Parent root = loader.load();
+
+        // Switch to the Partnerships scene
+        stage = (Stage) events.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
 //Reclamations
     public void goto_forum(ActionEvent event) throws IOException {
       /*  mainController.loadFXML("/login.fxml");*/
