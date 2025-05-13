@@ -1,7 +1,5 @@
 package entities;
 
-import utils.Session;
-
 public class user {
     private int id;
     private String username;
@@ -14,99 +12,15 @@ public class user {
     private String picture;
     private String phonenumber;
     private int level;
-    private String role;
     private int id_role;
 
-    //Getters & Setters
-    public int getId() { return id ;}
-    public void setId(int id) { this.id = id; }
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public String getEmail() {return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public String getFirstname() { return firstname; }
-    public void setFirstname(String firstname) { this.firstname = firstname; }
-    public String getLastname() { return lastname; }
-    public void setLastname(String lastname) { this.lastname = lastname; }
-    public String getBirthday() { return birthday; }
-    public void setBirthday(String birthday) { this.birthday = birthday; }
-    public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
-    public String getPicture() { return picture; }
-    public void setPicture(String picture) { this.picture = picture; }
-    public String getPhonenumber() { return phonenumber; }
-    public void setPhonenumber(String phonenumber) { this.phonenumber = phonenumber; }
-    public int getLevel() { return level; }
-    public void setLevel(int level) { this.level = level; }
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
+    // Constructeurs
 
     public user() {}
-    //Add Constructor
-    /*public user(String username, String email, String password, String firstname, String lastname, String birthday, String gender, String picture, String phonenumber) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.picture = picture;
-        this.phonenumber = phonenumber;
-    }*/
 
-    //Add Constructor
-    public user(String username, String email, String password, String firstname, String lastname, String birthday, String gender
-            , String picture, String phonenumber) {
-
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.picture = picture;
-        this.phonenumber = phonenumber;
-        this.level = 0;
-        this.role = "user";
-        this.id_role = 12;
-    }
-
-    public user(String username, String email, String password, String firstname, String lastname, String birthday, String gender, String picture, String phonenumber, int id_role) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.picture = picture;
-        this.phonenumber = phonenumber;
-        this.id_role = id_role;
-    }
-    //Constructor for the update
-    public user(int id,String username, String email, String password, String firstname, String lastname, String birthday, String gender
-            , String picture, String phonenumber) {
-        this.id =id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.picture = picture;
-        this.phonenumber = phonenumber;
-
-    }
-    //Login Constructor
-    public user(int id,String username, String email, String password, String firstname, String lastname, String birthday, String gender
-            , String picture, String phonenumber, int level, String role) {
-        this.id =id;
+    public user(String username, String email, String password, String firstname,
+                String lastname, String birthday, String gender, String picture,
+                String phonenumber, int level, int id_role) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -117,32 +31,68 @@ public class user {
         this.picture = picture;
         this.phonenumber = phonenumber;
         this.level = level;
-        this.role = role;
+        this.id_role = id_role;
     }
 
+    public user(int id, String username, String email, String password, String firstname,
+                String lastname, String birthday, String gender, String picture,
+                String phonenumber, int level, int id_role) {
+        this(username, email, password, firstname, lastname, birthday, gender, picture, phonenumber, level, id_role);
+        this.id = id;
+    }
+
+    // Getters et Setters
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getFirstname() { return firstname; }
+    public void setFirstname(String firstname) { this.firstname = firstname; }
+
+    public String getLastname() { return lastname; }
+    public void setLastname(String lastname) { this.lastname = lastname; }
+
+    public String getBirthday() { return birthday; }
+    public void setBirthday(String birthday) { this.birthday = birthday; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getPicture() { return picture; }
+    public void setPicture(String picture) { this.picture = picture; }
+
+    public String getPhonenumber() { return phonenumber; }
+    public void setPhonenumber(String phonenumber) { this.phonenumber = phonenumber; }
+
+    public int getLevel() { return level; }
+    public void setLevel(int level) { this.level = level; }
+
+    public int getId_role() { return id_role; }
+    public void setId_role(int id_role) { this.id_role = id_role; }
+
+    // toString
     @Override
     public String toString() {
         return "user{" +
+                "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", birthday='" + birthday + '\'' +
                 ", gender='" + gender + '\'' +
-                ", picture='" + picture + '\'' +
                 ", phonenumber='" + phonenumber + '\'' +
                 ", level=" + level +
-                ", role='" + role + '\'' +
+                ", id_role=" + id_role +
                 '}';
-    }
-
-
-
-    public int getId_role() {
-        return id_role;
-    }
-    public void setId_role(int id_role) {
-        this.id_role = id_role;
     }
 }

@@ -58,39 +58,33 @@ public class loginUser {
             // Retrieve user from database using email
             user user = userService.authenticateUser(email, password);
 
-            if (user != null) {
-                // Start user session
-                Session.getInstance().startSession(user);
-                System.out.println("User logged in successfully");
-
-                // Store user session
-                UserSession.getInstance(
-                    user.getId(),
-                    user.getUsername(),
-                    user.getEmail(),
-                    user.getPassword(),
-                    user.getFirstname(),
-                    user.getLastname(),
-                    user.getBirthday(),
-                    user.getGender(),
-                    user.getPicture(),
-                    user.getPhonenumber(),
-                    user.getLevel(),
-                    user.getRole()
+            // Check if the password matches
+            if (user!=null) {
+                UserSession.createSession(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getPassword(),
+                        user.getFirstname(),
+                        user.getLastname(),
+                        user.getBirthday(),
+                        user.getGender(),
+                        user.getPicture(),
+                        user.getPhonenumber(),
+                        user.getLevel(),
+                        user.getId_role()
                 );
+                UserSession session = UserSession.getInstance(); // ✅ Maintenant l'instance existe
 
                 // Redirect based on role
-                String role = user.getRole().toUpperCase(); // Convert to uppercase to match DB format
-                System.out.println("User role: " + role); // Debug log
-                
-                switch (role) {
-                    case "ROLE_ADMIN":
+                switch (user.getId_role()) {
+                    case 1:
                         loadPage("/adminDashboard.fxml");
                         break;
-                    case "ROLE_PARTICIPANT":
+                    case 2:
                         loadPage("/participantDashboard.fxml");
                         break;
-                    case "ROLE_ORGANISATEUR":
+                    case 3:
                         loadPage("/organisateurDashboard.fxml");
                         break;
                     default:
