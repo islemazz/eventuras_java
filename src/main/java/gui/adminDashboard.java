@@ -2,12 +2,15 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import entities.Role;
 import entities.user;
 import gui.GestionUser.UserSession;
 import javafx.animation.*;
@@ -26,6 +29,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import services.Crole;
 import services.userService;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -76,13 +80,29 @@ public class adminDashboard {
     private Text time;
     UserSession userSession = UserSession.getInstance();
 
+    @FXML private Label username;
+    @FXML private Label role;
+    @FXML private Label level;
 
 
 
     @FXML
-    void initialize() {
+    void initialize() throws SQLException {
         updateTime();
+// Récupère l'utilisateur connecté
+        user connectedUser = new userService().getUserById(userSession.getId());  // utile si tu veux des infos fraîches depuis la DB
 
+        // Remplir les labels
+        username.setText(userSession.getUsername());
+        level.setText(String.valueOf(userSession.getLevel()));
+
+        try {
+            Role currentRole = new Crole().getRoleById(userSession.getRole());
+            role.setText(currentRole.getRoleName());
+        } catch (Exception e) {
+            role.setText("Unknown");
+            System.err.println("Erreur lors de la récupération du rôle : " + e.getMessage());
+        }
         userService userService = new userService();
         ObservableList<user> userList = FXCollections.observableList(userService.getallUserdata());
         animateScrollingText();
@@ -122,7 +142,7 @@ public class adminDashboard {
     public void goto_dashboard(ActionEvent event) throws IOException {
 
     }
-//
+    //
     public void goto_user(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/listUser.fxml"));
         Parent root = loader.load();
@@ -133,7 +153,7 @@ public class adminDashboard {
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }
-//events(listEVENTS)
+    //events(listEVENTS)
     public void goto_event(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventBACK.fxml"));
         Parent root = loader.load();
@@ -144,13 +164,13 @@ public class adminDashboard {
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }
-//Reclamations
+    //Reclamations
     public void goto_forum(ActionEvent event) throws IOException {
-      /*  mainController.loadFXML("/login.fxml");*/
+        /*  mainController.loadFXML("/login.fxml");*/
     }
-//Forum
+    //Forum
     public void goto_blog(ActionEvent event) throws IOException {
-      /*  mainController.loadFXML("/login.fxml");*/
+        /*  mainController.loadFXML("/login.fxml");*/
     }
 
     public void goto_edit(ActionEvent event) throws IOException {
@@ -163,7 +183,7 @@ public class adminDashboard {
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }
-//
+    //
     public void disconnect(ActionEvent event) throws IOException {
         userSession.cleanUserSession();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));

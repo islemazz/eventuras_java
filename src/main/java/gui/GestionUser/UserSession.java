@@ -15,25 +15,54 @@ public final class UserSession {
     private String picture;
     private String phonenumber;
     private int level;
-    private String role;
+    private int role;
 
-    public int getId() { return id; }
-    public String getUsername() { return username; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
-    public String getFirstname() { return firstname; }
-    public String getLastname() { return lastname; }
-    public String getBirthday() { return birthday; }
-    public String getGender() { return gender; }
-    public String getPicture() { return picture; }
-    public String getPhonenumber() { return phonenumber; }
-
-    public static void setInstance(UserSession instance) {
-        UserSession.instance = instance;
+    private UserSession(int id, String username, String email, String password,
+                        String firstname, String lastname, String birthday,
+                        String gender, String picture, String phonenumber,
+                        int level, int role) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.picture = picture;
+        this.phonenumber = phonenumber;
+        this.level = level;
+        this.role = role;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    // Crée une nouvelle session ou remplace l'existante
+    public static void createSession(int id, String username, String email, String password,
+                                     String firstname, String lastname, String birthday,
+                                     String gender, String picture, String phonenumber,
+                                     int level, int role) {
+        instance = new UserSession(id, username, email, password, firstname,
+                lastname, birthday, gender, picture,
+                phonenumber, level, role);
+    }
+
+    public static UserSession getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("User session is not initialized.");
+        }
+        return instance;
+    }
+
+    public static void cleanUserSession(){
+        instance = null;
+    }
+    public void setId(int id) { this.id = id; }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public void setUsername(String username) {
@@ -46,14 +75,6 @@ public final class UserSession {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
     }
 
     public void setBirthday(String birthday) {
@@ -76,57 +97,23 @@ public final class UserSession {
         this.level = level;
     }
 
-    public void setRole(String role) {
+    public void setRole(int role) {
         this.role = role;
     }
 
+    // Getters
+    public int getId() { return id; }
+    public String getUsername() { return username; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
+    public String getFirstname() { return firstname; }
+    public String getLastname() { return lastname; }
+    public String getBirthday() { return birthday; }
+    public String getGender() { return gender; }
+    public String getPicture() { return picture; }
+    public String getPhonenumber() { return phonenumber; }
     public int getLevel() { return level; }
-    public String getRole() { return role; }
-    public UserSession(int id,String username, String email, String password, String firstname, String lastname, String birthday, String gender
-            , String picture, String phonenumber, int level, String role) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.picture = picture;
-        this.phonenumber = phonenumber;
-        this.level = level;
-        this.role = role;
-    }
-
-    public static UserSession getInstance(int id,String username, String email, String password, String firstname, String lastname, String birthday, String gender
-            , String picture, String phonenumber, int level, String role) {
-        if(instance == null) {
-            instance = new UserSession(id, username, email, password, firstname, lastname, birthday, gender, picture, phonenumber, level, role);
-        }
-        return instance;
-    }
-    public static UserSession getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("UserSession has not been initialized.");
-        }
-        return instance;
-    }
-
-    public void cleanUserSession() {
-        id = 0;
-        username = null;
-        email = null;
-        password = null;
-        firstname = null;
-        lastname = null;
-        birthday = null;
-        gender = null;
-        picture = null;
-        phonenumber = null;
-        level = 0;
-        role = null;
-
-    }
+    public int getRole() { return role; }
 
     @Override
     public String toString() {
@@ -134,7 +121,6 @@ public final class UserSession {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", birthday='" + birthday + '\'' +
@@ -142,7 +128,7 @@ public final class UserSession {
                 ", picture='" + picture + '\'' +
                 ", phonenumber='" + phonenumber + '\'' +
                 ", level=" + level +
-                ", role='" + role + '\'' +
+                ", role=" + role +
                 '}';
     }
 }

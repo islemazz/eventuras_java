@@ -61,10 +61,7 @@ public class loginUser {
 
             // Check if the password matches
             if (user!=null) {
-                Session.getInstance().startSession(user);
-                System.out.println("User logged in");
-                // Password is correct, store user session
-                UserSession.getInstance(
+                UserSession.createSession(
                         user.getId(),
                         user.getUsername(),
                         user.getEmail(),
@@ -76,18 +73,19 @@ public class loginUser {
                         user.getPicture(),
                         user.getPhonenumber(),
                         user.getLevel(),
-                        user.getRole()
+                        user.getId_role()
                 );
+                UserSession session = UserSession.getInstance(); // ✅ Maintenant l'instance existe
 
                 // Redirect based on role
-                switch (user.getRole().toLowerCase()) {
-                    case "admin":
+                switch (user.getId_role()) {
+                    case 1:
                         loadPage("/adminDashboard.fxml");
                         break;
-                    case "participant":
+                    case 2:
                         loadPage("/participantDashboard.fxml");
                         break;
-                    case "organisateur":
+                    case 3:
                         loadPage("/organisateurDashboard.fxml");
                         break;
                     default:
