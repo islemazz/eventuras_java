@@ -1,5 +1,10 @@
 package gui.GestionEvents;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.Month;
+import java.util.Map;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,11 +15,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import services.ServiceEvent;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.time.Month;
-import java.util.Map;
 
 public class OrganisateurDashboard {
 
@@ -60,22 +60,19 @@ public class OrganisateurDashboard {
     }
     public void showAcceuil(ActionEvent event) throws IOException {
         // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("organisateurDashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/organisateurDashboard.fxml"));
         Parent root = loader.load();
-
 
         // Switch to the AfficherEvent scene
         Stage stage = (Stage) Acceuil.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-
     }
 
     public void showEvents2(ActionEvent event) throws IOException {
         // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("AfficherEvent.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEvent.fxml"));
         Parent root = loader.load();
-
 
         // Switch to the AfficherEvent scene
         Stage stage = (Stage) GoToEvents.getScene().getWindow();
@@ -83,32 +80,27 @@ public class OrganisateurDashboard {
         stage.setScene(scene);
         AfficherEvent afficherEvent = loader.getController();
         afficherEvent.initialize(); // Call the method to display all events
-
     }
 
     public void createEvent(ActionEvent event) throws IOException {
         // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("AjouterEvent.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterEvent.fxml"));
         Parent root = loader.load();
-
 
         // Switch to the AfficherEvent scene
         Stage stage = (Stage) create.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-
     }
 
     public void goToForum(ActionEvent event) throws IOException {
         // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("posts.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/posts.fxml"));
         Parent root = loader.load();
-
 
         // Switch to the AfficherEvent scene
         Stage stage = (Stage) forum.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
-
     }
 }

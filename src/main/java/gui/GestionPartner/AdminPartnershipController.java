@@ -99,10 +99,12 @@ public class AdminPartnershipController implements Initializable {
             partnership.setDescription(description);
             partnership.setSigned(isSigned);
             partnership.setStatus("Pending");
+            partnership.setCreatedAt(LocalDateTime.now());
 
             partnershipService.create(partnership);
             refreshPartnerships();
             clearFields();
+            showAlert("Success", "Partnership created successfully", Alert.AlertType.INFORMATION);
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter valid IDs", Alert.AlertType.ERROR);
         }
@@ -235,13 +237,15 @@ public class AdminPartnershipController implements Initializable {
     @FXML
     private void goToDashboard() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminDashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminDashboard.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) partnershipList.getScene().getWindow();
             stage.setScene(scene);
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Error", "Failed to load dashboard: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 

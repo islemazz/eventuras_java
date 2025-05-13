@@ -16,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import services.userService;
-import utils.Session;
 
 public class loginUser {
 
@@ -88,7 +87,7 @@ public class loginUser {
                         loadPage("/organisateurDashboard.fxml");
                         break;
                     default:
-                        System.err.println("Unexpected role: " + role); // Debug log
+                        System.err.println("Unexpected role: " + user.getId_role()); // Debug log
                         showAlert("Error", "Invalid role configuration. Please contact support.");
                 }
             } else {
@@ -112,7 +111,8 @@ public class loginUser {
 
     private void loadPage(String fxmlPath) throws IOException {
         Stage stage = (Stage) submitButton.getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(fxmlPath.substring(1)));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show();
     }

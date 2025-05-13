@@ -26,7 +26,9 @@ public class CreateTestUser {
                 "2000-01-01",        // birthday
                 "Male",              // gender
                 "",                  // picture (empty for now)
-                "1234567890"         // phonenumber
+                "1234567890",        // phonenumber
+                1,                   // level
+                2                    // role_id (2 for regular user)
             );
             
             userService.addUser(testUser);

@@ -1,27 +1,5 @@
 package gui.GestionUser;
 
-import entities.Role;
-import entities.user;
-import gui.mainController;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import org.mindrot.jbcrypt.BCrypt;
-import services.Crole;
-import services.userService;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -29,13 +7,33 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import entities.user;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import services.Crole;
+import services.userService;
 
 public class editCurrentUser {
 
@@ -275,34 +273,6 @@ public class editCurrentUser {
         stage.show();
     }
 
-    public void back_to_list(ActionEvent actionEvent) {
-    }
-
-    public void goto_shop(ActionEvent actionEvent) {
-    }
-
-    public void goto_blog(ActionEvent actionEvent) {
-    }
-
-    public void goto_dashboard(ActionEvent actionEvent) {
-    }
-
-    public void goto_edit(ActionEvent actionEvent) {
-    }
-
-    public void disconnect(ActionEvent actionEvent) {
-    }
-
-    public void goto_forum(ActionEvent actionEvent) {
-    }
-
-    public void goto_event(ActionEvent actionEvent) {
-    }
-
-    public void goto_user(ActionEvent actionEvent) {
-
-    }
-
     @FXML
     void goto_dashboard(ActionEvent event) throws IOException {
         navigateTo("/adminDashboard.fxml", event);
@@ -315,34 +285,31 @@ public class editCurrentUser {
 
     @FXML
     void goto_event(ActionEvent event) throws IOException {
-        navigateTo("/listColis.fxml", event);
+        navigateTo("/listEvent.fxml", event);
     }
 
     @FXML
     void goto_forum(ActionEvent event) throws IOException {
-        navigateTo("/listReponses.fxml", event);
+        navigateTo("/listForum.fxml", event);
     }
 
     @FXML
     void goto_shop(ActionEvent event) throws IOException {
-        navigateTo("/listFactures.fxml", event);
+        navigateTo("/listShop.fxml", event);
     }
 
     @FXML
     void goto_blog(ActionEvent event) throws IOException {
-        navigateTo("/listTrajets.fxml", event);
+        navigateTo("/listBlog.fxml", event);
     }
 
     @FXML
     void goto_edit(ActionEvent event) throws IOException {
-        navigateTo("/editCurrentuser.fxml", event);
+        navigateTo("/editCurrentUser.fxml", event);
     }
 
     @FXML
     void disconnect(ActionEvent event) throws IOException {
-        // Clear user session
-        UserSession.getInstance().cleanUserSession();
-        // Navigate to login page
         navigateTo("/login.fxml", event);
     }
 }

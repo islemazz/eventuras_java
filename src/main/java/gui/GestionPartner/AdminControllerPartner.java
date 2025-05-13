@@ -150,19 +150,33 @@ public class AdminControllerPartner {
 
     @FXML
     private void browseVideo() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choisir une vidéo");
-        fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("Vidéos", "*.mp4", "*.avi", "*.mov", "*.wmv")
-        );
+        // Instead of file chooser, show a dialog to enter YouTube URL
+        TextField urlField = new TextField();
+        urlField.setPromptText("Enter YouTube URL");
         
-        File selectedFile = fileChooser.showOpenDialog(browseVideo.getScene().getWindow());
-        if (selectedFile != null) {
-            videoPath = selectedFile.getAbsolutePath();
-            // For video files, we'll show a generic video icon
-            Image videoIcon = new Image(getClass().getResourceAsStream("/images/video-icon.png"));
-            partnerVideo.setImage(videoIcon);
-        }
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+        dialog.setTitle("Add Video");
+        dialog.setHeaderText("Enter YouTube URL");
+        dialog.getDialogPane().setContent(urlField);
+        
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                String url = urlField.getText().trim();
+                if (isValidYouTubeUrl(url)) {
+                    videoPath = url;
+                    // Show a generic video icon
+                    Image videoIcon = new Image(getClass().getResourceAsStream("/images/video-icon.png"));
+                    partnerVideo.setImage(videoIcon);
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Invalid URL", "Please enter a valid YouTube URL");
+                }
+            }
+        });
+    }
+
+    private boolean isValidYouTubeUrl(String url) {
+        // Basic validation for YouTube URLs
+        return url != null && (url.contains("youtube.com/watch?v=") || url.contains("youtu.be/"));
     }
 
     @FXML
@@ -330,27 +344,70 @@ public class AdminControllerPartner {
         private final Label nameLabel;
         private final Label typeLabel;
         private final Label emailLabel;
+        private final ImageView imageView;
+        private final ImageView videoIcon;
 
         public PartnerCell() {
-            content = new HBox(10);
+            content = new HBox(15);
             nameLabel = new Label();
             typeLabel = new Label();
             emailLabel = new Label();
-
-            nameLabel.setStyle("-fx-font-weight: bold;");
-            content.getChildren().addAll(nameLabel, typeLabel, emailLabel);
+            imageView = new ImageView();
+            videoIcon = new ImageView();
+            
+            imageView.setFitHeight(80);
+            imageView.setFitWidth(80);
+            imageView.setPreserveRatio(true);
+            
+            videoIcon.setFitHeight(40);
+            videoIcon.setFitWidth(40);
+            videoIcon.setPreserveRatio(true);
+            
+            nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+            typeLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+            emailLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #666666;");
+            
+            javafx.scene.layout.VBox labelsBox = new javafx.scene.layout.VBox(5);
+            labelsBox.getChildren().addAll(nameLabel, typeLabel, emailLabel);
+            
+            content.getChildren().addAll(imageView, labelsBox, videoIcon);
+            content.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            content.setStyle("-fx-padding: 10; -fx-background-color: white; -fx-background-radius: 5;");
         }
 
         @Override
         protected void updateItem(Partner partner, boolean empty) {
             super.updateItem(partner, empty);
+            
             if (empty || partner == null) {
-                setText(null);
                 setGraphic(null);
             } else {
                 nameLabel.setText(partner.getName());
                 typeLabel.setText(partner.getType().toString());
                 emailLabel.setText(partner.getEmail());
+                
+                if (partner.getImagePath() != null && !partner.getImagePath().isEmpty()) {
+                    try {
+                        Image image = new Image(new File(partner.getImagePath()).toURI().toString());
+                        imageView.setImage(image);
+                    } catch (Exception e) {
+                        imageView.setImage(null);
+                    }
+                } else {
+                    imageView.setImage(null);
+                }
+                
+                if (partner.getVideoPath() != null && !partner.getVideoPath().isEmpty()) {
+                    try {
+                        Image videoIconImage = new Image(getClass().getResourceAsStream("/images/video-icon.png"));
+                        videoIcon.setImage(videoIconImage);
+                    } catch (Exception e) {
+                        videoIcon.setImage(null);
+                    }
+                } else {
+                    videoIcon.setImage(null);
+                }
+                
                 setGraphic(content);
             }
         }
