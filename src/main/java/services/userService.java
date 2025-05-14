@@ -25,7 +25,7 @@ public class userService implements Iuser<user> {
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getEmail());
-            pstmt.setString(3, BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+            pstmt.setString(3, user.getPassword()); // ✅ Do not rehash here!
             pstmt.setString(4, user.getFirstname());
             pstmt.setString(5, user.getLastname());
             pstmt.setString(6, user.getBirthday());
@@ -38,6 +38,7 @@ public class userService implements Iuser<user> {
             pstmt.executeUpdate();
         }
     }
+
 
     public user getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM users WHERE user_email = ?";
@@ -149,8 +150,9 @@ public class userService implements Iuser<user> {
 
     public boolean updateUserPasswordByEmail(String email, String newPassword) throws SQLException {
         String query = "UPDATE users SET user_password = ? WHERE user_email = ?";
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt()).replaceFirst("^\\$2a\\$", "\\$2y\\$");
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
-            pstmt.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            pstmt.setString(1, hashedPassword);
             pstmt.setString(2, email);
             return pstmt.executeUpdate() > 0;
         }
@@ -158,8 +160,9 @@ public class userService implements Iuser<user> {
 
     public void updateforgottenpassword(String email, String password) {
         String query = "UPDATE users SET user_password = ? WHERE user_email = ?";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt()).replaceFirst("^\\$2a\\$", "\\$2y\\$");
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
-            pstmt.setString(1, BCrypt.hashpw(password, BCrypt.gensalt()));
+            pstmt.setString(1, hashedPassword);
             pstmt.setString(2, email);
             pstmt.executeUpdate();
         } catch (SQLException e) {
