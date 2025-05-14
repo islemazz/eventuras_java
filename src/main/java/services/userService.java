@@ -19,8 +19,8 @@ public class userService implements Iuser<user> {
     @Override
     public void addUser(user user) throws SQLException, IOException {
         String query = "INSERT INTO users (user_username, user_email, user_password, user_firstname, user_lastname, " +
-                "user_birthday, user_gender, user_picture, user_phonenumber, user_level, role_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "user_birthday, user_gender, user_picture, user_phonenumber, user_level, role_id, statut) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
             pstmt.setString(1, user.getUsername());
@@ -34,7 +34,7 @@ public class userService implements Iuser<user> {
             pstmt.setString(9, user.getPhonenumber());
             pstmt.setInt(10, user.getLevel());
             pstmt.setInt(11, user.getId_role());
-
+            pstmt.setInt(12, 1);
             pstmt.executeUpdate();
         }
     }
