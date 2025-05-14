@@ -114,7 +114,7 @@ public class AjouterReservation {
     }
 
     public void goToReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AfficherReclamations.fxml"));
         Parent root = loader.load();
 
         AfficherEventHOME afficherEventController = loader.getController();

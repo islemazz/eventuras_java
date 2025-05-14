@@ -1,5 +1,6 @@
+/* Root style (applies to the entire scene) */
 .root {
-    -fx-background-image: url("Images/bakc6.png");
+    -fx-background-image: url("../Images/bakc6.png");
     -fx-background-size: cover;  /* Makes the image cover the entire scene */
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
@@ -7,8 +8,8 @@
 
 AnchorPane {
     -fx-background-color: #F8F9FA; /* Blanc légèrement grisé pour un effet moderne */
-}
 
+}
 /* Base style for TextField, ComboBox, and DatePicker */
 
 TextField, ComboBox, DatePicker {
@@ -46,7 +47,6 @@ ComboBox .arrow {
 DatePicker .arrow-button {
     -fx-background-color: #1A237E; /* Dark blue for the arrow button */
     -fx-background-radius: 0 5px 5px 0; /* Rounded corners on the right side */
-    -fx-border-radius: 20px;
 }
 
 DatePicker .arrow {
@@ -55,7 +55,7 @@ DatePicker .arrow {
 
 /* Button styling */
 
-Button {
+.btn {
     -fx-background-color: transparent; /* Gradient from bright yellow to darker yellow */
     -fx-text-fill: #E07564; /* Dark blue text */
     -fx-font-weight: bold;
@@ -69,7 +69,7 @@ Button {
 
 /* Button hover effect */
 
-Button:hover {
+.btn:hover {
     -fx-background-color:white; /* Darker gradient on hover */
     -fx-border-radius: 20px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 3); /* Stronger shadow on hover */
@@ -77,7 +77,7 @@ Button:hover {
 
 /* Button pressed effect */
 
-Button:pressed {
+.btn:pressed {
     -fx-background-color: white; /* Even darker gradient when pressed */
     -fx-border-radius: 20px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 4); /* Strongest shadow when pressed */
@@ -100,59 +100,9 @@ Text {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
+.test{
+    -fx-font-size: 15px;
+}
 imageEve{
     -fx-border-radius: 25px;
-}
-TableView{
-    -fx-border-radius: 20px;
-    font-family: 'Poppins', sans-serif;
-    -fx-text-fill: #1A237E;
-}
-
-.grid-pane {
-    -fx-padding: 20px;
-}
-/* Card Styling */
-.card {
-    -fx-background-color: white;
-    -fx-border-color: black;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-padding: 10px;
-    -fx-spacing: 5px;
-    -fx-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 2, 2);
-    -fx-transition: all 0.3s ease-in-out;
-}
-
-/* Show Buttons on Hover */
-.card:hover .edit-btn,
-.card:hover .details-btn {
-    -fx-opacity: 1;
-    -fx-translate-y: 0;
-    -fx-transition: opacity 0.3s ease-in-out, translate-y 0.3s ease-in-out;
-}
-
-/* Hide Buttons Initially */
-.edit-btn, .details-btn {
-    -fx-opacity: 0;
-    -fx-translate-y: 10px;
-    -fx-transition: opacity 0.3s ease-in-out, translate-y 0.3s ease-in-out;
-}
-
-/* Delete Button */
-.modifier-btn {
-    -fx-background-color: #9dff00;
-    -fx-text-fill: white;
-    -fx-padding: 5px 10px;
-    -fx-border-radius: 3px;
-}
-
-/* Details Button */
-.details-btn {
-    -fx-background-color: blue;
-    -fx-text-fill: white;
-    -fx-padding: 5px 10px;
-    -fx-border-radius: 3px;
 }

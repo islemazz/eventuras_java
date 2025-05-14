@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefWidth="1305.0" stylesheets="@AfficherReclamation.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionReclam.AfficherReclamations">
+    <children>
+        <HBox layoutX="365.0" layoutY="178.0" spacing="10">
+            <Label text="📌 Filtrer par status:" />
+            <ComboBox fx:id="cbFilterStatus" promptText="Select Status" />
+
+            <Label text="📎 Filtrer par sujet:" />
+            <ComboBox fx:id="cbFilterSubject" promptText="Select Subject" />
+        </HBox>
+
+        <GridPane fx:id="reclamationsGrid" hgap="20" layoutX="365.0" layoutY="254.0" prefHeight="288.0" prefWidth="559.0" vgap="50" />
+
+        <!--        <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Evenements" />-->
+        <!--        <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />-->
+        <!--        <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />-->
+        <!--        <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Admin" />-->
+        <!--        <Button fx:id="adminpage" layoutX="24.0" layoutY="533.0" mnemonicParsing="false" onMouseClicked="#goToAdminXD" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />-->
+        <!--        <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />-->
+
+        <!--        <Button fx:id="GoToEvents1" layoutX="25.0" layoutY="281.0" mnemonicParsing="false" onAction="#showEvents1" prefHeight="40.0" prefWidth="177.0" text="Evenements" />-->
+        <!--        <Button fx:id="Collaborations" layoutX="25.0" layoutY="343.0" mnemonicParsing="false" onMouseClicked="#ViewPartners" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />-->
+        <!--        <Button fx:id="tickets" layoutX="25.0" layoutY="465.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />-->
+        <!--        <Button fx:id="Acceuil" layoutX="25.0" layoutY="223.0" mnemonicParsing="false" onAction="#showAcceuil1" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />-->
+        <!--        <Button fx:id="reclam" layoutX="25.0" layoutY="404.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" onAction="#goToReclams" text="Réclamations" />-->
+        <!--        -->
+
+        <Button fx:id="GoToEvents1" layoutX="25.0" layoutY="281.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+        <Button fx:id="Collaborations" layoutX="25.0" layoutY="343.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+        <Button fx:id="tickets" layoutX="25.0" layoutY="465.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+        <Button fx:id="Acceuil" layoutX="25.0" layoutY="223.0" mnemonicParsing="false"  prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+        <Button fx:id="reclam" layoutX="25.0" layoutY="404.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0"  text="Réclamations" />
+
+        <Text layoutX="683.0" layoutY="159.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Reclamations">
+            <font>
+                <Font size="24.0" />
+            </font>
+        </Text>
+        <Button layoutX="1052.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#goToAjouterPage" text="+" />
+    </children>
+</AnchorPane>

@@ -1,5 +1,7 @@
 package gui.GestionReclam;
 
+import entities.Reclamation;
+import entities.ReclamationAttachment;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -9,10 +11,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import entities.Reclamation;
-import entities.ReclamationAttachment;
-import services.ReclamationService;
 
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -21,16 +22,41 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import java.io.File;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
-
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import java.io.File;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.ResourceBundle;
 import javafx.scene.control.Label; // 🔹 Import Label
+import services.Reclamation.ReclamationService;
 
 public class DetailsReclamation implements Initializable {
 
@@ -48,6 +74,11 @@ public class DetailsReclamation implements Initializable {
 
     @FXML
     private ListView<HBox> textAttachmentsList; // Change ListView<String> -> ListView<HBox>
+
+    @FXML
+    private Label refusalReasonLabel;
+
+
 
     @FXML
     private HBox imageContainer;
@@ -70,8 +101,16 @@ public class DetailsReclamation implements Initializable {
         imageContainer.setStyle(
 
                 " -fx-alignment: CENTER"
-                );
+        );
     }
+
+    @FXML
+    private Button btnModifier;
+
+    @FXML
+    private Button btnSupprimer;
+
+
 
     public void setReclamationData(Reclamation reclamation) {
         this.currentReclamation = reclamation;
@@ -82,7 +121,33 @@ public class DetailsReclamation implements Initializable {
 
         // Load attachments
         loadAttachments(reclamation.getAttachments());
+
+        // ✅ Hide "Modifier" & "Supprimer" buttons if status is "Rejeté"
+        if ("Rejeté".equals(reclamation.getStatus())) {
+            btnModifier.setVisible(false);
+            btnModifier.setManaged(false);
+
+            btnSupprimer.setVisible(false);
+            btnSupprimer.setManaged(false);
+
+            // ✅ Show the refusal reason
+            if (reclamation.getRefuseReason() != null && !reclamation.getRefuseReason().isEmpty()) {
+                refusalReasonLabel.setText("Raison de refus: " + reclamation.getRefuseReason());
+                refusalReasonLabel.setVisible(true);
+            } else {
+                refusalReasonLabel.setVisible(false);
+            }
+        } else {
+            btnModifier.setVisible(true);
+            btnModifier.setManaged(true);
+
+            btnSupprimer.setVisible(true);
+            btnSupprimer.setManaged(true);
+
+            refusalReasonLabel.setVisible(false);
+        }
     }
+
 
     private void loadAttachments(List<ReclamationAttachment> attachments) {
         textAttachmentsList.getItems().clear();
@@ -311,67 +376,6 @@ public class DetailsReclamation implements Initializable {
             alert.showAndWait();
         }
     }
-  /*  public void showEvents(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showAllEvents(); // Call the method to display all events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) GoToEvents.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    //display last 3 events in the home section
-    public void showAcceuil(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Acceuil.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-
-    }
-
-    public void goToCollabs(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Collaborations.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    public void goToTickets(ActionEvent event) throws IOException {
-
-    }
-
-    public void goToReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) reclam.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-*/
 
 
 }

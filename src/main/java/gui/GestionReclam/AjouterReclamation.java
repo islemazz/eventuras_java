@@ -1,15 +1,16 @@
 package gui.GestionReclam;
 
 
+import entities.Reclamation;
+import entities.ReclamationAttachment;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import entities.Reclamation;
-import entities.ReclamationAttachment;
-import services.ReclamationService;
+import services.Reclamation.ReclamationService;
+import utils.Session;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,15 +22,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class AjouterReclamation {
 
-    public Button GoToEvents;
-    public Button Collaborations;
-    public Button tickets;
-    public Button Acceuil;
-    public Button reclam;
-    public Button btnSubmit;
     @FXML
     private ComboBox<String> CBSuject;
 
@@ -47,21 +41,28 @@ public class AjouterReclamation {
     private List<ReclamationAttachment> selectedAttachments = new ArrayList<>();
 
     @FXML
-    private Button uploadButton;
-
-    @FXML
     private ListView<ReclamationAttachment> attachmentListView;
 
     @FXML
+    private Button uploadButton;
+
+
+
+    @FXML
     public void initialize() {
-        // Populate combo box
+        // Populate the ComboBox
         CBSuject.getItems().addAll("Organisateur", "Evenement", "Probleme technique");
         CBSuject.setValue("Sujet");
+
+        // Fetch the logged-in user and set their ID in the TextField
+        int loggedInUserId = Session.getInstance().getCurrentUser().getId();
+        TFId_user.setText(String.valueOf(loggedInUserId));
+        TFId_user.setEditable(false); // Prevent manual editing
 
         // Setup the "Upload" button
         uploadButton.setOnAction(event -> selectFiles());
 
-        // Custom cell factory so we can remove attachments
+        // Custom cell factory for attachments
         attachmentListView.setCellFactory(param -> new ListCell<>() {
             private final HBox hbox = new HBox(10);
             private final Label fileNameLabel = new Label();
@@ -91,6 +92,9 @@ public class AjouterReclamation {
                 }
             }
         });
+
+        // Debugging: Ensure user ID is fetched correctly
+        System.out.println("Fetched logged-in user ID: " + loggedInUserId);
     }
 
 
@@ -139,13 +143,60 @@ public class AjouterReclamation {
 
     @FXML
     void ajouter(ActionEvent event) {
-        // Collect user input
-        int id_user = Integer.parseInt(TFId_user.getText());
-        int id_event = Integer.parseInt(TFId_event.getText());
+        // Fetch user ID from the TextField (debugging purpose)
+        int id_user;
+        try {
+            id_user = Integer.parseInt(TFId_user.getText());
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur de format");
+            alert.setHeaderText("ID utilisateur invalide");
+            alert.setContentText("L'ID utilisateur doit être un nombre valide.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Debugging: Print the fetched user ID
+        System.out.println("User ID being used for reclamation: " + id_user);
+
+        // Validate event ID and description
+        if (TFId_event.getText().isEmpty() || TFDescription.getText().isEmpty() || CBSuject.getValue().equals("Sujet")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validation Error");
+            alert.setHeaderText("Champs obligatoires manquants");
+            alert.setContentText("Veuillez remplir tous les champs avant de soumettre.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Validate event ID
+        int id_event;
+        try {
+            id_event = Integer.parseInt(TFId_event.getText());
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur de format");
+            alert.setHeaderText("ID événement invalide");
+            alert.setContentText("L'ID événement doit être un nombre valide.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Validate description length
         String description = TFDescription.getText();
+        if (description.length() < 10) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Validation Error");
+            alert.setHeaderText("Description trop courte");
+            alert.setContentText("Veuillez entrer au moins 10 caractères dans la description.");
+            alert.showAndWait();
+            return;
+        }
+
+        // Get selected subject
         String subject = CBSuject.getValue();
 
-        // Current date/time
+        // Get current timestamp
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String created_at = now.format(formatter);
@@ -155,7 +206,7 @@ public class AjouterReclamation {
 
         try {
             rs.create(r);
-            System.out.println("Reclamation added successfully with attachments!");
+            System.out.println("Réclamation ajoutée avec succès avec les pièces jointes!");
 
             Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
             successAlert.setTitle("Succès");
@@ -163,7 +214,7 @@ public class AjouterReclamation {
             successAlert.setContentText("Votre réclamation a été créée avec succès !");
             successAlert.showAndWait();
 
-            // Refresh the reclamation display if we have a reference
+            // Refresh the reclamation display if needed
             if (afficherReclamationsController != null) {
                 afficherReclamationsController.refreshReclamationsDisplay();
             }
@@ -179,69 +230,11 @@ public class AjouterReclamation {
             alert.showAndWait();
         }
     }
+
+
     private AfficherReclamations afficherReclamationsController;
 
     public void setAfficherReclamationsController(AfficherReclamations controller) {
         this.afficherReclamationsController = controller;
     }
-    /*
-    public void showEvents(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showAllEvents(); // Call the method to display all events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) GoToEvents.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    //display last 3 events in the home section
-    public void showAcceuil(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Acceuil.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-
-    }
-
-    public void goToCollabs(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Collaborations.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    public void goToTickets(ActionEvent event) throws IOException {
-
-    }
-
-    public void goToReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) reclam.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }*/
 }

@@ -1,6 +1,8 @@
 package gui.GestionReclam;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,32 +14,86 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import entities.Reclamation;
-import services.ReclamationService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+
+import entities.Reclamation;
+import services.Reclamation.ReclamationService;
 
 
 public class AfficherReclamations {
 
     private final ReclamationService rs = new ReclamationService();
-    public Button GoToEvents;
-    public Button Collaborations;
-    public Button Acceuil;
-    public Button tickets;
-    public Button reclam;
-    public Button adminpage;
-    
+
     @FXML
     private GridPane reclamationsGrid; // GridPane to hold all cards
 
     @FXML
     void initialize() {
+        cbFilterStatus.setItems(FXCollections.observableArrayList("All", "En attente", "En cours", "Rejeté", "Résolu"));
+        cbFilterStatus.setValue("All");
+
+        populateSubjects();
+
+        // 🔹 Apply filters automatically when selection changes
+        cbFilterStatus.setOnAction(event -> applyFilter());
+        cbFilterSubject.setOnAction(event -> applyFilter());
+
         refreshReclamationsDisplay();
     }
 
+    @FXML
+    private void applyFilter() {
+        String selectedStatus = cbFilterStatus.getValue();
+        String selectedSubject = cbFilterSubject.getValue();
+
+        List<Reclamation> filtered = reclamationsList.stream()
+                .filter(rec -> selectedStatus.equals("All") || rec.getStatus().equals(selectedStatus))
+                .filter(rec -> selectedSubject.equals("All") || rec.getSubject().equals(selectedSubject))
+                .toList();
+
+        updateGrid(filtered);
+    }
+
+    private void updateGrid(List<Reclamation> list) {
+        reclamationsGrid.getChildren().clear();
+        int column = 0, row = 0;
+        for (Reclamation rec : list) {
+            VBox card = createReclamationCard(rec);
+            reclamationsGrid.add(card, column, row);
+            column++;
+            if (column == 3) {
+                column = 0;
+                row++;
+            }
+        }
+    }
+
+
+    private void populateSubjects() {
+        Set<String> uniqueSubjects = new HashSet<>();
+        try {
+            reclamationsList = rs.readAllById();
+            for (Reclamation rec : reclamationsList) {
+                uniqueSubjects.add(rec.getSubject());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        List<String> subjectOptions = new ArrayList<>(uniqueSubjects);
+        subjectOptions.add(0, "All"); // Default option
+        cbFilterSubject.setItems(FXCollections.observableArrayList(subjectOptions));
+        cbFilterSubject.setValue("All");
+    }
+
+    private List<Reclamation> reclamationsList;
 
     private VBox createReclamationCard(Reclamation rec) {
         VBox card = new VBox(5);
@@ -53,10 +109,16 @@ public class AfficherReclamations {
         Label ticketDescription = new Label("Description: " + rec.getDescription());
         ticketDescription.getStyleClass().add("ticket-description");
 
-        // Action Buttons (hidden by default)
+        Label ticketStatus = new Label("Status: " + rec.getStatus());
+        ticketStatus.getStyleClass().add("ticket-status");
+
+        // ✅ Apply dynamic color based on status
+        ticketStatus.setStyle("-fx-text-fill: " + getStatusColor(rec.getStatus()) + ";");
+
+        // Action Buttons
         HBox actionButtons = new HBox(10);
-        Button editButton = new Button("Modifier");
-        Button detailsButton = new Button("Détails");
+        Button editButton = new Button("Détails");
+        Button detailsButton = new Button("Suivre");
 
         editButton.getStyleClass().add("modifier-btn");
         detailsButton.getStyleClass().add("details-btn");
@@ -64,21 +126,46 @@ public class AfficherReclamations {
         actionButtons.getChildren().addAll(editButton, detailsButton);
         actionButtons.setOpacity(0);
 
-        // Show the buttons on hover
+        // Show buttons on hover
         card.setOnMouseEntered(event -> actionButtons.setOpacity(1));
         card.setOnMouseExited(event -> actionButtons.setOpacity(0));
 
         // "Modifier" leads to the details page
         editButton.setOnAction(event -> goToEditPage(event, rec));
-        // Alternatively, "Détails" can do the same or different
 
-        card.getChildren().addAll(ticketNumber, ticketDate, ticketDescription, actionButtons);
+        // ✅ Handle "Suivre" button click
+        detailsButton.setOnAction(event -> {
+            if ("En cours".equals(rec.getStatus())) {
+                // ✅ If status is "En cours", navigate to conversation
+                goToConversation(event, rec);
+            } else {
+                // ✅ Show alert if status isn't "En cours"
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Réclamation non acceptée");
+                alert.setHeaderText(null);
+                alert.setContentText("Cette réclamation n'est pas encore acceptée !");
+                alert.showAndWait();
+            }
+        });
+
+        card.getChildren().addAll(ticketNumber, ticketDate, ticketDescription, ticketStatus, actionButtons);
         return card;
     }
 
+    private String getStatusColor(String status) {
+        return switch (status) {
+            case "En attente" -> "blue";  // or "#0066FF"
+            case "Résolu" -> "green";
+            case "Rejeté" -> "red";
+            case "En cours" -> "orange";  // or "#F7FF00"
+            default -> "black";
+        };
+    }
+
+
     public void goToAjouterPage(MouseEvent mouseEvent) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterReclamation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AjouterReclamation.fxml"));
             Parent root = loader.load();
 
             // Get the controller
@@ -100,7 +187,7 @@ public class AfficherReclamations {
 
     private void goToEditPage(javafx.event.ActionEvent event, Reclamation rec) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DetailsReclamation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/DetailsReclamation.fxml"));
             Parent root = loader.load();
 
             DetailsReclamation controller = loader.getController();
@@ -121,23 +208,8 @@ public class AfficherReclamations {
     }
     public void refreshReclamationsDisplay() {
         try {
-            List<Reclamation> reclamations = rs.readAll(); // Fetch updated list
-            reclamationsGrid.getChildren().clear(); // Clear previous items
-
-            int column = 0;
-            int row = 0;
-
-            for (Reclamation rec : reclamations) {
-                VBox card = createReclamationCard(rec);
-                reclamationsGrid.add(card, column, row);
-
-                column++;
-                if (column == 3) {
-                    column = 0;
-                    row++;
-                }
-            }
-
+            reclamationsList = rs.readAllById();
+            applyFilter(); // Apply filter automatically after loading
         } catch (SQLException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erreur");
@@ -145,7 +217,6 @@ public class AfficherReclamations {
             alert.showAndWait();
         }
     }
-
 
     public void refreshReclamationsDisplayAfterDelete() {
         Platform.runLater(() -> { // Ensure UI update runs on JavaFX thread
@@ -179,8 +250,8 @@ public class AfficherReclamations {
     }
 
 
-    public void goToAjouterReservation(MouseEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamationsAdmin.fxml"));
+    public void goToAdminXD(MouseEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AfficherReclamationsAdmin.fxml"));
         Parent root = loader.load();
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -188,67 +259,33 @@ public class AfficherReclamations {
         stage.show();
     }
 
-/*
-    public void showEvents(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
 
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showAllEvents(); // Call the method to display all events
+    public void goToConversation(ActionEvent event, Reclamation rec) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/ReclamationConversation.fxml"));
+            Parent root = loader.load();
 
-        // Switch to the AfficherEvent scene
-        stage = (Stage) GoToEvents.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+            // ✅ Get the controller instance
+            ReclamationConversation controller = loader.getController();
+
+            // ✅ Pass the selected reclamation data
+            controller.setReclamationData(rec);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Impossible d'ouvrir la conversation !");
+            alert.showAndWait();
+        }
     }
+    @FXML private ComboBox<String> cbFilterStatus;
+    @FXML private ComboBox<String> cbFilterSubject;
 
-    //display last 3 events in the home section
-    public void showAcceuil(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
 
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Acceuil.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-
-    }
-
-    public void goToCollabs(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Collaborations.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    public void goToTickets(ActionEvent event) throws IOException {
-
-    }
-
-    public void goToReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) reclam.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
- */
 }
 

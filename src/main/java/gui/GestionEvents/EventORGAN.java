@@ -82,7 +82,7 @@ public class EventORGAN {
     }
 
     public void checkReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AfficherReclamations.fxml"));
         Parent root = loader.load();
         // Switch to the AfficherEvent scene
         Stage stage = (Stage) reclam.getScene().getWindow();
