@@ -22,6 +22,7 @@ import services.ServicePost;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -156,7 +157,13 @@ public class PostsController {
         userImageView.setFitWidth(40);
         userImageView.setFitHeight(40);
         if (author != null && author.getPicture() != null && !author.getPicture().isEmpty()) {
-            Image userImage = new Image(getClass().getResourceAsStream("/Images/" + author.getPicture()));
+            String path = "/images/" + author.getPicture();
+            System.out.println("Loading image from classpath: " + path);
+            InputStream is = getClass().getResourceAsStream(path);
+            if (is == null) {
+                is = getClass().getResourceAsStream("/images/profil.png");
+            }
+            Image userImage = new Image(is);
             if (!userImage.isError()) {
                 userImageView.setImage(userImage);
                 // Arrondir la photo avec un clip circulaire

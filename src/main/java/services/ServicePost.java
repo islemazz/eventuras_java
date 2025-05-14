@@ -17,8 +17,8 @@ public class ServicePost implements IService<Post> {
 
     @Override
     public void ajouter(Post post) throws SQLException {
-        String sql = "INSERT INTO post (title, content, created_at, user_id, image_path) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO post (title, content, created_at, user_id, image_path,category) " +
+                "VALUES (?, ?, ?, ?, ?,?)";
 
         PreparedStatement pst = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         pst.setString(1, post.getTitle());
@@ -26,6 +26,7 @@ public class ServicePost implements IService<Post> {
         pst.setTimestamp(3, new java.sql.Timestamp(post.getCreated_at().getTime()));
         pst.setInt(4, post.getUser_id());
         pst.setString(5, post.getImage_path());
+        pst.setString(6, "Announcement");
 
         pst.executeUpdate();
         System.out.println("Post added successfully!");
