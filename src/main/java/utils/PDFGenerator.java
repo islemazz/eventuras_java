@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,54 +9,92 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFGenerator {
-    public static void generateContract(String partnerName, String email, String phone, String address) throws Exception {
+    private static final String CONTRACTS_DIR = "contracts";
+
+    public static void generateContract(String partnerName, String partnerEmail, String partnerPhone, String partnerAddress,
+                                      int partnershipId, String contractType, String description, int organizerId) throws Exception {
+        // Create contracts directory if it doesn't exist
+        File contractsDir = new File(CONTRACTS_DIR);
+        if (!contractsDir.exists()) {
+            contractsDir.mkdirs();
+        }
+
         Document document = new Document();
-        String fileName = "contract_" + partnerName.replaceAll("\\s+", "_") + "_" + 
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
+        String fileName = CONTRACTS_DIR + File.separator + "contract_" + partnershipId + "_" + 
+                         LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".pdf";
         
-        PdfWriter.getInstance(document, new FileOutputStream(fileName));
-        document.open();
+        System.out.println("Generating contract PDF at: " + fileName);
+        
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(fileName));
+            document.open();
 
-        // Add title
-        Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-        Paragraph title = new Paragraph("Partnership Contract", titleFont);
-        title.setAlignment(Element.ALIGN_CENTER);
-        title.setSpacingAfter(20);
-        document.add(title);
+            // Add title
+            Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+            Paragraph title = new Paragraph("Partnership Agreement", titleFont);
+            title.setAlignment(Element.ALIGN_CENTER);
+            document.add(title);
+            document.add(new Paragraph("\n"));
 
-        // Add partner information
-        Font normalFont = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
-        document.add(new Paragraph("Partner Information:", normalFont));
-        document.add(new Paragraph("Name: " + partnerName, normalFont));
-        document.add(new Paragraph("Email: " + email, normalFont));
-        document.add(new Paragraph("Phone: " + phone, normalFont));
-        document.add(new Paragraph("Address: " + address, normalFont));
-        document.add(new Paragraph("\n"));
+            // Add partnership details
+            document.add(new Paragraph("Partnership ID: " + partnershipId));
+            document.add(new Paragraph("Contract Type: " + contractType));
+            document.add(new Paragraph("Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))));
+            document.add(new Paragraph("\n"));
 
-        // Add contract details
-        document.add(new Paragraph("Contract Details:", normalFont));
-        document.add(new Paragraph("Date: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), normalFont));
-        document.add(new Paragraph("This contract is valid for one year from the date of signing.", normalFont));
-        document.add(new Paragraph("\n"));
+            // Add partner details
+            document.add(new Paragraph("Partner Details:", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
+            document.add(new Paragraph("Name: " + partnerName));
+            document.add(new Paragraph("Email: " + partnerEmail));
+            document.add(new Paragraph("Phone: " + partnerPhone));
+            document.add(new Paragraph("Address: " + partnerAddress));
+            document.add(new Paragraph("\n"));
 
-        // Add terms and conditions
-        document.add(new Paragraph("Terms and Conditions:", normalFont));
-        document.add(new Paragraph("1. Both parties agree to maintain confidentiality of shared information.", normalFont));
-        document.add(new Paragraph("2. The partnership can be terminated with 30 days written notice.", normalFont));
-        document.add(new Paragraph("3. All disputes will be resolved through mutual discussion.", normalFont));
-        document.add(new Paragraph("\n"));
+            // Add organizer details
+            document.add(new Paragraph("Organizer Details:", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
+            document.add(new Paragraph("Organizer ID: " + organizerId));
+            document.add(new Paragraph("\n"));
 
-        // Add signature lines
-        document.add(new Paragraph("Signatures:", normalFont));
-        document.add(new Paragraph("_____________________", normalFont));
-        document.add(new Paragraph("Partner Representative", normalFont));
-        document.add(new Paragraph("\n"));
-        document.add(new Paragraph("_____________________", normalFont));
-        document.add(new Paragraph("Eventuras Representative", normalFont));
+            // Add partnership description
+            document.add(new Paragraph("Partnership Description:", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
+            document.add(new Paragraph(description));
+            document.add(new Paragraph("\n"));
 
-        document.close();
+            // Add signature spaces
+            document.add(new Paragraph("Signatures:", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
+            document.add(new Paragraph("\n\n"));
+            
+            PdfPTable signatureTable = new PdfPTable(2);
+            signatureTable.setWidthPercentage(100);
+            
+            PdfPCell partnerCell = new PdfPCell(new Paragraph("Partner Signature:"));
+            partnerCell.setBorder(Rectangle.TOP);
+            partnerCell.setPaddingTop(30);
+            
+            PdfPCell organizerCell = new PdfPCell(new Paragraph("Organizer Signature:"));
+            organizerCell.setBorder(Rectangle.TOP);
+            organizerCell.setPaddingTop(30);
+            
+            signatureTable.addCell(partnerCell);
+            signatureTable.addCell(organizerCell);
+            
+            document.add(signatureTable);
+            
+            System.out.println("Contract PDF generated successfully");
+        } catch (Exception e) {
+            System.err.println("Error generating contract PDF: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
+        } finally {
+            if (document != null && document.isOpen()) {
+                document.close();
+            }
+        }
     }
 } 

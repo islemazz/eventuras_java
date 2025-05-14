@@ -9,9 +9,12 @@ import java.util.List;
 import entities.Partner;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -27,6 +30,9 @@ public class ParticipantPartnerController {
 
     @FXML
     private ScrollPane scrollPane; // ScrollPane pour permettre le défilement si la liste est longue
+
+    @FXML
+    private Button returnToDashboardButton;
 
     private final PartnerService partnerService = new PartnerService();
 
@@ -115,5 +121,15 @@ public class ParticipantPartnerController {
 
     public void goToTickets(ActionEvent event) throws IOException {
 
+    }
+
+    @FXML
+    private void handleReturnToDashboard(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/participantDashboard.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) returnToDashboardButton.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }

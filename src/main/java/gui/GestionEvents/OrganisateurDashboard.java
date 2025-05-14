@@ -26,6 +26,7 @@ public class OrganisateurDashboard {
     public Button reclam;
     public Button create;
     public Button forum;
+    public Button partners;
     public BarChart<String,Number> monthlyEventsChart;
     public PieChart categoryPieChart;
     public BarChart<String,Number> participantsChart;
@@ -100,6 +101,17 @@ public class OrganisateurDashboard {
 
         // Switch to the AfficherEvent scene
         Stage stage = (Stage) forum.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
+    public void goToCollaborations(ActionEvent event) throws IOException {
+        // Load the UserParnter interface
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/UserParnter.fxml"));
+        Parent root = loader.load();
+
+        // Switch to the UserParnter scene
+        Stage stage = (Stage) Collaborations.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }

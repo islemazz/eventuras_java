@@ -1,8 +1,12 @@
 package gui.GestionEvents;
+import java.io.IOException;
+
 import entities.user;
+import gui.GestionUser.UserSession;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,9 +16,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import utils.Session;
-
-import java.io.IOException;
 
 public class ParticipantDashboard {
 
@@ -26,10 +27,37 @@ public class ParticipantDashboard {
     public Text scrolling_text;
     public Pane news_pane;
     private Scene scene;
-    user CurrentUser = Session.getInstance().getCurrentUser();
+    user CurrentUser;
 
+  @FXML
   void initialize(){
-      animateScrollingText();
+      try {
+          UserSession session = UserSession.getInstance();
+          // Reconstruct the user object from UserSession
+          CurrentUser = new user(
+              session.getId(),
+              session.getUsername(),
+              session.getEmail(),
+              session.getPassword(), // Or null/empty string if not needed here
+              session.getFirstname(),
+              session.getLastname(),
+              session.getBirthday(),
+              session.getGender(),
+              session.getPicture(),
+              session.getPhonenumber(),
+              session.getLevel(),
+              session.getRole()
+          );
+      } catch (IllegalStateException e) {
+          System.err.println("ParticipantDashboard: User session not initialized. " + e.getMessage());
+          CurrentUser = null; 
+      }
+      
+      if (CurrentUser != null) {
+          animateScrollingText();
+      } else {
+          scrolling_text.setText("Welcome, Guest!"); 
+      }
   }
     public void showEvents1(ActionEvent event) throws IOException {  // Load the AfficherEvent interface
         // Load the AfficherEvent interface
@@ -60,6 +88,10 @@ public class ParticipantDashboard {
     }
 
     private void animateScrollingText() {
+        if (CurrentUser == null) {
+            scrolling_text.setText("Welcome!");
+            return; 
+        }
         String newsText = "° Welcome back!: " + CurrentUser.getFirstname() + " " + CurrentUser.getLastname() + " hetheka houwa °";
         scrolling_text.setText(newsText);
 
@@ -89,6 +121,16 @@ public class ParticipantDashboard {
         SequentialTransition sequentialTransition = new SequentialTransition(transitionOut, transitionIn);
         sequentialTransition.setCycleCount(SequentialTransition.INDEFINITE);
         sequentialTransition.play();
+    }
+
+    @FXML
+    void goToPartnerships(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) Collaborations.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
 }

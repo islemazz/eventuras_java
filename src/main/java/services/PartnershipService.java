@@ -13,22 +13,54 @@ import java.util.List;
 import entities.Partnership;
 
 public class PartnershipService {
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/eventuras";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/eventuras";
     private static final String USER = "root";
     private static final String PASS = "";
 
     public PartnershipService() {
-        // No initialization needed for JDBC
+        try {
+            // Load MySQL JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.out.println("Database driver loaded successfully");
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error loading database driver: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, USER, PASS);
+        try {
+            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
+            System.out.println("Database connection established successfully");
+            return conn;
+        } catch (SQLException e) {
+            System.err.println("Error connecting to database: " + e.getMessage());
+            throw e;
+        }
     }
 
     public Partnership create(Partnership partnership) {
+        // Validate required fields
+        if (partnership.getContractType() == null || partnership.getContractType().isEmpty()) {
+            System.err.println("[ERROR] Contract type cannot be null or empty");
+            return null;
+        }
+        if (partnership.getDescription() == null || partnership.getDescription().isEmpty()) {
+            System.err.println("[ERROR] Description cannot be null or empty");
+            return null;
+        }
+        
+        // Ensure status length is within limits
+        if (partnership.getStatus() != null && partnership.getStatus().length() > 20) {
+            System.err.println("[ERROR] Status length exceeds 20 characters");
+            return null;
+        }
+
         String sql = "INSERT INTO partnership (partner_id, organizerid, contracttype, description, is_signed, status, created_at, signed_contract_file, signed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
             System.out.println("[DEBUG] Attempting to insert partnership:");
             System.out.println("partner_id: " + partnership.getPartnerId());
             System.out.println("organizerid: " + partnership.getOrganizerId());
@@ -40,28 +72,60 @@ public class PartnershipService {
             System.out.println("signed_contract_file: " + partnership.getSignedContractFile());
             System.out.println("signed_at: " + partnership.getSignedAt());
 
+            // Set parameters with proper type checking
             pstmt.setInt(1, partnership.getPartnerId());
             pstmt.setInt(2, partnership.getOrganizerId());
             pstmt.setString(3, partnership.getContractType());
             pstmt.setString(4, partnership.getDescription());
             pstmt.setBoolean(5, partnership.isSigned());
-            pstmt.setString(6, partnership.getStatus());
-            pstmt.setObject(7, partnership.getCreatedAt());
-            pstmt.setString(8, partnership.getSignedContractFile());
-            pstmt.setObject(9, partnership.getSignedAt());
+            
+            // Handle nullable status
+            if (partnership.getStatus() == null || partnership.getStatus().isEmpty()) {
+                pstmt.setNull(6, java.sql.Types.VARCHAR);
+            } else {
+                pstmt.setString(6, partnership.getStatus());
+            }
+            
+            // Handle created_at
+            if (partnership.getCreatedAt() == null) {
+                pstmt.setNull(7, java.sql.Types.TIMESTAMP);
+            } else {
+                pstmt.setObject(7, partnership.getCreatedAt());
+            }
+            
+            // Handle nullable signed_contract_file
+            if (partnership.getSignedContractFile() == null || partnership.getSignedContractFile().isEmpty()) {
+                pstmt.setNull(8, java.sql.Types.VARCHAR);
+            } else {
+                pstmt.setString(8, partnership.getSignedContractFile());
+            }
+            
+            // Handle nullable signed_at
+            if (partnership.getSignedAt() == null) {
+                pstmt.setNull(9, java.sql.Types.TIMESTAMP);
+            } else {
+                pstmt.setObject(9, partnership.getSignedAt());
+            }
+
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
                 System.err.println("[ERROR] No rows inserted!");
                 return null;
             }
+            
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 partnership.setId(rs.getInt(1));
+                System.out.println("[DEBUG] Partnership inserted with ID: " + partnership.getId());
+                return partnership;
+            } else {
+                System.err.println("[ERROR] Failed to get generated ID");
+                return null;
             }
-            System.out.println("[DEBUG] Partnership inserted with ID: " + partnership.getId());
-            return partnership;
         } catch (SQLException e) {
             System.err.println("[ERROR] SQL Exception during insert: " + e.getMessage());
+            System.err.println("[ERROR] SQL State: " + e.getSQLState());
+            System.err.println("[ERROR] Error Code: " + e.getErrorCode());
             e.printStackTrace();
             return null;
         }

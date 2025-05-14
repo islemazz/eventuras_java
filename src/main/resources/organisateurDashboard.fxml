@@ -13,7 +13,7 @@
 <AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionEvents.OrganisateurDashboard">
    <children>
       <Button fx:id="GoToEvents" layoutX="25.0" layoutY="280.0" mnemonicParsing="false" onAction="#showEvents2" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
-      <Button fx:id="Collaborations" layoutX="25.0" layoutY="342.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+      <Button fx:id="Collaborations" layoutX="25.0" layoutY="342.0" mnemonicParsing="false" onAction="#goToCollaborations" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
       <Button fx:id="tickets" layoutX="25.0" layoutY="464.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
       <Button fx:id="Acceuil" layoutX="25.0" layoutY="222.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
       <Button fx:id="reclam" layoutX="25.0" layoutY="403.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
