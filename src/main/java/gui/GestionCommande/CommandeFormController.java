@@ -1,20 +1,34 @@
 package gui.GestionCommande;
 
 import entities.Commande;
+import entities.Event;
 import entities.Produit;
+import gui.GestionEvents.AfficherEventHOME;
+import gui.GestionProduit.AfficherProduit;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import services.CommandeService;
 import services.ProduitService;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class CommandeFormController {
 
     @FXML private Label productNameLabel;
-    @FXML private TextField nomClientField, adresseField, telephoneField, emailField, quantiteField;
+    @FXML private TextField nomClientField, adresseField, telephoneField, quantiteField;
 
     private Produit produit;
 
@@ -75,7 +89,10 @@ public class CommandeFormController {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Erreur lors de la commande : " + e.getMessage());
             alert.showAndWait();
         }
+
+
+    }
+
     }
 
 
-}
