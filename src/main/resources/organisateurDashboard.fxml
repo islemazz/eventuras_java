@@ -12,51 +12,51 @@
 
 <?import javafx.scene.control.Label?>
 <AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionEvents.OrganisateurDashboard">
-    <children>
-        <Button fx:id="GoToEvents" layoutX="25.0" layoutY="280.0" mnemonicParsing="false" onAction="#showEvents2" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
-        <Button fx:id="Collaborations" layoutX="25.0" layoutY="342.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
-        <Button fx:id="tickets" layoutX="25.0" layoutY="464.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
-        <Button fx:id="Acceuil" layoutX="25.0" layoutY="222.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
-        <Button fx:id="reclam" layoutX="25.0" layoutY="403.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
-        <Button fx:id="create" layoutX="802.0" layoutY="51.0" mnemonicParsing="false" onAction="#createEvent" prefHeight="43.0" prefWidth="239.0" text="Créer votre évenement" />
-        <Button fx:id="forum" layoutX="25.0" layoutY="528.0" mnemonicParsing="false" onAction="#goToForum" prefHeight="40.0" prefWidth="177.0" text="Forum" />
-        <Text id="event-text" fill="#1a237e" layoutX="343.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hello" wrappingWidth="599.4701232910156">
-            <font>
-                <Font name="Britannic Bold" size="29.0" />
-            </font>
-        </Text>
+   <children>
+      <Button fx:id="GoToEvents" layoutX="25.0" layoutY="280.0" mnemonicParsing="false" onAction="#showEvents2" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+      <Button fx:id="Collaborations" layoutX="25.0" layoutY="342.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+      <Button fx:id="tickets" layoutX="25.0" layoutY="464.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+      <Button fx:id="Acceuil" layoutX="25.0" layoutY="222.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+      <Button fx:id="reclam" layoutX="25.0" layoutY="403.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+      <Button fx:id="create" layoutX="802.0" layoutY="51.0" mnemonicParsing="false" onAction="#createEvent" prefHeight="43.0" prefWidth="239.0" text="Créer votre évenement" />
+      <Button fx:id="forum" layoutX="25.0" layoutY="528.0" mnemonicParsing="false" onAction="#goToForum" prefHeight="40.0" prefWidth="177.0" text="Forum" />
+      <Text id="event-text" fill="#1a237e" layoutX="343.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hello" wrappingWidth="599.4701232910156">
+         <font>
+            <Font name="Britannic Bold" size="29.0" />
+         </font>
+      </Text>
 
 
-        <Pane layoutX="278.0" layoutY="275.0" prefHeight="255.0" prefWidth="294.0">
-            <children>
-                <BarChart fx:id="monthlyEventsChart" prefHeight="255.0" prefWidth="294.0">
-                    <xAxis>
-                        <CategoryAxis side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis side="LEFT" />
-                    </yAxis>
-                </BarChart>
-            </children>
-        </Pane>
-        <Pane layoutX="615.0" layoutY="280.0" prefHeight="255.0" prefWidth="294.0">
-            <children>
-                <PieChart fx:id="categoryPieChart" layoutX="-4.0" layoutY="-5.0" prefHeight="262.0" prefWidth="303.0" />
-            </children>
-        </Pane>
-        <Pane layoutX="942.0" layoutY="280.0" prefHeight="255.0" prefWidth="294.0">
-            <children>
-                <BarChart fx:id="participantsChart" prefHeight="255.0" prefWidth="303.0">
-                    <xAxis>
-                        <CategoryAxis side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                        <NumberAxis side="LEFT" />
-                    </yAxis>
-                </BarChart>
-            </children>
-        </Pane>
-    </children>
+       <Pane layoutX="278.0" layoutY="275.0" prefHeight="255.0" prefWidth="294.0">
+         <children>
+            <BarChart fx:id="monthlyEventsChart" prefHeight="255.0" prefWidth="294.0">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </BarChart>
+         </children>
+      </Pane>
+      <Pane layoutX="615.0" layoutY="280.0" prefHeight="255.0" prefWidth="294.0">
+         <children>
+            <PieChart fx:id="categoryPieChart" layoutX="-4.0" layoutY="-5.0" prefHeight="262.0" prefWidth="303.0" />
+         </children>
+      </Pane>
+      <Pane layoutX="942.0" layoutY="280.0" prefHeight="255.0" prefWidth="294.0">
+         <children>
+            <BarChart fx:id="participantsChart" prefHeight="255.0" prefWidth="303.0">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </BarChart>
+         </children>
+      </Pane>
+   </children>
     <Label fx:id="username" text="username" visible="false" managed="false" />
     <Label fx:id="role" text="role" visible="false" managed="false" />
     <Label fx:id="level" text="level" visible="false" managed="false" />

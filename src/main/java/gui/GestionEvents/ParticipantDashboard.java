@@ -81,7 +81,7 @@ public class ParticipantDashboard {
     }
 
     private void animateScrollingText() {
-        String newsText = "Â° Welcome back!: " + userSession.getFirstname() + " " + userSession.getLastname();
+        String newsText = "° Welcome back!: " + userSession.getFirstname() + " " + userSession.getLastname();
         scrolling_text.setText(newsText);
 
         scrolling_text.setTranslateX(news_pane.getWidth());
