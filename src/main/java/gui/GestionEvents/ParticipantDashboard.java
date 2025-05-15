@@ -1,8 +1,10 @@
 package gui.GestionEvents;
 import entities.user;
+import gui.GestionProduit.AfficherProduit;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,7 +21,7 @@ public class ParticipantDashboard {
 
     public Button GoToEvents1;
     public Button Collaborations;
-    public Button tickets;
+    public Button Boutique;
     public Button Acceuil;
     public Button reclam;
     public Button forum;
@@ -45,6 +47,16 @@ public class ParticipantDashboard {
         stage.setScene(scene);
     }
 
+    @FXML
+    public void goToBoutique() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProduit.fxml"));
+        Parent root = loader.load();
+        AfficherProduit controller = loader.getController();
+        controller.loadProducts();
+        Stage stage = (Stage) Boutique.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
     public void showAcceuil1(ActionEvent event) throws IOException {
         // Load the AfficherEvent interface
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));

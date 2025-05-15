@@ -12,7 +12,7 @@
    <children>
       <Button fx:id="GoToEvents1" layoutX="25.0" layoutY="281.0" mnemonicParsing="false" onAction="#showEvents1" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
       <Button fx:id="Collaborations" layoutX="25.0" layoutY="343.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
-      <Button fx:id="tickets" layoutX="25.0" layoutY="465.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+      <Button fx:id="Boutique" layoutX="25.0" layoutY="465.0" mnemonicParsing="false" onAction="#goToBoutique"  prefHeight="40.0" prefWidth="177.0" text="Boutique" />
       <Button fx:id="Acceuil" layoutX="25.0" layoutY="223.0" mnemonicParsing="false" onAction="#showAcceuil1" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
       <Button fx:id="forum" layoutX="25.0" layoutY="528.0" mnemonicParsing="false" onAction="#goToForum" prefHeight="40.0" prefWidth="177.0" text="Forum" />
       <Button fx:id="reclam" layoutX="25.0" layoutY="404.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />

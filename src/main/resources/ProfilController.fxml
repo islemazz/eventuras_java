@@ -6,9 +6,9 @@
 <AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ProfilController">
    <children>
       <Button fx:id="GoToEvents" layoutX="23.0" layoutY="268.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
-      <Button fx:id="Collaborations" layoutX="23.0" layoutY="330.0" mnemonicParsing="false" onAction="#GoToCollab3" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
-      <Button fx:id="tickets" layoutX="23.0" layoutY="452.0" mnemonicParsing="false" onAction="#GoTotickets3" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
-      <Button fx:id="Acceuil" layoutX="23.0" layoutY="210.0" mnemonicParsing="false" onAction="#goHome" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
-      <Button fx:id="reclam" layoutX="23.0" layoutY="391.0" mnemonicParsing="false" onAction="#GoToReclam3" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+      <Button fx:id="Collaborations" layoutX="23.0" layoutY="330.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+      <Button fx:id="Boutique" layoutX="23.0" layoutY="452.0" mnemonicParsing="false" onAction="#goToBoutique" prefHeight="40.0" prefWidth="177.0" text="Boutique" />
+      <Button fx:id="Acceuil" layoutX="23.0" layoutY="210.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+      <Button fx:id="reclam" layoutX="23.0" layoutY="391.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
    </children>
 </AnchorPane>
