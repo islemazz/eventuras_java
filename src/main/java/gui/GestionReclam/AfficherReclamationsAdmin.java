@@ -1,41 +1,41 @@
 package gui.GestionReclam;
 
-import gui.GestionEvents.AfficherEventHOME;
+import entities.Reclamation;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import entities.Reclamation;
 import javafx.stage.Stage;
-import services.ReclamationService;
 
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import services.Reclamation.ReclamationService;
+
 
 public class AfficherReclamationsAdmin implements Initializable {
 
-    public Button GoToEvents;
-    public Button Collaborations;
-    public Button tickets;
-    public Button Acceuil;
-    public Button reclam;
     @FXML private GridPane reclamationsGrid;
     @FXML private ComboBox<String> cbFilterStatus;
     @FXML private VBox detailsPanel;
     @FXML private Label lblUser, lblSubject, lblDescription;
-    @FXML private ComboBox<String> cbStatus;
+    @FXML private ComboBox<String> cbStatus,cbFilterSubject;
     @FXML private TextArea taResponse;
     @FXML private Label lblTotal, lblPending, lblResolved, lblRejected, lblCurrent;
+
 
     private final ReclamationService rs = new ReclamationService();
     private List<Reclamation> reclamationsList;
@@ -44,12 +44,32 @@ public class AfficherReclamationsAdmin implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cbFilterStatus.setItems(FXCollections.observableArrayList("All", "En attente", "En cours", "Rejeté", "Résolu"));
-        cbFilterStatus.setValue("All"); // Default filter
-        cbStatus.setItems(FXCollections.observableArrayList("En attente", "Résolu", "Rejeté" , "En cours"));
+        cbFilterStatus.setValue("All");
+
+        cbStatus.setItems(FXCollections.observableArrayList("En attente", "Résolu", "Rejeté", "En cours"));
+
+        // 🔹 Populate subjects dynamically
+        Set<String> uniqueSubjects = new HashSet<>();
+        try {
+            reclamationsList = rs.readAll();
+            for (Reclamation rec : reclamationsList) {
+                uniqueSubjects.add(rec.getSubject());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        List<String> subjectOptions = new ArrayList<>(uniqueSubjects);
+        subjectOptions.add(0, "All"); // Default option
+        cbFilterSubject.setItems(FXCollections.observableArrayList(subjectOptions));
+        cbFilterSubject.setValue("All");
+
+        // 🔹 Apply filter automatically when selections change
+        cbFilterStatus.setOnAction(event -> applyFilter());
+        cbFilterSubject.setOnAction(event -> applyFilter());
 
         loadReclamations();
     }
-
     private void loadReclamations() {
         try {
             reclamationsList = rs.readAll();
@@ -82,10 +102,22 @@ public class AfficherReclamationsAdmin implements Initializable {
         Label lblStatus = new Label("Status: " + rec.getStatus());
         lblStatus.setStyle("-fx-font-weight: bold; -fx-text-fill: " + getStatusColor(rec.getStatus()));
 
-        Button btnDetails = new Button("Voir détails");
-        btnDetails.setOnAction(event -> showDetails(rec));
+        // Determine button text and action based on status
+        String buttonText;
+        EventHandler<ActionEvent> buttonAction;
 
-        card.getChildren().addAll(lblId, new Text(rec.getSubject()), lblStatus, btnDetails);
+        if (rec.getStatus().equals("En cours") || rec.getStatus().equals("Résolu")) {
+            buttonText = "Suivre";
+            buttonAction = event -> goToConversation(event, rec);
+        } else {
+            buttonText = "Voir détails";
+            buttonAction = event -> goToDetailsPage(event, rec);
+        }
+
+        Button actionButton = new Button(buttonText);
+        actionButton.setOnAction(buttonAction);
+
+        card.getChildren().addAll(lblId, new Text(rec.getSubject()), lblStatus, actionButton);
         return card;
     }
 
@@ -99,27 +131,19 @@ public class AfficherReclamationsAdmin implements Initializable {
         };
     }
 
-    private void showDetails(Reclamation rec) {
-        currentReclamation = rec;
-        lblUser.setText("User: " + rec.getId_user());
-        lblSubject.setText("Subject: " + rec.getSubject());
-        lblDescription.setText("Description: " + rec.getDescription());
-        cbStatus.setValue(rec.getStatus());
 
-        detailsPanel.setVisible(true);
-    }
 
     @FXML
     private void applyFilter() {
         String selectedStatus = cbFilterStatus.getValue();
-        if (selectedStatus.equals("All")) {
-            updateGrid(reclamationsList);
-        } else {
-            List<Reclamation> filtered = reclamationsList.stream()
-                    .filter(rec -> rec.getStatus().equals(selectedStatus))
-                    .toList();
-            updateGrid(filtered);
-        }
+        String selectedSubject = cbFilterSubject.getValue();
+
+        List<Reclamation> filtered = reclamationsList.stream()
+                .filter(rec -> selectedStatus.equals("All") || rec.getStatus().equals(selectedStatus))
+                .filter(rec -> selectedSubject.equals("All") || rec.getSubject().equals(selectedSubject))
+                .toList();
+
+        updateGrid(filtered);
     }
 
     @FXML
@@ -142,32 +166,11 @@ public class AfficherReclamationsAdmin implements Initializable {
         }
     }
 
-    @FXML
-    private void handleSendResponse() {
-        if (currentReclamation == null) return;
-
-        String responseText = taResponse.getText();
-        if (responseText.isEmpty()) return;
-
-        System.out.println("📩 Admin response: " + responseText);
-        taResponse.clear(); // Clear input after sending
-    }
-
-
-
-
-    @FXML
-    private void closeDetailsPanel() {
-        detailsPanel.setVisible(false);
-    }
-
     private void updateDashboardStats() {
         long pending = reclamationsList.stream().filter(r -> r.getStatus().equals("En attente")).count();
         long resolved = reclamationsList.stream().filter(r -> r.getStatus().equals("Résolu")).count();
         long rejected = reclamationsList.stream().filter(r -> r.getStatus().equals("Rejeté")).count();
         long EnCours = reclamationsList.stream().filter(r -> r.getStatus().equals("En cours")).count();
-
-
 
         lblTotal.setText("📊 Total: " + reclamationsList.size());
         lblPending.setText("📍 En attente: " + pending);
@@ -175,66 +178,87 @@ public class AfficherReclamationsAdmin implements Initializable {
         lblRejected.setText("❌ Rejeté: " + rejected);
         lblCurrent.setText("⌛ En cours: " + EnCours);
     }
-    Scene scene;
-    Stage stage;
 
-    public void showEvents(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
 
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showAllEvents(); // Call the method to display all events
 
-        // Switch to the AfficherEvent scene
-        Stage stage = (Stage) GoToEvents.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+    private void goToDetailsPage(ActionEvent event, Reclamation rec) {
+        System.out.println("DEBUG: Opening details for reclamation ID " + rec.getId());
+        System.out.println("DEBUG: Refuse reason before passing: " + rec.getRefuseReason());
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/DetailsReclamationAdmin.fxml"));
+            Parent root = loader.load();
+
+            DetailsReclamationAdmin controller = loader.getController();
+            controller.setReclamationData(rec);
+            controller.setAfficherReclamationsController(this);
+
+            Stage stage = new Stage();
+            stage.setTitle("Modifier Reclamation");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Loading Error");
+            alert.setContentText("Error while loading DetailsReclamation: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
-    //display last 3 events in the home section
-    public void showAcceuil(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
 
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
+    public void goToConversation(ActionEvent event, Reclamation rec) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/ReclamationConversation.fxml"));
+            Parent root = loader.load();
 
-        // Switch to the AfficherEvent scene
-        Stage stage = (Stage) Acceuil.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+            // ✅ Get the controller instance
+            ReclamationConversation controller = loader.getController();
 
+            // ✅ Pass the selected reclamation data
+            controller.setReclamationData(rec);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("Impossible d'ouvrir la conversation !");
+            alert.showAndWait();
+        }
     }
 
-    public void goToCollabs(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
-        Parent root = loader.load();
 
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
 
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Collaborations.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+
+    public void refreshReclamationsDisplay() {
+        try {
+            List<Reclamation> reclamations = rs.readAll();
+            reclamationsGrid.getChildren().clear();
+
+            int column = 0, row = 0;
+            for (Reclamation rec : reclamations) {
+                VBox card = createReclamationCard(rec);
+                reclamationsGrid.add(card, column, row);
+
+                column++;
+                if (column == 3) {
+                    column = 0;
+                    row++;
+                }
+            }
+
+            this.updateDashboardStats();
+
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText("Error loading reclamations: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
-    public void goToTickets(ActionEvent event) throws IOException {
-
-    }
-
-    public void goToReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) reclam.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
 }

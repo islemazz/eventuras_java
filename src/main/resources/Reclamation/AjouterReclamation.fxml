@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="631.0" prefWidth="924.0" spacing="10" stylesheets="@AjouterReclamation.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionReclam.AjouterReclamation">
+
+    <TextField  fx:id="TFId_user" visible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="38.0" prefWidth="198.0" promptText="id user" />
+    <Label layoutX="72.0" layoutY="117.0" text="id event" />
+    <TextField fx:id="TFId_event" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="38.0" prefWidth="203.0" promptText="id event" />
+    <Label layoutX="73.0" layoutY="171.0" text="description" />
+    <TextField fx:id="TFDescription" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="38.0" prefWidth="203.0" promptText="description" />
+
+    <ComboBox fx:id="CBSuject" minHeight="-Infinity" minWidth="50.0" prefWidth="150.0">
+    </ComboBox>
+
+    <!-- <Button fx:id="upload" layoutX="658.0" layoutY="611.0" mnemonicParsing="false" onAction="#uploadImage" prefHeight="40.0" prefWidth="209.0" text="attachment" /> -->
+    <Button fx:id="uploadButton" layoutX="150.0" layoutY="320.0" text="Ajouter fichiers" styleClass="btn" />
+    <ListView fx:id="attachmentListView"
+              layoutX="150.0"
+              layoutY="360.0"
+              prefHeight="200.0"
+              prefWidth="105.0"
+              maxWidth="300.0"
+              minWidth="105.0"/>
+
+    <Button  styleClass="btn" fx:id="btnSubmit" onAction="#ajouter" text="Ajouter" />
+</VBox>

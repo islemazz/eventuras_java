@@ -148,6 +148,21 @@ public class ParticipantDashboard {
 
     }
 
+    public void goToReclams(ActionEvent event) throws IOException {  // Load the AfficherEvent interface
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AfficherReclamations.fxml"));
+        Parent root = loader.load();
+
+//        AfficherEventHOME afficherEventController = loader.getController();
+//        afficherEventController.showAllEvents(); // Call the method to display all events
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) reclam.getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
+
     @FXML
     void goToPartnerships(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));

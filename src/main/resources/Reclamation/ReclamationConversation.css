@@ -1,0 +1,185 @@
+.root {
+    -fx-background-image: url("Images/bakc6.png");
+    -fx-background-size: cover;  /* Makes the image cover the entire scene */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+
+
+
+TextField {
+    -fx-background-color: #FFFFFF; /* White background */
+    -fx-border-color: #1A237E; /* Dark blue border */
+    -fx-border-radius: 5px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-prompt-text-fill: #9E9E9E; /* Gray placeholder text */
+}
+
+
+TextField:focused{
+    -fx-border-color: #03A9F4; /* Light blue border */
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(3, 169, 244, 0.2), 10, 0, 0, 3); /* Stronger shadow on focus */
+}
+
+
+Button {
+    -fx-background-color: transparent; /* Gradient from bright yellow to darker yellow */
+    -fx-text-fill: #E07564; /* Dark blue text */
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-border-color: white;
+    -fx-border-radius: 20px;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 2); /* Subtle shadow */
+    -fx-cursor: hand; /* Hand cursor on hover */
+}
+
+
+Button:hover {
+    -fx-background-color:white; /* Darker gradient on hover */
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 3); /* Stronger shadow on hover */
+}
+
+
+Button:pressed {
+    -fx-background-color: white; /* Even darker gradient when pressed */
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 4); /* Strongest shadow when pressed */
+}
+
+
+ImageView{
+    -fx-border-color: white;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 20px;
+}
+
+Text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: #2C3E50;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 10px 20px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+imageEve{
+    -fx-border-radius: 25px;
+}
+TableView{
+    -fx-border-radius: 20px;
+    font-family: 'Poppins', sans-serif;
+    -fx-text-fill: #1A237E;
+}
+
+.grid-pane {
+    -fx-padding: 20px;
+}
+
+
+/* Conversation container */
+#conversationContainer {
+    -fx-padding: 15px;
+}
+
+/* Top bar */
+#topBar {
+    -fx-alignment: center-left;
+}
+
+#conversationTitle {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* Message scroll pane */
+#messageScrollPane {
+    -fx-background-color: white;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 5px;
+}
+
+/* Message input container */
+#messageInputContainer {
+    -fx-padding: 10px;
+}
+
+#txtMessage {
+    -fx-pref-width: 500px;
+}
+
+#btnAttach {
+    -fx-font-size: 16px;
+}
+
+/* Reclamation details */
+#reclamationDetails {
+    -fx-padding: 15px;
+    -fx-background-color: #f8f9fa;
+    -fx-pref-width: 300px;
+}
+
+#userAvatar {
+    -fx-border-radius: 50px;
+}
+
+#btnSatisfait {
+    -fx-background-color: #ffcc00;
+    -fx-text-fill: black;
+}
+
+
+
+
+.message-bubble {
+    -fx-padding: 10px;
+    -fx-background-radius: 10px;
+    -fx-font-size: 14px;
+
+}
+
+/* ✅ Style for admin (right-aligned) messages */
+.message-right {
+//-fx-background-color: #e07564; /* Green for Admin */
+    //-fx-background-color: #862341; /* Green for Admin */
+    -fx-background-color: #E0E0E0; /* Gray for Participant */
+
+//-fx-background-color: #A004E2; /* Green for Admin */
+//2a004e
+
+
+-fx-text-fill: white;
+    -fx-alignment: center-right;
+}
+/* ✅ Style for participant (left-aligned) messages */
+.message-left {
+    -fx-background-color: #862341; /* Gray for Participant */
+
+    -fx-text-fill: black;
+    -fx-alignment: center-left;
+}
+
+/* ✅ Add padding to the message container (VBox inside ScrollPane) */
+#messageContainer {
+    -fx-padding: 10px; /* Adds spacing inside the VBox */
+    -fx-spacing: 5px;  /* Adds spacing between message bubbles */
+}
+
+.image-box {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+}
+.attachment-box {
+    -fx-spacing: 5px;
+    -fx-alignment: center-left;
+}
