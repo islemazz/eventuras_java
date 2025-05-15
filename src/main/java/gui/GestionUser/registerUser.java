@@ -15,6 +15,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import entities.Role;
 import entities.user;
 import javafx.collections.FXCollections;
@@ -26,38 +28,59 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import org.mindrot.jbcrypt.BCrypt;
 import services.userService;
 import services.Crole;
+import utils.MyConnection;
 
 public class registerUser {
 
+    @FXML
+    public Text error;
+    @FXML
+    public ComboBox<Role> role_input;
+    @FXML
+    private ResourceBundle resources;
+    @FXML
+    private URL location;
+    @FXML
+    private DatePicker birthday_input;
+    @FXML
+    private TextField email_input;
+    @FXML
+    private TextField firstname_input;
+    @FXML
+    private ComboBox<String> gender_input;
+    @FXML
+    private ComboBox<Integer> level_PMR_input;
+    @FXML
+    private TextField lastname_input;
+    @FXML
+    private PasswordField password_input;
+    @FXML
+    private PasswordField passwordconfirmation_input;
+    @FXML
+    private TextField picture_input;
+    @FXML
+    private TextField username_input;
+    @FXML
+    private TextField phonenumber_input;
+    @FXML
+    private Pane imagePane;
+    private boolean imageChanged = false;
+    private boolean isInitialized = false;
     private final userService userService = new userService();
     private final Crole roleService = new Crole();
-
-    @FXML private ResourceBundle resources;
-    @FXML private URL location;
-    @FXML private DatePicker birthday_input;
-    @FXML private TextField email_input;
-    @FXML private ComboBox<Integer> level_PMR_input;
-    @FXML private TextField firstname_input;
-    @FXML private ComboBox<String> gender_input;
-    @FXML private TextField lastname_input;
-    @FXML private PasswordField password_input;
-    @FXML private PasswordField passwordconfirmation_input;
-    @FXML private TextField username_input;
-    @FXML private TextField picture_input;
-    @FXML private TextField phonenumber_input;
-    @FXML private Text error;
-    @FXML private Pane imagePane;
-    @FXML private ComboBox<Role> role_input;
-
     private final ObservableList<Role> rolesList = FXCollections.observableArrayList();
 
     @FXML

@@ -2,6 +2,7 @@ package gui.GestionEvents;
 
 import entities.Event;
 import entities.Participation;
+import gui.GestionUser.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -70,12 +71,13 @@ public class AjouterParticipation {
         String selectedActivitiesString = String.join(", ", selectedActivities);
 
         // Fetch the current user ID (replace 1 with the actual logged-in user ID)
-        int userId = getCurrentUserId();
+        UserSession session = UserSession.getInstance();
+        int currentUserId = session.getId();
 
         // Create a Participation object
         Participation participation = new Participation();
         participation.setEvent_id(event.getId_event()); // Set the event ID
-        participation.setUser_id(userId); // Set the user ID
+        participation.setUser_id(currentUserId); // Set the user ID
         participation.setActivities(selectedActivitiesString); // Set the selected activities
         participation.setStatus("En cours"); // Set the status to "En cours"
 

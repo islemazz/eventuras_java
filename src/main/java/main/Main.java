@@ -1,18 +1,16 @@
-
-/*package main;
-
-
-import services.ServiceCategorie;
-import services.ServiceEvent;
-import entities.Categorie;
-import entities.Event;
+package main;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.Date;
+import java.util.Scanner;
+
+import entities.Categorie;
+import entities.Event;
+import services.ServiceCategorie;
+import services.ServiceEvent;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -93,7 +91,7 @@ public class Main {
 
 
                     //Create Event object and insert it into the database
-                    Event event = new Event(0, title, description, eventDate, location, 01, categoryId);
+                    Event event = new Event(title, description, eventDate, location, 01, categoryId, null);
 
 
                     sE.ajouter(event);
@@ -155,4 +153,4 @@ public class Main {
 
     }
 
-}*/
+}

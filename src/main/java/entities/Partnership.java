@@ -1,39 +1,58 @@
 package entities;
 
+import java.time.LocalDateTime;
+
 public class Partnership {
     private int id;
-    private int organizerId;
     private int partnerId;
-    private ContractType contractType;
+    private int organizerId;
+    private String contractType;
     private String description;
-    private boolean isSigned;          // True if both parties have signed
+    private boolean isSigned;
+    private String status;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String signedContractFile;
+    private LocalDateTime signedAt;
+    private String generatedContractPath;
 
-    public Partnership( int organizerId, int partnerId, ContractType contractType, String description, boolean isSigned ) {
-
-        this.organizerId = organizerId;
-        this.partnerId = partnerId;
-        this.contractType = contractType;
-        this.description = description;
-        this.isSigned = false;
+    // Default constructor
+    public Partnership() {
     }
 
-    public Partnership(int id, int organizerId, int partnerId, ContractType contractType, String description, boolean isSigned) {
+    // Constructor with all fields
+    public Partnership(int id, int partnerId, int organizerId, String contractType, 
+                      String description, boolean isSigned, String status, 
+                      LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.organizerId = organizerId;
         this.partnerId = partnerId;
+        this.organizerId = organizerId;
         this.contractType = contractType;
         this.description = description;
         this.isSigned = isSigned;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
+    // Constructor without id (for new partnerships)
+    public Partnership(int partnerId, int organizerId, String contractType, 
+                      String description, boolean isSigned, String status) {
+        this.partnerId = partnerId;
+        this.organizerId = organizerId;
+        this.contractType = contractType;
+        this.description = description;
+        this.isSigned = isSigned;
+        this.status = status;
+    }
 
     // Getters and Setters
-    public int getOrganizerId() {
-        return organizerId;
+    public int getId() {
+        return id;
     }
 
-    public void setOrganizerId(int organizerId) {
-        this.organizerId = organizerId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getPartnerId() {
@@ -44,11 +63,19 @@ public class Partnership {
         this.partnerId = partnerId;
     }
 
-    public ContractType getContractType() {
+    public int getOrganizerId() {
+        return organizerId;
+    }
+
+    public void setOrganizerId(int organizerId) {
+        this.organizerId = organizerId;
+    }
+
+    public String getContractType() {
         return contractType;
     }
 
-    public void setContractType(ContractType contractType) {
+    public void setContractType(String contractType) {
         this.contractType = contractType;
     }
 
@@ -60,33 +87,78 @@ public class Partnership {
         this.description = description;
     }
 
-
-
     public boolean isSigned() {
         return isSigned;
     }
 
+    public void setSigned(boolean signed) {
+        isSigned = signed;
+    }
 
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getSignedContractFile() {
+        return signedContractFile;
+    }
+
+    public void setSignedContractFile(String signedContractFile) {
+        this.signedContractFile = signedContractFile;
+    }
+
+    public LocalDateTime getSignedAt() {
+        return signedAt;
+    }
+
+    public void setSignedAt(LocalDateTime signedAt) {
+        this.signedAt = signedAt;
+    }
+
+    public String getGeneratedContractPath() {
+        return generatedContractPath;
+    }
+
+    public void setGeneratedContractPath(String generatedContractPath) {
+        this.generatedContractPath = generatedContractPath;
+    }
 
     @Override
     public String toString() {
         return "Partnership{" +
-                "organizerId=" + organizerId +
+                "id=" + id +
                 ", partnerId=" + partnerId +
-                ", contractType=" + contractType +
+                ", organizerId=" + organizerId +
+                ", contractType='" + contractType + '\'' +
                 ", description='" + description + '\'' +
                 ", isSigned=" + isSigned +
+                ", status='" + status + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", signedContractFile='" + signedContractFile + '\'' +
+                ", signedAt=" + signedAt +
+                ", generatedContractPath='" + generatedContractPath + '\'' +
                 '}';
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }
 

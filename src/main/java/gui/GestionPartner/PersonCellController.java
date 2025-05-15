@@ -8,28 +8,25 @@ import javafx.scene.layout.HBox;
 public class PersonCellController {
 
     @FXML
-    private HBox Hbox;
+    private HBox cellContainer;
 
     @FXML
-    private Label NameLabel;
+    private Label nameLabel;
 
     @FXML
-    private Label TypeLabel;
+    private Label typeLabel;
 
     @FXML
-    private Label ContactInfoLabel;
+    private Label emailLabel;
 
     @FXML
-    private Label VideoLabel;
+    private Label ratingLabel;
 
-    // Method to initialize the cell with a Partner object
-    public void initializeCell(Partner partner) {
-        if (partner != null) {
-            NameLabel.setText(partner.getName());
-            TypeLabel.setText(partner.getType().toString());
-            ContactInfoLabel.setText(partner.getContactInfo());
-            VideoLabel.setText(partner.getImagePath());
-        }
+    public void setPartner(Partner partner) {
+        nameLabel.setText(partner.getName());
+        typeLabel.setText(partner.getType().toString());
+        emailLabel.setText(partner.getEmail());
+        ratingLabel.setText(String.format("★ %.1f (%d)", partner.getRating(), partner.getRatingCount()));
     }
 
 }
