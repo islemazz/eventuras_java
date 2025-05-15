@@ -27,12 +27,15 @@ public class ServiceEvent implements IService<Event> {
     public void ajouter(Event event) throws SQLException {
         // Convert the list of activities to a comma-separated string
         String activitiesString = String.join(", ", event.getActivities());
+
+        // Validate that the event date is not null
         if (event.getDate_event() == null) {
             throw new IllegalArgumentException("La date de l'événement ne peut pas être null !");
         }
 
-        // Update the SQL query to include the 'status' field
-        String sql = "INSERT INTO event (title, description, date_event, location, user_id, category_id, image, price, activities, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // SQL query including the status field
+        String sql = "INSERT INTO event (title, description, date_event, location, user_id, category_id, image, activities, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement pst = cnx.prepareStatement(sql)) {
             pst.setString(1, event.getTitle());
             pst.setString(2, event.getDescription());
@@ -42,11 +45,12 @@ public class ServiceEvent implements IService<Event> {
             pst.setInt(6, event.getCategory_id());
             pst.setString(7, event.getImage());
             pst.setString(8, activitiesString);
-            pst.setString(9, "En cours"); // Set the status to "En cours"
+            pst.setString(9, "En cours de traitement"); // Default status
             pst.executeUpdate();
-            System.out.println("Event ajouté avec succès !");
+            System.out.println("Événement ajouté avec succès !");
         }
     }
+
     //Modify for Organiser
     @Override
     public void update(Event event) throws SQLException {

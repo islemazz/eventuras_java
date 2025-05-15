@@ -1,5 +1,7 @@
 package gui.GestionPartner;
 
+import java.io.IOException;
+
 import entities.Partner;
 import entities.PartnerType;
 import gui.GestionEvents.AfficherEventHOME;
@@ -12,12 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import services.PartnerService;
-
-import java.io.IOException;
-import java.sql.SQLException;
 
 public class ModifyPartnerController {
 
@@ -33,13 +35,31 @@ public class ModifyPartnerController {
     private ChoiceBox<PartnerType> typeField;
 
     @FXML
-    private TextField contactField;
+    private TextArea descriptionField;
 
     @FXML
-    private TextField videoField;
+    private TextField emailField;
+
+    @FXML
+    private TextField phoneField;
+
+    @FXML
+    private TextArea addressField;
+
+    @FXML
+    private TextField websiteField;
+
+    @FXML
+    private Spinner<Double> ratingSpinner;
+
+    @FXML
+    private Spinner<Integer> ratingCountSpinner;
 
     @FXML
     private Button btnUpdate;
+
+    @FXML
+    private Button cancelButton;
 
     private Partner currentPartner;
     private final PartnerService partnerService = new PartnerService();
@@ -48,47 +68,77 @@ public class ModifyPartnerController {
     public void initialize() {
         typeField.setItems(FXCollections.observableArrayList(PartnerType.values()));
 
+        // Initialize spinners
+        ratingSpinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 5, 0, 0.1));
+        ratingCountSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000, 0));
+
         btnUpdate.setOnAction(event -> updatePartner());
     }
 
     public void setPartner(Partner partner) {
         this.currentPartner = partner;
+        populateFields(partner);
+    }
+
+    private void populateFields(Partner partner) {
         nameField.setText(partner.getName());
         typeField.setValue(partner.getType());
-        contactField.setText(partner.getContactInfo());
-        videoField.setText(partner.getImagePath());
+        descriptionField.setText(partner.getDescription());
+        emailField.setText(partner.getEmail());
+        phoneField.setText(partner.getPhone());
+        addressField.setText(partner.getAddress());
+        websiteField.setText(partner.getWebsite());
+        ratingSpinner.getValueFactory().setValue(partner.getRating());
+        ratingCountSpinner.getValueFactory().setValue(partner.getRatingCount());
     }
 
     @FXML
     private void updatePartner() {
-        try {
-            String name = nameField.getText().trim();
-            PartnerType type = typeField.getValue();
-            String contactInfo = contactField.getText().trim();
-            String imagePath = videoField.getText().trim(); // Change variable name to imagePath
+        if (validateFields()) {
+            try {
+                currentPartner.setName(nameField.getText());
+                currentPartner.setType(typeField.getValue());
+                currentPartner.setDescription(descriptionField.getText());
+                currentPartner.setEmail(emailField.getText());
+                currentPartner.setPhone(phoneField.getText());
+                currentPartner.setAddress(addressField.getText());
+                currentPartner.setWebsite(websiteField.getText());
+                currentPartner.setRating(ratingSpinner.getValue());
+                currentPartner.setRatingCount(ratingCountSpinner.getValue());
 
-            if (name.isEmpty() || type == null || contactInfo.isEmpty() || imagePath.isEmpty()) {
-                showAlert(Alert.AlertType.WARNING, "Input Error", "Please fill in all fields.");
-                return;
+                partnerService.update(currentPartner);
+                showAlert(Alert.AlertType.INFORMATION, "Succès", "Partenaire modifié avec succès !");
+                closeWindow();
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la modification du partenaire : " + e.getMessage());
             }
-
-            currentPartner.setName(name);
-            currentPartner.setType(type);
-            currentPartner.setContactInfo(contactInfo);
-            currentPartner.setImagePath(imagePath); // Set imagePath instead of videoPath
-
-            partnerService.update(currentPartner);
-
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Partner updated successfully!");
-
-            Stage stage = (Stage) btnUpdate.getScene().getWindow();
-            stage.close(); // Close the modification window
-
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Database Error", "Error while updating partner: " + e.getMessage());
         }
     }
 
+    @FXML
+    private void handleCancel() {
+        closeWindow();
+    }
+
+    private boolean validateFields() {
+        if (nameField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Erreur", "Le nom du partenaire est requis.");
+            return false;
+        }
+        if (typeField.getValue() == null) {
+            showAlert(Alert.AlertType.WARNING, "Erreur", "Le type du partenaire est requis.");
+            return false;
+        }
+        if (emailField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Erreur", "L'email est requis.");
+            return false;
+        }
+        if (phoneField.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Erreur", "Le numéro de téléphone est requis.");
+            return false;
+        }
+        return true;
+    }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
@@ -96,6 +146,12 @@ public class ModifyPartnerController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    private void closeWindow() {
+        Stage stage = (Stage) cancelButton.getScene().getWindow();
+        stage.close();
+    }
+
     Scene scene;
     Stage stage;
 

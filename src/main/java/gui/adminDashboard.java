@@ -13,7 +13,12 @@ import java.util.ResourceBundle;
 import entities.Role;
 import entities.user;
 import gui.GestionUser.UserSession;
-import javafx.animation.*;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Timeline;
+import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,20 +27,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import services.Crole;
 import services.userService;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.chart.PieChart;
 public class adminDashboard {
     public Label welcome;
     public Button Dashboard;
@@ -164,7 +175,28 @@ public class adminDashboard {
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }
-    //Reclamations
+    
+    public void goto_partners(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminPartner.fxml"));
+        Parent root = loader.load();
+
+        // Switch to the Partners scene
+        stage = (Stage) events.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
+    public void goto_partnerships(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AdminPartnership.fxml"));
+        Parent root = loader.load();
+
+        // Switch to the Partnerships scene
+        stage = (Stage) events.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
+//Reclamations
     public void goto_forum(ActionEvent event) throws IOException {
         /*  mainController.loadFXML("/login.fxml");*/
     }

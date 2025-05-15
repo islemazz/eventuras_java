@@ -1,8 +1,11 @@
 package gui.GestionUser;
 
-import entities.user;
+import java.io.IOException;
+import java.sql.SQLException;
+
 import org.mindrot.jbcrypt.BCrypt;
-import services.userService;
+
+import entities.user;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,11 +17,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import utils.Session;
-import org.mindrot.jbcrypt.BCrypt;
-
-import java.io.IOException;
-import java.sql.SQLException;
+import services.userService;
 
 public class loginUser {
 
@@ -124,7 +123,8 @@ public class loginUser {
 
     private void loadPage(String fxmlPath) throws IOException {
         Stage stage = (Stage) submitButton.getScene().getWindow();
-        Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource(fxmlPath.substring(1)));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.show();
     }

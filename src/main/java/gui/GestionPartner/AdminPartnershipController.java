@@ -5,8 +5,12 @@ import entities.Partnership;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -14,245 +18,295 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
+import javafx.util.StringConverter;
 import services.PartnershipService;
+import services.userService;
+import entities.user;
+import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
-public class AdminPartnershipController {
+public class AdminPartnershipController implements Initializable {
 
     public GridPane Grid;
     public Sphere modelGroup;
     @FXML
     private ListView<Partnership> partnershipList;
-
     @FXML
-    private Button Ajouter;
-
+    private ComboBox<ContractType> contractTypeComboBox;
     @FXML
-    private Button Supprimer;
-
+    private TextArea descriptionArea;
     @FXML
-    private Button Modifier;
+    private TextField partnerIdField;
+    @FXML
+    private ComboBox<user> organizerComboBox;
+    @FXML
+    private CheckBox signedCheckBox;
 
-    private PartnershipService partnershipService;
-    private ObservableList<Partnership> partnerships;
+    private final PartnershipService partnershipService = new PartnershipService();
+    private userService uService;
+    private final ObservableList<Partnership> partnerships = FXCollections.observableArrayList();
 
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        uService = new userService();
 
-    public void initialize() {
+        // Initialize contract type combo box
+        contractTypeComboBox.setItems(FXCollections.observableArrayList(ContractType.values()));
+        contractTypeComboBox.setConverter(new StringConverter<ContractType>() {
+            @Override
+            public String toString(ContractType type) {
+                return type != null ? type.toString() : "";
+            }
 
-        partnershipService = new PartnershipService();
-        partnerships = FXCollections.observableArrayList();
-        partnershipList.setItems(partnerships);
-        partnershipList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        loadPartnerships();
+            @Override
+            public ContractType fromString(String string) {
+                if (string == null || string.isEmpty()) {
+                    return null;
+                }
+                try {
+                    return ContractType.valueOf(string);
+                } catch (IllegalArgumentException e) {
+                    System.err.println("AdminPartnershipController: No ContractType enum constant for string '" + string + "'");
+                    return null;
+                }
+            }
+        });
 
-        // Set custom cell factory
-        partnershipList.setCellFactory(listView -> new PartnershipCell());
+        // Initialize organizer combo box
+        populateOrganizerComboBox();
+        organizerComboBox.setConverter(new StringConverter<user>() {
+            @Override
+            public String toString(user organizer) {
+                if (organizer == null) {
+                    return null;
+                }
+                // Display format: "FirstName LastName (Username)"
+                return String.format("%s %s (%s)", organizer.getFirstname(), organizer.getLastname(), organizer.getUsername());
+            }
+
+            @Override
+            public user fromString(String string) {
+                // Not strictly needed if the ComboBox is not editable or if selection is always from the list
+                return organizerComboBox.getItems().stream()
+                        .filter(organizer -> toString(organizer).equals(string))
+                        .findFirst().orElse(null);
+            }
+        });
+
+        // Load partnerships into ListView
+        refreshPartnerships();
+        partnershipList.setCellFactory(listView -> new PartnershipCell(this));
     }
 
-    private void loadPartnerships() {
-        partnerships.clear();
+    @FXML
+    private void handleAdd() {
         try {
-            partnerships.addAll(partnershipService.readAll());
-        } catch (SQLException e) {
-            showAlert("Erreur", "Échec du chargement des partenariats", Alert.AlertType.ERROR);
+            int partnerId = Integer.parseInt(partnerIdField.getText());
+            user selectedOrganizer = organizerComboBox.getSelectionModel().getSelectedItem();
+            ContractType contractType = contractTypeComboBox.getValue();
+            String description = descriptionArea.getText();
+            boolean isSigned = signedCheckBox.isSelected();
+
+            if (selectedOrganizer == null) {
+                showAlert("Error", "Please select an organizer", Alert.AlertType.ERROR);
+                return;
+            }
+            if (contractType == null) {
+                showAlert("Error", "Please select a contract type", Alert.AlertType.ERROR);
+                return;
+            }
+
+            Partnership partnership = new Partnership();
+            partnership.setPartnerId(partnerId);
+            partnership.setOrganizerId(selectedOrganizer.getId());
+            partnership.setContractType(contractType.toString());
+            partnership.setDescription(description);
+            partnership.setSigned(isSigned);
+            partnership.setStatus("Pending");
+            partnership.setCreatedAt(LocalDateTime.now());
+
+            partnershipService.create(partnership);
+            refreshPartnerships();
+            clearFields();
+            showAlert("Success", "Partnership created successfully", Alert.AlertType.INFORMATION);
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Please enter a valid Partner ID", Alert.AlertType.ERROR);
         }
     }
 
+    @FXML
+    private void handleDelete() {
+        Partnership selectedPartnership = partnershipList.getSelectionModel().getSelectedItem();
+        if (selectedPartnership != null) {
+            partnershipService.delete(selectedPartnership.getId());
+            refreshPartnerships();
+        } else {
+            showAlert("Error", "Please select a partnership to delete", Alert.AlertType.ERROR);
+        }
+    }
 
     @FXML
-    private void addPartnership(MouseEvent mouseEvent) {
-        Dialog<Partnership> dialog = new Dialog<>();
-        dialog.setTitle("Add Partnership");
-        dialog.setHeaderText("Enter partnership details");
-
-        // Create a GridPane for the input fields
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        // Create text fields for each property
-        TextField organizerIdField = new TextField();
-        TextField partnerIdField = new TextField();
-
-        // Create a ComboBox for contract type
-        ComboBox<ContractType> contractTypeComboBox = new ComboBox<>();
-        contractTypeComboBox.getItems().addAll(ContractType.values()); // Add all ContractType values to the ComboBox
-        contractTypeComboBox.setPromptText("Selectionner type de contrat");
-
-        TextField descriptionField = new TextField();
-        CheckBox isSignedCheckbox = new CheckBox("Is Signed"); // Checkbox for boolean value
-
-        // Add fields to the grid
-        grid.addRow(0, new Label("Organizer ID:"), organizerIdField);
-        grid.addRow(1, new Label("Partner ID:"), partnerIdField);
-        grid.addRow(2, new Label("Contract Type:"), contractTypeComboBox);
-        grid.addRow(3, new Label("Description:"), descriptionField);
-        grid.addRow(4, new Label("Is Signed:"), isSignedCheckbox);
-
-        dialog.getDialogPane().setContent(grid);
-
-        // Add buttons
-        ButtonType saveButtonType = new ButtonType("Sauvegarder", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-        // Convert the result to a Partnership object when the Save button is clicked
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == saveButtonType) {
-                // Parse the input values
-                try {
-                    int organizerId = Integer.parseInt(organizerIdField.getText());
-                    int partnerId = Integer.parseInt(partnerIdField.getText());
-
-                    // Get selected contract type from ComboBox
-                    ContractType contractType = contractTypeComboBox.getValue();
-                    if (contractType == null) {
-                        showAlert("Erreur", "Veuillez selectionner un type de contrat", Alert.AlertType.ERROR);
-                        return null; // Don't proceed if no contract type is selected
-                    }
-
-                    String description = descriptionField.getText();
-                    boolean isSigned = isSignedCheckbox.isSelected(); // Get value from checkbox
-
-                    // Create a new partnership object
-                    Partnership newPartnership = new Partnership(0, organizerId, partnerId, contractType, description, isSigned);
-                    return newPartnership;
-                } catch (NumberFormatException e) {
-                    showAlert("Erreur", "Input Invalid", Alert.AlertType.ERROR);
-                }
-            }
-            return null;
-        });
-
-        // Show the dialog and handle the result
-        dialog.showAndWait().ifPresent(newPartnership -> {
+    private void handleUpdate() {
+        Partnership selectedPartnership = partnershipList.getSelectionModel().getSelectedItem();
+        if (selectedPartnership != null) {
             try {
-                partnershipService.create(newPartnership);
-                loadPartnerships();
-            } catch (SQLException e) {
-                showAlert("Erreur", "Echec d'ajout de Partnership", Alert.AlertType.ERROR);
-            }
-        });
-    }
+                int partnerId = Integer.parseInt(partnerIdField.getText());
+                user selectedOrganizer = organizerComboBox.getSelectionModel().getSelectedItem();
+                ContractType contractType = contractTypeComboBox.getValue();
+                String description = descriptionArea.getText();
+                boolean isSigned = signedCheckBox.isSelected();
 
-
-    @FXML
-    private void delPartnership(MouseEvent mouseEvent) {
-        Partnership selected = partnershipList.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmationAlert.setTitle("Confirm Deletion");
-            confirmationAlert.setHeaderText("Etes Vous sur ?");
-            confirmationAlert.setContentText("Cette Action est definitive");
-
-            Optional<ButtonType> result = confirmationAlert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    partnershipService.delete(selected);
-                    loadPartnerships();
-                } catch (SQLException e) {
-                    showAlert("Erreur", "Echec de suppression de Partnership", Alert.AlertType.ERROR);
+                if (selectedOrganizer == null) {
+                    showAlert("Error", "Please select an organizer", Alert.AlertType.ERROR);
+                    return;
                 }
+                if (contractType == null) {
+                    showAlert("Error", "Please select a contract type", Alert.AlertType.ERROR);
+                    return;
+                }
+
+                selectedPartnership.setPartnerId(partnerId);
+                selectedPartnership.setOrganizerId(selectedOrganizer.getId());
+                selectedPartnership.setContractType(contractType.toString());
+                selectedPartnership.setDescription(description);
+                selectedPartnership.setSigned(isSigned);
+
+                partnershipService.update(selectedPartnership);
+                refreshPartnerships();
+                clearFields();
+            } catch (NumberFormatException e) {
+                showAlert("Error", "Please enter a valid Partner ID", Alert.AlertType.ERROR);
             }
         } else {
-            showAlert("Alert", "Veuillez selectionner un partenaire", Alert.AlertType.WARNING);
+            showAlert("Error", "Please select a partnership to update", Alert.AlertType.ERROR);
         }
     }
 
-    @FXML
-    private void setPartnership(MouseEvent mouseEvent) {
-        Partnership selected = partnershipList.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            // Create a dialog to modify partnership details
-            Dialog<Partnership> dialog = new Dialog<>();
-            dialog.setTitle("Edit Partnership");
-            dialog.setHeaderText("Modify partnership details");
-
-            // Create a GridPane for the input fields
-            GridPane grid = new GridPane();
-            grid.setHgap(10);
-            grid.setVgap(10);
-
-            // Create text fields for each property
-            TextField organizerIdField = new TextField(String.valueOf(selected.getOrganizerId()));
-            TextField partnerIdField = new TextField(String.valueOf(selected.getPartnerId()));
-            TextField contractTypeField = new TextField(selected.getContractType().toString());
-            TextField descriptionField = new TextField(selected.getDescription());
-            TextField isSignedField = new TextField(selected.isSigned() ? "Yes" : "No"); // Accept "Yes" or "No"
-
-            // Add fields to the grid
-            grid.addRow(0, new Label("Organizer ID:"), organizerIdField);
-            grid.addRow(1, new Label("Partner ID:"), partnerIdField);
-            grid.addRow(2, new Label("Contract Type:"), contractTypeField);
-            grid.addRow(3, new Label("Description:"), descriptionField);
-            grid.addRow(4, new Label("Is Signed (Yes/No):"), isSignedField);
-
-            dialog.getDialogPane().setContent(grid);
-
-            // Add buttons
-            ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-            dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
-
-            // Convert the result to a Partnership object when the Save button is clicked
-            dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == saveButtonType) {
-                    // Update the selected partnership object with new values
-                    selected.setOrganizerId(Integer.parseInt(organizerIdField.getText()));
-                    selected.setPartnerId(Integer.parseInt(partnerIdField.getText()));
-                    selected.setContractType(ContractType.valueOf(contractTypeField.getText())); // Adjust if necessary
-                    selected.setDescription(descriptionField.getText());
-                    selected.isSigned();
-
-                    return selected;
-                }
-                return null;
-            });
-
-            // Show the dialog and handle the result
-            dialog.showAndWait().ifPresent(updatedPartnership -> {
-                try {
-                    partnershipService.update(updatedPartnership);
-                    loadPartnerships();
-                } catch (SQLException e) {
-                    showAlert("Error", "Failed to update partnership", Alert.AlertType.ERROR);
-                }
-            });
-        } else {
-            showAlert("Warning", "Please select a partnership to edit", Alert.AlertType.WARNING);
-        }
+    private void refreshPartnerships() {
+        partnerships.clear();
+        partnerships.addAll(partnershipService.readAll());
+        partnershipList.setItems(partnerships);
     }
 
-    private void showAlert(String title, String message, Alert.AlertType type) {
+    private void clearFields() {
+        partnerIdField.clear();
+        organizerComboBox.getSelectionModel().clearSelection();
+        contractTypeComboBox.setValue(null);
+        descriptionArea.clear();
+        signedCheckBox.setSelected(false);
+    }
+
+    private void showAlert(String title, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 
-    // Custom ListCell Class
+    // Method to populate organizer ComboBox
+    private void populateOrganizerComboBox() {
+        try {
+            List<user> allUsers = uService.getallUserdata();
+            List<user> organizers = allUsers.stream()
+                                            .filter(u -> u.getId_role() == 3) // Assuming role_id 3 is for Organizers
+                                            .collect(Collectors.toList());
+            organizerComboBox.setItems(FXCollections.observableArrayList(organizers));
+        } catch (Exception e) {
+            // Handle exceptions, e.g., show an alert or log
+            System.err.println("Error populating organizer ComboBox: " + e.getMessage());
+            e.printStackTrace();
+            showAlert("Error", "Could not load organizers.", Alert.AlertType.ERROR);
+        }
+    }
 
+    // Method to handle AI signature verification
+    private void handleVerifySignature(Partnership partnership) {
+        if (partnership.getSignedContractFile() == null || partnership.getSignedContractFile().isEmpty()) {
+            showAlert("Verification Info", "No contract file specified for this partnership.", Alert.AlertType.INFORMATION);
+            return;
+        }
 
-    static class PartnershipCell extends ListCell<Partnership> {
+        // --- AI VERIFICATION PLACEHOLDER ---
+        Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationDialog.setTitle("AI Signature Verification (Mock)");
+        confirmationDialog.setHeaderText("Simulating AI check for: " + partnership.getSignedContractFile());
+        confirmationDialog.setContentText("Is the contract document signed?");
+
+        ButtonType buttonTypeYes = new ButtonType("Yes (Signed)");
+        ButtonType buttonTypeNo = new ButtonType("No (Not Signed)");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        confirmationDialog.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo, buttonTypeCancel);
+
+        Optional<ButtonType> result = confirmationDialog.showAndWait();
+        // --- END AI VERIFICATION PLACEHOLDER ---
+
+        if (result.isPresent() && result.get() == buttonTypeYes) {
+            try {
+                partnership.setSigned(true);
+                partnership.setSignedAt(LocalDateTime.now());
+                partnership.setStatus("Signed (Verified)"); // Optional: Update status
+                partnershipService.update(partnership);
+                refreshPartnerships(); // Refresh the entire list to show changes
+                showAlert("Success", "Contract marked as signed!", Alert.AlertType.INFORMATION);
+            } catch (Exception e) { // Catch potential SQL exceptions from service
+                showAlert("Error", "Failed to update partnership: " + e.getMessage(), Alert.AlertType.ERROR);
+                // Optionally revert UI changes if DB update fails
+                partnership.setSigned(false); // Revert in-memory change
+                partnership.setSignedAt(null);
+                partnership.setStatus("Pending"); // Revert status
+            }
+        } else if (result.isPresent() && result.get() == buttonTypeNo) {
+            showAlert("Verification Result", "Contract marked as NOT signed by AI (Mock).", Alert.AlertType.INFORMATION);
+        }
+    }
+
+    // Custom ListCell Class - made non-static
+    class PartnershipCell extends ListCell<Partnership> {
         private final HBox hBox;
         private final Label organizerLabel;
         private final Label partnerLabel;
         private final Label contractTypeLabel;
         private final Label descriptionLabel;
         private final Label isSignedLabel;
+        private final Label contractFileLabel; // Added to show contract file
+        private final Button verifyButton;
+        private final AdminPartnershipController controller; // Reference to outer class
 
-        public PartnershipCell() {
-            hBox = new HBox();
+        public PartnershipCell(AdminPartnershipController controller) {
+            this.controller = controller; // Store reference to controller
+            hBox = new HBox(10); // Add spacing to HBox
+            hBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
             organizerLabel = new Label();
             partnerLabel = new Label();
             contractTypeLabel = new Label();
             descriptionLabel = new Label();
             isSignedLabel = new Label();
+            contractFileLabel = new Label(); // Initialize new label
 
-            VBox vBox = new VBox();
-            vBox.getChildren().addAll(organizerLabel, partnerLabel, contractTypeLabel, descriptionLabel, isSignedLabel);
-            hBox.getChildren().add(vBox);
+            VBox detailsVBox = new VBox(5); // VBox for text details
+            detailsVBox.getChildren().addAll(
+                    organizerLabel, partnerLabel, contractTypeLabel,
+                    descriptionLabel, contractFileLabel, isSignedLabel
+            );
+
+            verifyButton = new Button("Verify Signature");
+            verifyButton.getStyleClass().add("action-button-small"); // Optional: for styling
+
+            // Add details and button to HBox
+            // Make detailsVBox take up available horizontal space
+            HBox.setHgrow(detailsVBox, javafx.scene.layout.Priority.ALWAYS);
+            hBox.getChildren().addAll(detailsVBox, verifyButton);
         }
 
         @Override
@@ -262,24 +316,64 @@ public class AdminPartnershipController {
                 setText(null);
                 setGraphic(null);
             } else {
-                // Set the text for each label based on the partnership object
-                organizerLabel.setText("Organizer ID: " + partnership.getOrganizerId()); // Adjust this if you have a method to get organizer name
-                partnerLabel.setText("Partner ID: " + partnership.getPartnerId()); // Adjust this if you have a method to get partner name
+                organizerLabel.setText("Organizer ID: " + partnership.getOrganizerId());
+                partnerLabel.setText("Partner ID: " + partnership.getPartnerId());
                 contractTypeLabel.setText("Contract Type: " + partnership.getContractType());
                 descriptionLabel.setText("Description: " + partnership.getDescription());
-                isSignedLabel.setText("Is Signed: " + (partnership.isSigned() ? "Yes" : "No")); // Assuming isSigned returns boolean
+                descriptionLabel.setWrapText(true); // Allow description to wrap
 
+                String contractPath = partnership.getSignedContractFile();
+                if (contractPath != null && !contractPath.isEmpty() && !contractPath.equalsIgnoreCase("null")) {
+                    contractFileLabel.setText("Contract File: " + contractPath);
+                    contractFileLabel.setVisible(true);
+                } else {
+                    contractFileLabel.setText("Contract File: Not available");
+                    contractFileLabel.setVisible(true); // Or false if you prefer to hide
+                }
+                
+                isSignedLabel.setText("Status: " + (partnership.isSigned() ? "Signed on " + partnership.getSignedAt() : "Not Signed (Status: " + partnership.getStatus() + ")"));
+                isSignedLabel.setTextFill(partnership.isSigned() ? Color.GREEN : Color.RED);
+
+                // Configure verify button
+                if (!partnership.isSigned() && contractPath != null && !contractPath.isEmpty() && !contractPath.equalsIgnoreCase("null")) {
+                    verifyButton.setVisible(true);
+                    verifyButton.setOnAction(event -> controller.handleVerifySignature(partnership));
+                } else {
+                    verifyButton.setVisible(false);
+                }
                 setGraphic(hBox);
             }
         }
     }
-    private void create3DModel(Group root) {
-        Sphere bot = new Sphere(1); // Create a sphere with a radius of 1
-        PhongMaterial material = new PhongMaterial();
-        material.setDiffuseColor(Color.GREEN); // Set the color or texture
-        bot.setMaterial(material);
-        root.getChildren().add(bot);
+
+    @FXML
+    private void addPartnership() {
+        handleAdd();
     }
 
+    @FXML
+    private void delPartnership() {
+        handleDelete();
+    }
+
+    @FXML
+    private void setPartnership() {
+        handleUpdate();
+    }
+
+    @FXML
+    private void goToDashboard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/adminDashboard.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) partnershipList.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load dashboard: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
 
 }

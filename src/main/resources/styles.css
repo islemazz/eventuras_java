@@ -1,9 +1,9 @@
 /* Root style (applies to the entire scene) */
-.root {
-    -fx-background-image: url("Images/bakc6.png");
-    -fx-background-size: cover;  /* Makes the image cover the entire scene */
+.root, AnchorPane{
+    -fx-background-image: url("images/final.png");
     -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
 }
 
 AnchorPane {
@@ -178,4 +178,124 @@ Label {
     -fx-font-family: "Arial Rounded MT Bold"; /* Font style */
     -fx-font-size: 16px; /* Font size */
     -fx-padding: 5px; /* Padding around the text */
+}
+
+.main-container {
+    -fx-background-color: #f5f5f5;
+    -fx-padding: 20;
+}
+
+.title-text {
+    -fx-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+.section-title {
+    -fx-fill: #34495e;
+    -fx-font-weight: bold;
+}
+
+.content-grid {
+    -fx-background-color: white;
+    -fx-padding: 20;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.partnership-list {
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+}
+
+.action-button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-background-color: #2980b9;
+}
+
+.text-field, .text-area, .combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 3;
+    -fx-padding: 5;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: #3498db;
+}
+
+.check-box {
+    -fx-text-fill: #2c3e50;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #3498db;
+}
+
+/* User Profile Header Styles */
+.user-profile-header {
+    -fx-background-color: #FFFFFF; /* Light background for the card */
+    -fx-padding: 8px;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.1, 0, 2); /* Subtle shadow for card effect */
+    -fx-alignment: center-right; /* Align items to the right */
+    -fx-spacing: 10px;
+}
+
+.user-profile-image {
+    -fx-border-radius: 50%; /* Make it circular */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 1); 
+}
+
+.user-name-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 5px 0 0; /* Padding to the right of the name */
+}
+
+.user-actions-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+    -fx-graphic: url("images/icons/settings_icon.png"); /* Corrected path */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-min-width: 30px; /* Ensure enough space for the icon */
+    -fx-min-height: 30px;
+}
+
+.user-actions-button .arrow {
+    -fx-background-color: transparent; /* Hide the default arrow */
+    -fx-padding: 0;
+}
+
+.user-actions-button:hover {
+    -fx-background-color: #f0f0f0; /* Slight hover effect */
+    -fx-border-radius: 50%;
+}
+
+/* Style for MenuItems within the user actions button */
+.user-actions-button .menu-item .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333333;
+}
+
+.user-actions-button .menu-item:hover {
+    -fx-background-color: #e0e0e0;
 }

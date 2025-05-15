@@ -1,5 +1,13 @@
 package entities;
 
 public enum PartnerType {
-    PERSON, ORGANIZATION, ESTABLISHMENT, GROUP
+    SPONSOR,
+    VENUE,
+    SUPPLIER,
+    MEDIA,
+    TECHNOLOGY,
+    EDUCATION,
+    GOVERNMENT,
+    NON_PROFIT,
+    OTHER
 }

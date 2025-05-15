@@ -28,8 +28,8 @@ import netscape.javascript.JSObject;
 import services.ServiceCategorie;
 import services.ServiceEvent;
 import utils.MyConnection;
-import utils.Session;
 
+import gui.GestionUser.UserSession;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -97,7 +97,8 @@ public class AjouterEvent implements Initializable {
     }
     private List<String> activities = new ArrayList<>();
     private final ServiceEvent ServiceEvent = new ServiceEvent();
-    user currentUser = Session.getInstance().getCurrentUser();
+    UserSession session = UserSession.getInstance();
+    int currentUserId = session.getId();
 
     //Fonction d'ajout nécessite changement de controle de saisie sous forme de labels(instead of pop-ups)
     @FXML
@@ -192,13 +193,14 @@ public class AjouterEvent implements Initializable {
         }
 
         // Create Event object
-        Event eve = new Event(title, desc, date, loc, currentUser.getId(), categoryId, imagePath);
+        Event eve = new Event(title, desc, date, loc, currentUserId, categoryId, imagePath);
         eve.setActivities(activities);
 
         // Add event
         try {
             ServiceEvent.ajouter(eve);
         } catch (Exception ex) {
+            ex.printStackTrace();
             errorCateg.setText("Erreur lors de l'ajout de l'événement.");
             errorCateg.setVisible(true); // Show the error label
             return; // Stop execution if adding event fails

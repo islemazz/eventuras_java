@@ -1,10 +1,7 @@
 package entities;
 import entities.Ticket;
-import utils.Session;
-
 
 import java.util.List;
-
 
 public class Reservation {
     private int id;
@@ -15,25 +12,23 @@ public class Reservation {
     private Double prix;
     private List<Ticket> tickets;
     private Ticket ticket;
-    user currentUser = Session.getInstance().getCurrentUser();
-
 
     private int ticket_id;
 
     public Reservation() {}
 
-    public Reservation(int event_Id, int user_Id, String status, int NbPlaces,Double prix, int ticket_id) {
-        this.event_Id = 01;
-        this.user_Id = currentUser.getId();
+    public Reservation(int event_Id, int user_Id, String status, int NbPlaces, Double prix, int ticket_id) {
+        this.event_Id = event_Id;
+        this.user_Id = user_Id;
         this.status = status;
         this.NbPlaces = NbPlaces;
         this.prix = prix;
         this.ticket_id = ticket_id;
     }
 
-    public Reservation(int event_Id, int user_Id, String status, int NbPlaces,Double prix, Ticket ticket) {
-        this.event_Id = 01;
-        this.user_Id = currentUser.getId();
+    public Reservation(int event_Id, int user_Id, String status, int NbPlaces, Double prix, Ticket ticket) {
+        this.event_Id = event_Id;
+        this.user_Id = user_Id;
         this.status = status;
         this.NbPlaces = NbPlaces;
         this.prix = prix;
@@ -54,8 +49,6 @@ public class Reservation {
         this.ticket = ticket;
     }
 
-
-
     public Reservation(String status, int NbPlaces, Double prix) {
         this.status = status;
         this.NbPlaces = NbPlaces;
@@ -63,9 +56,10 @@ public class Reservation {
     }
 
     public Reservation(int event_Id, int user_Id, String status, int NbPlaces, Double prix) {
-        this.event_Id = 01;
-        this.user_Id = currentUser.getId();
+        this.event_Id = event_Id;
+        this.user_Id = user_Id;
         this.status = status;
+        this.NbPlaces = NbPlaces;
         this.prix = prix;
     }
 
@@ -102,7 +96,7 @@ public class Reservation {
     }
 
     public void setUser_Id(int user_Id) {
-        this.user_Id = currentUser.getId();
+        this.user_Id = user_Id;
     }
 
     public Double getPrix() {
