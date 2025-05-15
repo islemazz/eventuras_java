@@ -1,12 +1,21 @@
 package services;
 
-import entities.user;
-import org.mindrot.jbcrypt.BCrypt;
-import utils.MyConnection;
 
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.mindrot.jbcrypt.BCrypt;
+
+import entities.user;
+import utils.MyConnection;
 
 public class userService implements Iuser<user> {
 
@@ -26,6 +35,10 @@ public class userService implements Iuser<user> {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getEmail());
             pstmt.setString(3, user.getPassword()); // ✅ Do not rehash here!
+            String salt = BCrypt.gensalt(10);
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), salt);
+            System.out.println("New user hashed password: " + hashedPassword);
+            pstmt.setString(3, hashedPassword);
             pstmt.setString(4, user.getFirstname());
             pstmt.setString(5, user.getLastname());
             pstmt.setString(6, user.getBirthday());
@@ -177,25 +190,78 @@ public class userService implements Iuser<user> {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     String hashedPassword = rs.getString("user_password");
-                    if (BCrypt.checkpw(password, hashedPassword)) {
-                        return new user(
-                                rs.getInt("user_id"),
-                                rs.getString("user_username"),
-                                rs.getString("user_email"),
-                                hashedPassword,
-                                rs.getString("user_firstname"),
-                                rs.getString("user_lastname"),
-                                rs.getString("user_birthday"),
-                                rs.getString("user_gender"),
-                                rs.getString("user_picture"),
-                                rs.getString("user_phonenumber"),
-                                rs.getInt("user_level"),
-                                rs.getInt("role_id")
-                        );
+                    int roleId = rs.getInt("role_id");
+                    
+                    // Debug print to check values
+                    System.out.println("=== Authentication Debug ===");
+                    System.out.println("Attempting login for email: " + email);
+                    System.out.println("Role ID: " + roleId);
+                    System.out.println("Is Organizer: " + (roleId == 3));
+                    System.out.println("Stored hashed password: " + hashedPassword);
+                    System.out.println("Provided password: " + password);
+                    
+                    try {
+                        boolean passwordMatch = BCrypt.checkpw(password, hashedPassword);
+                        System.out.println("Password match result: " + passwordMatch);
+                        
+                        if (passwordMatch) {
+                            user authenticatedUser = new user(
+                                    rs.getInt("user_id"),
+                                    rs.getString("user_username"),
+                                    rs.getString("user_email"),
+                                    hashedPassword,
+                                    rs.getString("user_firstname"),
+                                    rs.getString("user_lastname"),
+                                    rs.getString("user_birthday"),
+                                    rs.getString("user_gender"),
+                                    rs.getString("user_picture"),
+                                    rs.getString("user_phonenumber"),
+                                    rs.getInt("user_level"),
+                                    roleId
+                            );
+                            System.out.println("Authentication successful for user: " + authenticatedUser.getUsername());
+                            System.out.println("User role: " + (roleId == 3 ? "Organizer" : "Other"));
+                            return authenticatedUser;
+                        } else {
+                            System.out.println("Password verification failed");
+                            // For organizer accounts, let's check if the password might be stored differently
+                            if (roleId == 3) {
+                                System.out.println("Organizer account - checking alternative password format");
+                                // Try with trimmed password
+                                String trimmedPassword = password.trim();
+                                if (!trimmedPassword.equals(password)) {
+                                    System.out.println("Trying with trimmed password");
+                                    if (BCrypt.checkpw(trimmedPassword, hashedPassword)) {
+                                        System.out.println("Password match with trimmed password");
+                                        return new user(
+                                            rs.getInt("user_id"),
+                                            rs.getString("user_username"),
+                                            rs.getString("user_email"),
+                                            hashedPassword,
+                                            rs.getString("user_firstname"),
+                                            rs.getString("user_lastname"),
+                                            rs.getString("user_birthday"),
+                                            rs.getString("user_gender"),
+                                            rs.getString("user_picture"),
+                                            rs.getString("user_phonenumber"),
+                                            rs.getInt("user_level"),
+                                            roleId
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error during password verification: " + e.getMessage());
+                        e.printStackTrace();
                     }
+                } else {
+                    System.out.println("No user found with email: " + email);
                 }
             }
         } catch (SQLException e) {
+            System.out.println("SQL Exception during authentication: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return null;
@@ -254,5 +320,25 @@ public class userService implements Iuser<user> {
             }
         }
         return null;
+    }
+
+    public void resetOrganizerPassword(String email, String newPassword) throws SQLException {
+        String query = "UPDATE users SET user_password = ? WHERE user_email = ? AND role_id = 3";
+        try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
+            // Use a consistent salt for password hashing
+            String salt = BCrypt.gensalt(10);
+            String hashedPassword = BCrypt.hashpw(newPassword, salt);
+            System.out.println("New hashed password: " + hashedPassword);
+            
+            pstmt.setString(1, hashedPassword);
+            pstmt.setString(2, email);
+            
+            int updated = pstmt.executeUpdate();
+            if (updated > 0) {
+                System.out.println("Password reset successful for organizer: " + email);
+            } else {
+                System.out.println("No organizer found with email: " + email);
+            }
+        }
     }
 }

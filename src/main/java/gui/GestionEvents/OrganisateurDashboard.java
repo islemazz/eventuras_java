@@ -1,5 +1,10 @@
 package gui.GestionEvents;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.Month;
+import java.util.Map;
+
 import entities.Role;
 import entities.user;
 import gui.GestionUser.UserSession;
@@ -18,14 +23,6 @@ import services.Crole;
 import services.ServiceEvent;
 import services.userService;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
-
 public class OrganisateurDashboard {
     @FXML public Button GoToEvents;
     @FXML public Button Collaborations;
@@ -34,6 +31,7 @@ public class OrganisateurDashboard {
     @FXML public Button reclam;
     @FXML public Button create;
     @FXML public Button forum;
+    @FXML public Button partners;
     @FXML public BarChart<String,Number> monthlyEventsChart;
     @FXML public PieChart categoryPieChart;
     @FXML public BarChart<String,Number> participantsChart;
@@ -85,6 +83,7 @@ public class OrganisateurDashboard {
         Parent root = loader.load();
         AfficherEvent afficherEvent = loader.getController();
         afficherEvent.initialize();
+
         Stage stage = (Stage) GoToEvents.getScene().getWindow();
         stage.setScene(new Scene(root));
     }
@@ -102,5 +101,14 @@ public class OrganisateurDashboard {
         Parent root = loader.load();
         Stage stage = (Stage) button.getScene().getWindow();
         stage.setScene(new Scene(root));
+    }
+
+    public void goToCollaborations(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/UserParnter.fxml"));
+        Parent root = loader.load();
+
+        Stage stage = (Stage) Collaborations.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
     }
 }

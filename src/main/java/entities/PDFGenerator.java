@@ -1,13 +1,17 @@
 package entities;
 
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import org.apache.pdfbox.pdmodel.*;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class PDFGenerator {
     public static void generateContract(String partnerName, PartnerType partnerType, String contactInfo,
@@ -37,7 +41,7 @@ public class PDFGenerator {
             }
 
             // Title
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 20);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 20);
             contentStream.beginText();
             contentStream.newLineAtOffset(margin, yPosition);
             contentStream.showText("CONTRACT AGREEMENT");
@@ -52,12 +56,12 @@ public class PDFGenerator {
             yPosition -= lineSpacing;
 
             // Add partner information header
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
             addText(contentStream, margin, yPosition, "Partner Information:");
             yPosition -= lineSpacing;
 
             // Add partner attributes
-            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
             addText(contentStream, margin, yPosition, "• Name: " + partnerName);
             yPosition -= lineSpacing;
             addText(contentStream, margin, yPosition, "• Type: " + partnerType);
@@ -76,11 +80,11 @@ public class PDFGenerator {
             yPosition -= lineSpacing;
 
             // Add agreement terms header
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
             addText(contentStream, margin, yPosition, "Agreement Terms:");
             yPosition -= lineSpacing;
 
-            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
             addText(contentStream, margin, yPosition, "1. The partner agrees to collaborate under the terms outlined.");
             yPosition -= lineSpacing;
             addText(contentStream, margin, yPosition, "2. The organizer provides necessary resources and support.");
@@ -97,10 +101,10 @@ public class PDFGenerator {
             yPosition -= lineSpacing;
 
             // Additional Terms Section
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
             addText(contentStream, margin, yPosition, "Additional Terms and Notes:");
             yPosition -= lineSpacing;
-            contentStream.setFont(PDType1Font.HELVETICA, 12);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA), 12);
             addText(contentStream, margin, yPosition, "(To be filled by the organizer or partner)");
             yPosition -= lineSpacing;
 
@@ -111,7 +115,7 @@ public class PDFGenerator {
             }
 
             // Date and signature placeholders
-            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+            contentStream.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD), 14);
             yPosition -= lineSpacing * 2; // Extra spacing before date
             addText(contentStream, margin, yPosition, "Date: " + java.time.LocalDate.now());
             yPosition -= lineSpacing * 2;

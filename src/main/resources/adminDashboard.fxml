@@ -150,12 +150,17 @@
                         <ImageView />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_CENTER" layoutX="50.0" layoutY="266.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="179.0" style="-fx-background-color: #DFE0E2; -fx-border-color: #DFE0E2; -fx-border-radius: 100; -fx-border-width: 2; -fx-background-radius: 100;" text="Reclamations">
+                  <Button fx:id="partners" alignment="BASELINE_CENTER" layoutX="49.0" layoutY="266.0" mnemonicParsing="false" onAction="#goto_partners" prefHeight="35.0" prefWidth="179.0" style="-fx-background-color: #DFE0E2; -fx-border-color: #DFE0E2; -fx-border-radius: 100; -fx-border-width: 2; -fx-background-radius: 100;" text="Partenaires">
                      <graphic>
                         <ImageView />
                      </graphic>
                   </Button>
-                  <Button alignment="BASELINE_CENTER" layoutX="49.0" layoutY="316.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="179.0" style="-fx-background-color: #DFE0E2; -fx-border-color: #DFE0E2; -fx-border-radius: 100; -fx-border-width: 2; -fx-background-radius: 100;" text="Forum">
+                  <Button fx:id="partnerships" alignment="BASELINE_CENTER" layoutX="49.0" layoutY="316.0" mnemonicParsing="false" onAction="#goto_partnerships" prefHeight="35.0" prefWidth="179.0" style="-fx-background-color: #DFE0E2; -fx-border-color: #DFE0E2; -fx-border-radius: 100; -fx-border-width: 2; -fx-background-radius: 100;" text="Partenariats">
+                     <graphic>
+                        <ImageView />
+                     </graphic>
+                  </Button>
+                  <Button alignment="BASELINE_CENTER" layoutX="50.0" layoutY="366.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="179.0" style="-fx-background-color: #DFE0E2; -fx-border-color: #DFE0E2; -fx-border-radius: 100; -fx-border-width: 2; -fx-background-radius: 100;" text="Reclamations">
                      <graphic>
                         <ImageView />
                      </graphic>
