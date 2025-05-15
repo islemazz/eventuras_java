@@ -14,6 +14,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import utils.Session;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
