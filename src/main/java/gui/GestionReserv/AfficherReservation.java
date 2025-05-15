@@ -1,5 +1,9 @@
 package gui.GestionReserv;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
 import entities.Event;
 import entities.Reservation;
 import entities.Ticket;
@@ -7,8 +11,6 @@ import gui.GestionEvents.AfficherEventHOME;
 import gui.GestionEvents.AjouterParticipation;
 import gui.GestionProduit.AfficherProduit;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,16 +19,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.Service;
 import services.ServiceEvent;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 
 public class AfficherReservation {
 
@@ -75,7 +76,7 @@ public class AfficherReservation {
 
         for (Reservation reservation : reservations) {
             // Obtenir le ticket associé à cette réservation
-            Ticket ticket = reservationService.getTicketByReservation(reservation.getId());
+            Ticket ticket = reservationService.getTicketById(reservation.getTicket_id());
 
             if (ticket != null) {
                 HBox hBox = createReservationHBox(reservation, ticket);
@@ -105,7 +106,7 @@ public class AfficherReservation {
             if (newValue != null) {
                 Reservation selectedReservation = (Reservation) newValue.getUserData();
                 try {
-                    Ticket ticket = reservationService.getTicketByReservation(selectedReservation.getId());
+                    Ticket ticket = reservationService.getTicketById(selectedReservation.getTicket_id());
                     if (ticket != null) {
                         updateFields(selectedReservation, ticket);
                     }

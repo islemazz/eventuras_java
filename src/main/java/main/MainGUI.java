@@ -25,7 +25,7 @@ public class MainGUI extends Application {
             primaryStage.show();
 
             // Test the PartnershipService
-            testPartnershipService();
+            // testPartnershipService(); // Commented out this line
         } catch (IOException e) {
             System.err.println("Erreur de l'application (IOException):");
             e.printStackTrace();

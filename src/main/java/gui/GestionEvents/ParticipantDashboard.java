@@ -1,15 +1,13 @@
 package gui.GestionEvents;
 
-import entities.Role;
 import java.io.IOException;
 
+import entities.Role;
 import entities.user;
-import gui.GestionUser.UserSession;
 import gui.GestionUser.UserSession;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,8 +22,6 @@ import javafx.util.Duration;
 import services.Crole;
 import services.userService;
 
-import java.io.IOException;
-
 public class ParticipantDashboard {
 
     @FXML public Button GoToEvents1;
@@ -35,6 +31,7 @@ public class ParticipantDashboard {
     @FXML public Button reclam;
     @FXML public Text scrolling_text;
     @FXML public Pane news_pane;
+    @FXML private Button forum;
 
     @FXML public Label username;
     @FXML public Label role;
@@ -45,7 +42,6 @@ public class ParticipantDashboard {
     user CurrentUser;
 
   @FXML
-    @FXML
     public void initialize() {
         try {
           UserSession session = UserSession.getInstance();

@@ -1,4 +1,4 @@
-package gui;
+package gui.GestionForum;
 
 import gui.GestionUser.UserSession;
 import javafx.event.ActionEvent;
@@ -20,7 +20,9 @@ import entities.user;
 import javafx.stage.Stage;
 import services.ServiceComment;
 import services.ServicePost;
-
+import javax.imageio.ImageIO;
+import javafx.embed.swing.SwingFXUtils;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,13 +34,10 @@ import javafx.geometry.Pos;
 import services.userService;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.WritableImage;
-import javafx.embed.swing.SwingFXUtils;
-import javax.imageio.ImageIO;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -212,46 +211,27 @@ public class PostsController {
         int likeCount = serviceLike.getNombreLikes(post.getId());
         boolean alreadyLiked = (currentUserId != -1) && serviceLike.aDejaLike(currentUserId, post.getId());
         Button likeButton = new Button((alreadyLiked ? "Unlike" : "Like") + " (" + likeCount + ")");
-        likeButton.setOnAction(e -> {
-            try {
-                if (serviceLike.aDejaLike(currentUserId, post.getId())) {
-                    serviceLike.supprimerLike(currentUserId, post.getId());
-                } else {
-                    serviceLike.ajouterLike(currentUserId, post.getId());
-                }
-                int newLikeCount = serviceLike.getNombreLikes(post.getId());
-                // Met à jour le texte du bouton avec le nouvel état et le nombre de likes
-                likeButton.setText((serviceLike.aDejaLike(currentUserId, post.getId()) ? "Unlike" : "Like") + " (" + newLikeCount + ")");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        });
 
-        // 8. Bouton pour afficher/masquer la zone de commentaires
-        Button toggleCommentsBtn = new Button("Afficher commentaires");
+        // 8. Bouton pour afficher/masquer les commentaires
+        Button toggleCommentsBtn = new Button("Afficher les commentaires");
         toggleCommentsBtn.setOnAction(e -> {
-            VBox commentsContainer = null;
-            for (javafx.scene.Node node : postBox.getChildren()) {
-                if (node instanceof VBox && "commentsContainer".equals(node.getId())) {
-                    commentsContainer = (VBox) node;
-                    break;
-                }
-            }
-            if (commentsContainer != null) {
-                postBox.getChildren().remove(commentsContainer);
-                toggleCommentsBtn.setText("Afficher commentaires");
-                try {
-                    int newCount = servicePost.getCommentCount(post.getId());
-                    commentCountLabel.setText("Commentaires: " + newCount);
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
+            Node existingCommentsContainer = postBox.lookup("#commentsContainer");
+            if (existingCommentsContainer != null) {
+                existingCommentsContainer.setVisible(!existingCommentsContainer.isVisible());
+                toggleCommentsBtn.setText(existingCommentsContainer.isVisible() ? "Masquer les commentaires" : "Afficher les commentaires");
             } else {
                 VBox newCommentsContainer = createCommentsContainer(post, postBox, toggleCommentsBtn, commentCountLabel);
                 postBox.getChildren().add(newCommentsContainer);
-                toggleCommentsBtn.setText("Réduire");
+                toggleCommentsBtn.setText("Masquer les commentaires");
             }
         });
+
+        // Ajout des éléments au postBox
+        postBox.getChildren().addAll(userInfoBox, titleLabel, postInfoLabel, contentLabel);
+        if (postImageView != null) {
+            postBox.getChildren().add(postImageView);
+        }
+        postBox.getChildren().addAll(likeButton, toggleCommentsBtn);
 
         // 9. Boutons Modifier et Supprimer pour le propriétaire du post
         HBox editDeleteBox = new HBox();
@@ -276,34 +256,22 @@ public class PostsController {
                 postBox.getChildren().remove(contentLabel);
                 postBox.getChildren().add(indexTitle, editBox);
 
-                btnValider.setOnAction(ev -> {
-                    String newTitle = titleEditField.getText().trim();
-                    String newContent = contentEditArea.getText().trim();
-                    if (newTitle.isEmpty() || newContent.isEmpty()) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING, "Veuillez remplir tous les champs !");
-                        alert.show();
-                        return;
-                    }
-                    post.setTitle(newTitle);
-                    post.setContent(newContent);
+                btnValider.setOnAction(event -> {
                     try {
+                        post.setTitle(titleEditField.getText());
+                        post.setContent(contentEditArea.getText());
                         servicePost.update(post);
-                        Label newTitleLabel = new Label(newTitle);
-                        newTitleLabel.getStyleClass().add("card-title");
-                        Label newContentLabel = new Label(newContent);
-                        newContentLabel.getStyleClass().add("card-content");
-                        newContentLabel.setWrapText(true);
-                        int editIndex = postBox.getChildren().indexOf(editBox);
                         postBox.getChildren().remove(editBox);
-                        postBox.getChildren().add(editIndex, newTitleLabel);
-                        postBox.getChildren().add(editIndex + 1, newContentLabel);
+                        titleLabel.setText(post.getTitle());
+                        contentLabel.setText(post.getContent());
+                        postBox.getChildren().add(indexTitle, titleLabel);
+                        postBox.getChildren().add(indexContent, contentLabel);
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 });
             });
 
-            // Action Supprimer : confirmation puis suppression
             btnSupprimer.setOnAction(e -> {
                 Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION, "Voulez-vous vraiment supprimer ce post ?", ButtonType.YES, ButtonType.NO);
                 confirmation.showAndWait().ifPresent(response -> {
@@ -323,41 +291,27 @@ public class PostsController {
         // 10. Bouton Partager : capture un snapshot du post et propose de le sauvegarder
         Button shareButton = new Button("Enregistrer");
         shareButton.setOnAction(e -> {
-            // Prendre un snapshot du postBox
             SnapshotParameters params = new SnapshotParameters();
-            params.setFill(javafx.scene.paint.Color.TRANSPARENT);
             WritableImage snapshot = postBox.snapshot(params, null);
-            // Ouvrir un FileChooser pour sauvegarder l'image
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Enregistrer le snapshot du post");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG Image", "*.png"));
-            File file = fileChooser.showSaveDialog(postBox.getScene().getWindow());
+            fileChooser.setTitle("Enregistrer le post");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PNG", "*.png"));
+            File file = fileChooser.showSaveDialog(null);
             if (file != null) {
                 try {
-                    SwingFXUtils.fromFXImage(snapshot, null); // conversion
-                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Snapshot enregistré avec succès !");
-                    alert.showAndWait();
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(snapshot, null);
+                    ImageIO.write(bufferedImage, "png", file);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
         });
 
-        // Assemblage final de la "card"
-        postBox.getChildren().addAll(userInfoBox, titleLabel, postInfoLabel, contentLabel);
-        if (postImageView != null) {
-            HBox imageContainer = new HBox();
-            imageContainer.setAlignment(Pos.CENTER);
-            imageContainer.getChildren().add(postImageView);
-            postBox.getChildren().add(imageContainer);
-        }
-        HBox likeCommentBox = new HBox();
-        likeCommentBox.setSpacing(10);
-        likeCommentBox.setAlignment(Pos.CENTER_LEFT);
-        likeCommentBox.getChildren().addAll(likeButton, toggleCommentsBtn, shareButton);
-        // Note : Le nombre de likes est désormais affiché dans le bouton lui-même
-        postBox.getChildren().add(likeCommentBox);
+        // Ajout des boutons d'action
+        HBox actionButtonsBox = new HBox(10, likeButton, toggleCommentsBtn, shareButton);
+        actionButtonsBox.setAlignment(Pos.CENTER_LEFT);
+        postBox.getChildren().add(actionButtonsBox);
+
         if (!editDeleteBox.getChildren().isEmpty()) {
             postBox.getChildren().add(editDeleteBox);
         }
@@ -434,80 +388,56 @@ public class PostsController {
         actionButtonsBox.setAlignment(Pos.CENTER_LEFT);
         UserSession session = UserSession.getInstance();
         int currentUserId = session.getId();
-        if (session != null && currentUserId == c.getUser_id()) {
+
+        if (currentUserId == c.getUser_id()) {
             Button btnModifier = new Button("Modifier");
             Button btnSupprimer = new Button("Supprimer");
 
-            // Action Modifier : remplacement du label par un champ éditable et un bouton Valider
             btnModifier.setOnAction(e -> {
                 TextField editField = new TextField(c.getContent());
                 Button btnValider = new Button("Valider");
-                HBox editBox = new HBox(editField, btnValider);
-                editBox.setSpacing(5);
+                HBox editBox = new HBox(5, editField, btnValider);
+                editBox.setAlignment(Pos.CENTER_LEFT);
 
-                // Remplacer temporairement la partie texte par le champ d'édition
                 int index = commentContentBox.getChildren().indexOf(contentNode);
                 commentContentBox.getChildren().remove(contentNode);
                 commentContentBox.getChildren().add(index, editBox);
 
-                btnValider.setOnAction(ev -> {
-                    String newContent = editField.getText().trim();
-                    if (newContent.isEmpty()) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING, "Le commentaire ne peut pas être vide !");
-                        alert.show();
-                        return;
-                    }
-                    c.setContent(newContent);
+                btnValider.setOnAction(event -> {
                     try {
-                        ServiceComment serviceComment = new ServiceComment();
-                        serviceComment.update(c); // Vous devez implémenter update dans ServiceComment
+                        c.setContent(editField.getText());
+                        ServiceComment commentService = new ServiceComment();
+                        commentService.update(c);
+                        commentContentBox.getChildren().remove(editBox);
+                        Label newContentLabel = new Label(c.getContent());
+                        newContentLabel.setWrapText(true);
+                        newContentLabel.setStyle("-fx-font-size: 12px;");
+                        commentContentBox.getChildren().add(index, newContentLabel);
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
-                    // Reconstruire le contenu en vérifiant le format GIF
-                    Node updatedContentNode;
-                    if(newContent.startsWith("[GIF] ")) {
-                        String gifUrlUpdated = newContent.substring(6).trim();
-                        Image gifImageUpdated = new Image(gifUrlUpdated);
-                        ImageView gifImageViewUpdated = new ImageView(gifImageUpdated);
-                        gifImageViewUpdated.setFitWidth(150);
-                        gifImageViewUpdated.setPreserveRatio(true);
-                        updatedContentNode = gifImageViewUpdated;
-                    } else {
-                        Label updatedCommentLabel = new Label(newContent);
-                        updatedCommentLabel.setWrapText(true);
-                        updatedCommentLabel.setStyle("-fx-font-size: 12px;");
-                        updatedContentNode = updatedCommentLabel;
-                    }
-                    int editIndex = commentContentBox.getChildren().indexOf(editBox);
-                    commentContentBox.getChildren().remove(editBox);
-                    commentContentBox.getChildren().add(editIndex, updatedContentNode);
                 });
             });
 
-            // Action Supprimer : confirmation puis suppression
             btnSupprimer.setOnAction(e -> {
                 Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION, "Voulez-vous vraiment supprimer ce commentaire ?", ButtonType.YES, ButtonType.NO);
                 confirmation.showAndWait().ifPresent(response -> {
                     if (response == ButtonType.YES) {
                         try {
-                            ServiceComment serviceComment = new ServiceComment();
-                            serviceComment.delete(c); // Implémentez delete dans ServiceComment
-                            ((VBox) commentBox.getParent()).getChildren().remove(commentBox);
+                            ServiceComment commentService = new ServiceComment();
+                            commentService.delete(c);
+                            commentBox.getParent().getChildrenUnmodifiable().remove(commentBox);
                         } catch (SQLException ex) {
                             ex.printStackTrace();
                         }
                     }
                 });
             });
+
             actionButtonsBox.getChildren().addAll(btnModifier, btnSupprimer);
         }
 
-        if (!actionButtonsBox.getChildren().isEmpty()) {
-            commentContentBox.getChildren().add(actionButtonsBox);
-        }
-
-        commentBox.getChildren().addAll(commenterImageView, commentContentBox);
+        commentBox.getChildren().addAll(commenterImageView, commentContentBox, actionButtonsBox);
         return commentBox;
     }
 
@@ -517,9 +447,9 @@ public class PostsController {
         commentsContainer.setStyle("-fx-padding: 5; -fx-background-color: #e9e9e9; -fx-border-color: #ccc;");
         commentsContainer.setId("commentsContainer");
 
-        ServiceComment serviceComment = new ServiceComment();
+        ServiceComment commentService = new ServiceComment();
         try {
-            List<Comment> comments = serviceComment.getCommentsByPostId(post.getId());
+            List<Comment> comments = commentService.getCommentsByPostId(post.getId());
             for (Comment c : comments) {
                 HBox commentBox = createCommentBox(c);
                 commentsContainer.getChildren().add(commentBox);
@@ -538,64 +468,72 @@ public class PostsController {
 
         // Action pour rechercher et ajouter un GIF dans le champ de commentaire
         btnAjouterGIF.setOnAction(e -> {
-            TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Recherche de GIF");
-            dialog.setHeaderText("Entrez un mot-clé pour rechercher des GIFs");
-            dialog.setContentText("Mot-clé:");
-            dialog.showAndWait().ifPresent(keyword -> {
-                List<String> gifs = searchGifs(keyword); // Assurez-vous d'avoir implémenté cette méthode
-                if (!gifs.isEmpty()) {
-                    // Créer une fenêtre pour afficher les GIFs dans une galerie
-                    Stage gifStage = new Stage();
-                    gifStage.setTitle("Sélectionnez un GIF");
+            TextField searchGifField = new TextField();
+            searchGifField.setPromptText("Rechercher un GIF...");
+            Button searchGifButton = new Button("Rechercher");
+            VBox searchBox = new VBox(5, searchGifField, searchGifButton);
+            TilePane gifResultsPane = new TilePane();
+            gifResultsPane.setHgap(5);
+            gifResultsPane.setVgap(5);
+            VBox gifSearchContainer = new VBox(10, searchBox, gifResultsPane);
 
-                    TilePane tilePane = new TilePane();
-                    tilePane.setHgap(10);
-                    tilePane.setVgap(10);
-                    tilePane.setPrefColumns(3);
-                    tilePane.setAlignment(Pos.CENTER);
+            searchGifButton.setOnAction(event -> {
+                try {
+                    String query = URLEncoder.encode(searchGifField.getText(), "UTF-8");
+                    String apiKey = "YOUR_GIPHY_API_KEY"; // Remplacez par votre clé API Giphy
+                    URL url = new URL("https://api.giphy.com/v1/gifs/search?api_key=" + apiKey + "&q=" + query + "&limit=10");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    conn.setRequestProperty("Accept", "application/json");
 
-                    for (String gifUrl : gifs) {
-                        Image gifImage = new Image(gifUrl);
-                        ImageView gifImageView = new ImageView(gifImage);
-                        gifImageView.setFitWidth(100);
-                        gifImageView.setPreserveRatio(true);
-                        gifImageView.setOnMouseClicked(ev -> {
-                            // Insérer l'URL du GIF dans le champ de commentaire ou, par exemple, formater différemment
-                            TFNewComment.setText("[GIF] " + gifUrl);
-                            gifStage.close();
-                        });
-                        tilePane.getChildren().add(gifImageView);
+                    if (conn.getResponseCode() == 200) {
+                        Scanner scanner = new Scanner(conn.getInputStream());
+                        StringBuilder response = new StringBuilder();
+                        while (scanner.hasNextLine()) {
+                            response.append(scanner.nextLine());
+                        }
+                        scanner.close();
+
+                        JSONObject jsonResponse = new JSONObject(response.toString());
+                        JSONArray data = jsonResponse.getJSONArray("data");
+                        gifResultsPane.getChildren().clear();
+
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject gif = data.getJSONObject(i);
+                            String gifUrl = gif.getJSONObject("images").getJSONObject("fixed_height").getString("url");
+                            ImageView gifImageView = new ImageView(new Image(gifUrl));
+                            gifImageView.setFitWidth(150);
+                            gifImageView.setPreserveRatio(true);
+                            gifImageView.setOnMouseClicked(clickEvent -> {
+                                TFNewComment.setText("[GIF] " + gifUrl);
+                                gifSearchContainer.setVisible(false);
+                            });
+                            gifResultsPane.getChildren().add(gifImageView);
+                        }
                     }
-
-                    ScrollPane sp = new ScrollPane(tilePane);
-                    sp.setFitToWidth(true);
-                    Scene scene = new Scene(sp, 400, 300);
-                    gifStage.setScene(scene);
-                    gifStage.showAndWait();
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Aucun GIF trouvé pour ce mot-clé.");
-                    alert.showAndWait();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             });
+
+            gifSearchContainer.setVisible(false);
+            commentsContainer.getChildren().add(gifSearchContainer);
+            btnAjouterGIF.setOnAction(event -> gifSearchContainer.setVisible(!gifSearchContainer.isVisible()));
         });
 
-        addCommentBox.getChildren().addAll(TFNewComment, btnAjouterComment, btnAjouterGIF);
-
         btnAjouterComment.setOnAction(e -> {
-            String newCommentText = TFNewComment.getText().trim();
-            if (!newCommentText.isEmpty()) {
+            String content = TFNewComment.getText();
+            if (!content.isEmpty()) {
                 try {
                     UserSession session = UserSession.getInstance();
                     int currentUserId = session.getId();
-                    Comment newComment = new Comment(0, post.getId(), currentUserId, newCommentText, new Date());
-                    ServiceComment serviceComment2 = new ServiceComment();
-                    serviceComment2.ajouter(newComment);
-                    // Rafraîchir le conteneur des commentaires
-                    VBox refreshedContainer = createCommentsContainer(post, postBox, toggleCommentsBtn, commentCountLabel);
-                    int index = postBox.getChildren().indexOf(commentsContainer);
-                    postBox.getChildren().set(index, refreshedContainer);
-                    // Mettre à jour le nombre de commentaires dans la carte
+                    Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+                    Comment newComment = new Comment(0, post.getId(), currentUserId, content, createdAt);
+                    ServiceComment commentService2 = new ServiceComment();
+                    commentService2.ajouter(newComment);
+                    TFNewComment.clear();
+                    HBox commentBox = createCommentBox(newComment);
+                    commentsContainer.getChildren().add(commentBox);
                     int newCount = servicePost.getCommentCount(post.getId());
                     commentCountLabel.setText("Commentaires: " + newCount);
                 } catch (SQLException ex) {
@@ -604,7 +542,9 @@ public class PostsController {
             }
         });
 
+        addCommentBox.getChildren().addAll(TFNewComment, btnAjouterComment, btnAjouterGIF);
         commentsContainer.getChildren().add(addCommentBox);
+
         return commentsContainer;
     }
 
@@ -654,7 +594,6 @@ public class PostsController {
         long diffMillis = System.currentTimeMillis() - date.getTime();
         System.out.println("date "+date);
 
-
         // Si la date est dans le futur
         if(diffMillis < 0) {
             return "À l'avenir";
@@ -680,42 +619,5 @@ public class PostsController {
 
         long diffDays = diffHours / 24;
         return "Il y a " + diffDays + " j";
-    }
-
-    private List<String> searchGifs(String query) {
-        List<String> gifUrls = new ArrayList<>();
-        try {
-            String apiKey = "Gsaeg8PQFRMhpwwZQ113uYCZAMi94m8K"; // Remplacez par votre clé API
-            String encodedQuery = URLEncoder.encode(query, "UTF-8");
-            String urlStr = "https://api.giphy.com/v1/gifs/search?api_key=" + apiKey + "&q=" + encodedQuery + "&limit=10";
-            URL url = new URL(urlStr);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            if (responseCode != 200) {
-                System.out.println("Erreur de réponse HTTP: " + responseCode);
-                return gifUrls;
-            }
-            StringBuilder inline = new StringBuilder();
-            Scanner scanner = new Scanner(url.openStream());
-            while (scanner.hasNext()) {
-                inline.append(scanner.nextLine());
-            }
-            scanner.close();
-            JSONObject json = new JSONObject(inline.toString());
-            JSONArray data = json.getJSONArray("data");
-            for (int i = 0; i < data.length(); i++) {
-                JSONObject gifObject = data.getJSONObject(i);
-                // On choisit par exemple l'URL du GIF de taille fixe (petite)
-                String gifUrl = gifObject.getJSONObject("images")
-                        .getJSONObject("fixed_height_small")
-                        .getString("url");
-                gifUrls.add(gifUrl);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return gifUrls;
     }
 }

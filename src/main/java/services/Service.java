@@ -1,16 +1,18 @@
 package services;
 
-import entities.Reservation;
-import utils.MyConnection;
-
-
-import entities.Ticket;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import entities.Reservation;
+import entities.Ticket;
+import utils.MyConnection;
 
 public class Service implements IService1<Reservation> {
     private Connection connection;
@@ -175,6 +177,27 @@ public class Service implements IService1<Reservation> {
         return tickets;
     }
 
+    public Ticket getTicketById(int ticketId) throws SQLException {
+        String query = "SELECT * FROM ticket WHERE ticket_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, ticketId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Ticket ticket = new Ticket(
+                        rs.getString("ticketCode"),
+                        rs.getString("seatNumber")
+                    );
+                    // Assuming Ticket class has setTicketId or you want to set it.
+                    // If Ticket constructor doesn't take id, and there's no setId,
+                    // you might need to adjust Ticket class or how it's constructed here.
+                    // For now, let's assume the constructor is sufficient or it has an ID field.
+                    ticket.setTicketId(rs.getInt("ticket_id")); // Make sure Ticket has this method
+                    return ticket;
+                }
+            }
+        }
+        return null;
+    }
 
     public void update(String ticketCode, String newEtat, int newNbPlaces, double newPrix, String newSeatNumber) throws SQLException {
 
