@@ -5,11 +5,9 @@ import java.io.IOException;
 
 import entities.user;
 import gui.GestionUser.UserSession;
-import gui.GestionUser.UserSession;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,7 +22,6 @@ import javafx.util.Duration;
 import services.Crole;
 import services.userService;
 
-import java.io.IOException;
 
 public class ParticipantDashboard {
 
