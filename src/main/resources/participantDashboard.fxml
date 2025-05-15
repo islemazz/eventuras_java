@@ -18,6 +18,7 @@
       <Button fx:id="tickets" layoutX="25.0" layoutY="465.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
       <Button fx:id="Acceuil" layoutX="25.0" layoutY="223.0" mnemonicParsing="false" onAction="#showAcceuil1" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
       <Button fx:id="reclam" layoutX="25.0" layoutY="404.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="RÃ©clamations" />
+      <Button fx:id="forum" layoutX="25.0" layoutY="528.0" mnemonicParsing="false" onAction="#goToForum" prefHeight="40.0" prefWidth="177.0" text="Forum" />
       <ImageView fitHeight="324.0" fitWidth="703.0" layoutX="413.0" layoutY="242.0" pickOnBounds="true" preserveRatio="true" />
       <TextField id="SearchField" layoutX="280.0" layoutY="57.0" prefHeight="36.0" prefWidth="717.0" />
       <Pane fx:id="news_pane" layoutX="251.0" layoutY="223.0" prefHeight="60.0" prefWidth="1027.0" style="-fx-background-color: #e07564; -fx-background-radius: 10;" />

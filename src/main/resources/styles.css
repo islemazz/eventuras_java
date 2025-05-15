@@ -1,5 +1,5 @@
 /* Root style (applies to the entire scene) */
-.root, AnchorPane, BorderPane, VBox, HBox, StackPane, GridPane, FlowPane, TilePane {
+.root, AnchorPane{
     -fx-background-image: url("images/final.png");
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;

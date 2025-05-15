@@ -52,6 +52,7 @@ public class AfficherEventHOME implements Initializable {
     public Button create;
     public TextField searchBar;
     public Button Boutique;
+    public Button forum;
 
     public AfficherEventHOME() {
         cnx = MyConnection.getInstance().getConnection();
@@ -484,6 +485,19 @@ public class AfficherEventHOME implements Initializable {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+    }
+
+    public void goToForum(ActionEvent event) throws IOException {
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("posts.fxml"));
+        Parent root = loader.load();
+
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) forum.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+
     }
 }
 

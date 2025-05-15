@@ -39,28 +39,28 @@
             </HBox>
             <!-- Aperçu de l'image (affiché uniquement si une image est uploadée) -->
             <ImageView fx:id="imageView" fitHeight="62.0" fitWidth="84.0" preserveRatio="true" />
-           <!-- Zone de recherche, filtre et tri -->
-           <HBox fx:id="searchContainer" alignment="CENTER" prefWidth="700.0" spacing="10.0">
-               <TextField fx:id="searchField" prefWidth="200.0" promptText="Rechercher..." />
-               <ComboBox fx:id="filterComboBox" prefWidth="150.0">
-                   <items>
-                       <FXCollections fx:factory="observableArrayList">
-                           <String fx:value="Tous" />
-                           <String fx:value="Titre" />
-                           <String fx:value="Contenu" />
-                       </FXCollections>
-                   </items>
-               </ComboBox>
-               <ComboBox fx:id="sortComboBox" prefWidth="150.0">
-                   <items>
-                       <FXCollections fx:factory="observableArrayList">
-                           <String fx:value="Plus récents" />
-                           <String fx:value="Plus anciens" />
-                       </FXCollections>
-                   </items>
-               </ComboBox>
-               <Button fx:id="btnSearch" onAction="#rechercher" text="Chercher" />
-           </HBox>
+            <!-- Zone de recherche, filtre et tri -->
+            <HBox fx:id="searchContainer" alignment="CENTER" prefWidth="700.0" spacing="10.0">
+                <TextField fx:id="searchField" prefWidth="200.0" promptText="Rechercher..." />
+                <ComboBox fx:id="filterComboBox" prefWidth="150.0">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tous" />
+                            <String fx:value="Titre" />
+                            <String fx:value="Contenu" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <ComboBox fx:id="sortComboBox" prefWidth="150.0">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Plus récents" />
+                            <String fx:value="Plus anciens" />
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Button fx:id="btnSearch" onAction="#rechercher" text="Chercher" />
+            </HBox>
         </VBox>
 
         <!-- Liste des posts -->
