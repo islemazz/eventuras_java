@@ -1,5 +1,6 @@
 package gui;
 
+import gui.GestionEvents.AfficherEventHOME;
 import gui.GestionUser.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -53,7 +54,13 @@ public class PostsController {
     @FXML private ComboBox<String> filterComboBox;
     @FXML private ComboBox<String> sortComboBox;
     @FXML private Button btnSearch;
-
+    public Button GoToEvents1;
+    public Button Collaborations;
+    public Button tickets;
+    public Button Acceuil;
+    public Button reclam;
+    public Button forum;
+    private Scene scene;
     private final ServicePost servicePost = new ServicePost();
     private String imagePath = null;
 
@@ -718,4 +725,45 @@ public class PostsController {
         }
         return gifUrls;
     }
+
+    public void showEvents1(ActionEvent event) throws IOException {  // Load the AfficherEvent interface
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
+        Parent root = loader.load();
+
+        AfficherEventHOME afficherEventController = loader.getController();
+        afficherEventController.showAllEvents(); // Call the method to display all events
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) GoToEvents1.getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+    }
+    public void showAcceuil1(ActionEvent event) throws IOException {
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
+        Parent root = loader.load();
+
+        AfficherEventHOME afficherEventController = loader.getController();
+        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) Acceuil.getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+    }
+
+    public void goToForum(ActionEvent event) throws IOException {
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("posts.fxml"));
+        Parent root = loader.load();
+
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) forum.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+
+    }
+
 }

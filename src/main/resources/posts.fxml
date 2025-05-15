@@ -15,6 +15,15 @@
 
 <AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.PostsController">
     <children>
+        <Button fx:id="GoToEvents1" layoutX="25.0" layoutY="281.0" mnemonicParsing="false" onAction="#showEvents1" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
+        <Button fx:id="Collaborations" layoutX="25.0" layoutY="343.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
+        <Button fx:id="tickets" layoutX="25.0" layoutY="465.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+        <Button fx:id="Acceuil" layoutX="25.0" layoutY="223.0" mnemonicParsing="false" onAction="#showAcceuil1" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
+        <Button fx:id="forum" layoutX="25.0" layoutY="528.0" mnemonicParsing="false" onAction="#goToForum" prefHeight="40.0" prefWidth="177.0" text="Forum" />
+        <Button fx:id="reclam" layoutX="25.0" layoutY="404.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+
+
+
         <!-- Formulaire d'ajout en haut (similaire à Twitter) -->
         <VBox fx:id="formContainer" alignment="CENTER" layoutX="304.0" layoutY="48.0" prefWidth="700.0" spacing="10.0">
             <!-- Titre du formulaire -->
