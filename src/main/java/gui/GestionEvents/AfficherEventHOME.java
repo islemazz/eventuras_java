@@ -2,10 +2,12 @@ package gui.GestionEvents;
 
 import entities.Event;
 import entities.user;
+import gui.GestionProduit.AfficherProduit;
 import gui.GestionUser.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -49,6 +51,7 @@ public class AfficherEventHOME implements Initializable {
     private final Connection cnx;
     public Button create;
     public TextField searchBar;
+    public Button Boutique;
 
     public AfficherEventHOME() {
         cnx = MyConnection.getInstance().getConnection();
@@ -462,6 +465,33 @@ public class AfficherEventHOME implements Initializable {
         // Add elements to the event card
         eventCard.getChildren().addAll(eventImage, titleText, descriptionText, dateText,participerButton);
         return eventCard;
+    }
+
+    @FXML
+    public void goToBoutique() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProduit.fxml"));
+            Parent root = loader.load();
+
+            // Facultatif : Appelle une méthode dans le contrôleur si besoin
+            AfficherProduit controller = loader.getController();
+            controller.loadProducts(); // Appelle ta méthode d'initialisation si elle existe
+
+            // Changement de scène
+            Stage stage = (Stage) Boutique.getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Optionnel : alerte utilisateur
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Impossible de charger la boutique");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
     }
 }
 

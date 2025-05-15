@@ -24,6 +24,10 @@ public class MainGUI extends Application {
 
         }catch (IOException e){
             System.out.println("Erreur de l'application");
+            e.printStackTrace();
+            System.out.println("Erreur de l'application : " + e.getMessage());
+
+
         }
     }
 }
