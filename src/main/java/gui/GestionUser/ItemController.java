@@ -183,7 +183,7 @@ public class ItemController {
         confirmDelete.setContentText("Are you sure you want to delete this user?\n" +
                 "Name: " + selectedUser.getFirstname() + " " + selectedUser.getLastname() + "\n" +
                 "Email: " + selectedUser.getEmail() + "\n" +
-                "Role: " + selectedUser.getRole() + "\n\n" +
+                "Role: " + selectedUser.getId_role() + "\n\n" +
                 "This action cannot be undone!");
 
         // Get the response from the dialog

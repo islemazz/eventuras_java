@@ -1,6 +1,11 @@
 package gui.GestionUser;
 
 import entities.Role;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import services.Crole;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -201,7 +207,19 @@ public class Crudrole {
     public void disconnect(ActionEvent event) {
 
     }
-}
+
+        public void goto_dashboard(ActionEvent e) throws IOException { navigateTo("/adminDashboard.fxml", e); }
+
+    private void navigateTo(String path, ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+        Parent root = loader.load();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+    }
+
+
 
 
 

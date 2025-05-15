@@ -59,21 +59,13 @@ public class AfficherEventHOME implements Initializable {
     public final ServiceEvent sE=new ServiceEvent();
     user CurrentUser = Session.getCurrentUser();
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        setButtonVisibilty();
+        //setButtonVisibilty();
         // Add a listener to the searchBar to filter events dynamically
         searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
             filterEvents(newValue);
         });
     }
 
-    public void setButtonVisibilty() {
-        if (CurrentUser.getRole() == "organisateur") {
-            System.out.println("Current user =" + Session.getInstance().getCurrentUser());
-            create.setVisible(true);
-        } else if (CurrentUser.getRole() == "participant") {
-            create.setVisible(false);
-        }
-    }
 
     public void showLastThreeEvents() {
         // Hide the ScrollPane and show the Slider with the last 3 events
