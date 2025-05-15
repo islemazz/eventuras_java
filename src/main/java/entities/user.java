@@ -79,6 +79,9 @@ public class user {
     public int getId_role() { return id_role; }
     public void setId_role(int id_role) { this.id_role = id_role; }
 
+    public int getRole() { return id_role; }
+    public void setRole(int role) { this.id_role = role; }
+
     // toString
     @Override
     public String toString() {

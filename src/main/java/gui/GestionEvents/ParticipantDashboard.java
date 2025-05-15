@@ -1,11 +1,15 @@
 package gui.GestionEvents;
 
 import entities.Role;
+import java.io.IOException;
+
 import entities.user;
+import gui.GestionUser.UserSession;
 import gui.GestionUser.UserSession;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -38,10 +42,38 @@ public class ParticipantDashboard {
 
     private final UserSession userSession = UserSession.getInstance();
     private Scene scene;
+    user CurrentUser;
 
+  @FXML
     @FXML
     public void initialize() {
-        animateScrollingText();
+        try {
+          UserSession session = UserSession.getInstance();
+          // Reconstruct the user object from UserSession
+          CurrentUser = new user(
+              session.getId(),
+              session.getUsername(),
+              session.getEmail(),
+              session.getPassword(), // Or null/empty string if not needed here
+              session.getFirstname(),
+              session.getLastname(),
+              session.getBirthday(),
+              session.getGender(),
+              session.getPicture(),
+              session.getPhonenumber(),
+              session.getLevel(),
+              session.getRole()
+          );
+      } catch (IllegalStateException e) {
+          System.err.println("ParticipantDashboard: User session not initialized. " + e.getMessage());
+          CurrentUser = null; 
+      }
+      
+      if (CurrentUser != null) {
+          animateScrollingText();
+      } else {
+          scrolling_text.setText("Welcome, Guest!"); 
+      }
 
         try {
             user currentUser = new userService().getUserById(userSession.getId());
@@ -81,6 +113,10 @@ public class ParticipantDashboard {
     }
 
     private void animateScrollingText() {
+        if (CurrentUser == null) {
+            scrolling_text.setText("Welcome!");
+            return; 
+        }
         String newsText = "° Welcome back!: " + userSession.getFirstname() + " " + userSession.getLastname();
         scrolling_text.setText(newsText);
 
@@ -103,4 +139,27 @@ public class ParticipantDashboard {
         sequentialTransition.setCycleCount(SequentialTransition.INDEFINITE);
         sequentialTransition.play();
     }
+    public void goToForum(ActionEvent event) throws IOException {
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("posts.fxml"));
+        Parent root = loader.load();
+
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) forum.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+
+    }
+
+    @FXML
+    void goToPartnerships(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) Collaborations.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 }

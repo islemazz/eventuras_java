@@ -37,6 +37,7 @@
          
              <Button fx:id="btnSubmit" text="Ajouter" />
              <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
+             <Button fx:id="btnReturnToDashboard" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Return to Dashboard" />
          </children>
       </VBox>
    </children>
