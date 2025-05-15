@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.SecureRandom;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
@@ -187,10 +185,13 @@ public class registerUser {
             }
             Path destinationPath = destinationDir.resolve(fileName);
 
+            String rawPassword = password_input.getText();
+            String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt()).replaceFirst("^\\$2a\\$", "\\$2y\\$");
+
             user newUser = new user(
                     username_input.getText(),
                     email_input.getText(),
-                    BCrypt.hashpw(password_input.getText(), BCrypt.gensalt()),
+                    hashedPassword,
                     firstname_input.getText(),
                     lastname_input.getText(),
                     formattedBirthday,
@@ -200,6 +201,8 @@ public class registerUser {
                     selectedLevel,
                     roleId
             );
+            System.out.println("Generated hash: " + hashedPassword);
+
 
             userService.addUser(newUser);
             Files.copy(path, destinationPath, StandardCopyOption.REPLACE_EXISTING);

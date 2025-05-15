@@ -28,12 +28,13 @@ public class userService implements Iuser<user> {
     @Override
     public void addUser(user user) throws SQLException, IOException {
         String query = "INSERT INTO users (user_username, user_email, user_password, user_firstname, user_lastname, " +
-                "user_birthday, user_gender, user_picture, user_phonenumber, user_level, role_id, statut) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "user_birthday, user_gender, user_picture, user_phonenumber, user_level, role_id, statut, statut) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
             pstmt.setString(1, user.getUsername());
             pstmt.setString(2, user.getEmail());
+            pstmt.setString(3, user.getPassword()); // ✅ Do not rehash here!
             String salt = BCrypt.gensalt(10);
             String hashedPassword = BCrypt.hashpw(user.getPassword(), salt);
             System.out.println("New user hashed password: " + hashedPassword);
@@ -46,11 +47,12 @@ public class userService implements Iuser<user> {
             pstmt.setString(9, user.getPhonenumber());
             pstmt.setInt(10, user.getLevel());
             pstmt.setInt(11, user.getId_role());
-            pstmt.setInt(12, 1); // Default statut value as integer 1
+            pstmt.setInt(12, 1);            pstmt.setInt(12, 1); // Default statut value as integer 1
 
             pstmt.executeUpdate();
         }
     }
+
 
     public user getUserByEmail(String email) throws SQLException {
         String query = "SELECT * FROM users WHERE user_email = ?";
@@ -162,8 +164,9 @@ public class userService implements Iuser<user> {
 
     public boolean updateUserPasswordByEmail(String email, String newPassword) throws SQLException {
         String query = "UPDATE users SET user_password = ? WHERE user_email = ?";
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt()).replaceFirst("^\\$2a\\$", "\\$2y\\$");
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
-            pstmt.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+            pstmt.setString(1, hashedPassword);
             pstmt.setString(2, email);
             return pstmt.executeUpdate() > 0;
         }
@@ -171,8 +174,9 @@ public class userService implements Iuser<user> {
 
     public void updateforgottenpassword(String email, String password) {
         String query = "UPDATE users SET user_password = ? WHERE user_email = ?";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt()).replaceFirst("^\\$2a\\$", "\\$2y\\$");
         try (PreparedStatement pstmt = cnx.prepareStatement(query)) {
-            pstmt.setString(1, BCrypt.hashpw(password, BCrypt.gensalt()));
+            pstmt.setString(1, hashedPassword);
             pstmt.setString(2, email);
             pstmt.executeUpdate();
         } catch (SQLException e) {

@@ -15,7 +15,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import services.userService;
+import utils.Session;
+import org.mindrot.jbcrypt.BCrypt;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class loginUser {
 
@@ -37,7 +41,6 @@ public class loginUser {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         return email.matches(emailRegex);
     }
-
     @FXML
     void login() throws SQLException {
         try {
@@ -54,41 +57,51 @@ public class loginUser {
                 return;
             }
 
-            // Retrieve user from database using email
-            user user = userService.authenticateUser(email, password);
+            // Retrieve user from database
+            user user = userService.getUserByEmail(email);
 
-            // Check if the password matches
-            if (user!=null) {
-                UserSession.createSession(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.getFirstname(),
-                        user.getLastname(),
-                        user.getBirthday(),
-                        user.getGender(),
-                        user.getPicture(),
-                        user.getPhonenumber(),
-                        user.getLevel(),
-                        user.getId_role()
-                );
-                UserSession session = UserSession.getInstance(); // ✅ Maintenant l'instance existe
+            if (user != null) {
+                String storedHash = user.getPassword();
 
-                // Redirect based on role
-                switch (user.getId_role()) {
-                    case 1:
-                        loadPage("/adminDashboard.fxml");
-                        break;
-                    case 2:
-                        loadPage("/participantDashboard.fxml");
-                        break;
-                    case 3:
-                        loadPage("/organisateurDashboard.fxml");
-                        break;
-                    default:
-                        System.err.println("Unexpected role: " + user.getId_role()); // Debug log
-                        showAlert("Error", "Invalid role configuration. Please contact support.");
+                // Convert $2y$ → $2a$ for BCrypt compatibility
+                if (storedHash != null && storedHash.startsWith("$2y$")) {
+                    storedHash = storedHash.replaceFirst("^\\$2y\\$", "\\$2a\\$");
+                }
+
+                // Verify password
+                if (BCrypt.checkpw(password, storedHash)) {
+                    UserSession.createSession(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            user.getPassword(),
+                            user.getFirstname(),
+                            user.getLastname(),
+                            user.getBirthday(),
+                            user.getGender(),
+                            user.getPicture(),
+                            user.getPhonenumber(),
+                            user.getLevel(),
+                            user.getId_role()
+                    );
+                    UserSession session = UserSession.getInstance();
+
+                    // Redirect based on role
+                    switch (user.getId_role()) {
+                        case 1:
+                            loadPage("/adminDashboard.fxml");
+                            break;
+                        case 2:
+                            loadPage("/participantDashboard.fxml");
+                            break;
+                        case 3:
+                            loadPage("/organisateurDashboard.fxml");
+                            break;
+                        default:
+                            showAlert("Error", "Unknown role. Please contact support.");
+                    }
+                } else {
+                    showAlert("Error", "Incorrect email or password. Please try again.");
                 }
             } else {
                 showAlert("Error", "Incorrect email or password. Please try again.");
@@ -98,6 +111,7 @@ public class loginUser {
             showAlert("Error", "An error occurred. Please try again.");
         }
     }
+
 
     @FXML
     void register_page(ActionEvent event) throws IOException {

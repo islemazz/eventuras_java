@@ -16,6 +16,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import utils.Session;
+import java.io.IOException;
 
 public class ParticipantDashboard {
 
@@ -24,6 +26,7 @@ public class ParticipantDashboard {
     public Button tickets;
     public Button Acceuil;
     public Button reclam;
+    public Button forum;
     public Text scrolling_text;
     public Pane news_pane;
     private Scene scene;
@@ -121,6 +124,28 @@ public class ParticipantDashboard {
         SequentialTransition sequentialTransition = new SequentialTransition(transitionOut, transitionIn);
         sequentialTransition.setCycleCount(SequentialTransition.INDEFINITE);
         sequentialTransition.play();
+    }
+    public void goToForum(ActionEvent event) throws IOException {
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("posts.fxml"));
+        Parent root = loader.load();
+
+
+        // Switch to the AfficherEvent scene
+        Stage stage = (Stage) forum.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+
+    }
+
+    @FXML
+    void goToPartnerships(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) Collaborations.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
     @FXML

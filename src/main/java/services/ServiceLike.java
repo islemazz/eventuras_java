@@ -21,17 +21,18 @@ public class ServiceLike {
             return;
         }
 
-        String sql = "INSERT INTO like (user_id, post_id) VALUES (?, ?)";
+        String sql = "INSERT INTO `like` (user_id, post_id,liked_at) VALUES (?, ?,?)";
         PreparedStatement pst = cnx.prepareStatement(sql);
         pst.setInt(1, userId);
         pst.setInt(2, postId);
+        pst.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
         pst.executeUpdate();
         System.out.println("Like ajouté avec succès !");
     }
 
     // Vérifier si un utilisateur a déjà liké un post
     public boolean aDejaLike(int userId, int postId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM like WHERE user_id = ? AND post_id = ?";
+        String sql = "SELECT COUNT(*) FROM `like` WHERE user_id = ? AND post_id = ?";
         PreparedStatement pst = cnx.prepareStatement(sql);
         pst.setInt(1, userId);
         pst.setInt(2, postId);
@@ -42,7 +43,7 @@ public class ServiceLike {
 
     // Supprimer un like
     public void supprimerLike(int userId, int postId) throws SQLException {
-        String sql = "DELETE FROM like WHERE user_id = ? AND post_id = ?";
+        String sql = "DELETE FROM `like` WHERE user_id = ? AND post_id = ?";
         PreparedStatement pst = cnx.prepareStatement(sql);
         pst.setInt(1, userId);
         pst.setInt(2, postId);
@@ -52,7 +53,7 @@ public class ServiceLike {
 
     // Obtenir le nombre de like d'un post
     public int getNombreLikes(int postId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM like WHERE post_id = ?";
+        String sql = "SELECT COUNT(*) FROM `like` WHERE post_id = ?";
         PreparedStatement pst = cnx.prepareStatement(sql);
         pst.setInt(1, postId);
         ResultSet rs = pst.executeQuery();
