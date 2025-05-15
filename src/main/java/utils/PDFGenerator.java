@@ -17,8 +17,8 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class PDFGenerator {
     private static final String CONTRACTS_DIR = "contracts";
 
-    public static void generateContract(String partnerName, String partnerEmail, String partnerPhone, String partnerAddress,
-                                      int partnershipId, String contractType, String description, int organizerId) throws Exception {
+    public static String generateContract(String partnerName, String partnerEmail, String partnerPhone, String partnerAddress,
+                                      int partnershipId, String contractType, String description, int organizerId, String organizerName) throws Exception {
         // Create contracts directory if it doesn't exist
         File contractsDir = new File(CONTRACTS_DIR);
         if (!contractsDir.exists()) {
@@ -58,7 +58,7 @@ public class PDFGenerator {
 
             // Add organizer details
             document.add(new Paragraph("Organizer Details:", new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD)));
-            document.add(new Paragraph("Organizer ID: " + organizerId));
+            document.add(new Paragraph("Name: " + organizerName));
             document.add(new Paragraph("\n"));
 
             // Add partnership description
@@ -96,5 +96,6 @@ public class PDFGenerator {
                 document.close();
             }
         }
+        return fileName;
     }
 } 

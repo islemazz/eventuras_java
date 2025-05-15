@@ -9,7 +9,7 @@
 <AnchorPane stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionPartner.ParticipantPartnerController">
    <children>
       <Button fx:id="returnToDashboardButton" layoutX="20.0" layoutY="20.0" onAction="#handleReturnToDashboard" text="Return to Dashboard" styleClass="button-secondary" />
-      <ScrollPane fx:id="scrollPane" layoutY="60.0" prefHeight="671.0" prefWidth="1305.0">
+      <ScrollPane fx:id="scrollPane" AnchorPane.topAnchor="70.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
           <content>
               <VBox fx:id="partnerContainer" alignment="CENTER" spacing="10" style="-fx-padding: 20px;">
             <!-- Partner cards will be dynamically added here -->

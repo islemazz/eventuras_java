@@ -14,6 +14,7 @@ public class Partnership {
     private LocalDateTime updatedAt;
     private String signedContractFile;
     private LocalDateTime signedAt;
+    private String generatedContractPath;
 
     // Default constructor
     public Partnership() {
@@ -134,6 +135,14 @@ public class Partnership {
         this.signedAt = signedAt;
     }
 
+    public String getGeneratedContractPath() {
+        return generatedContractPath;
+    }
+
+    public void setGeneratedContractPath(String generatedContractPath) {
+        this.generatedContractPath = generatedContractPath;
+    }
+
     @Override
     public String toString() {
         return "Partnership{" +
@@ -148,6 +157,7 @@ public class Partnership {
                 ", updatedAt=" + updatedAt +
                 ", signedContractFile='" + signedContractFile + '\'' +
                 ", signedAt=" + signedAt +
+                ", generatedContractPath='" + generatedContractPath + '\'' +
                 '}';
     }
 }

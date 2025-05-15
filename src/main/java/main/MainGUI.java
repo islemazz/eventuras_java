@@ -27,11 +27,12 @@ public class MainGUI extends Application {
             // Test the PartnershipService
             testPartnershipService();
         } catch (IOException e) {
-            System.out.println("Erreur de l'application");
+            System.err.println("Erreur de l'application (IOException):");
             e.printStackTrace();
             System.out.println("Erreur de l'application : " + e.getMessage());
 
 
+            e.printStackTrace();
         }
     }
 

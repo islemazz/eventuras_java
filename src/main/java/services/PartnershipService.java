@@ -247,4 +247,64 @@ public class PartnershipService {
         
         return partnership;
     }
+
+    // New method to record signature verification
+    public boolean recordSignatureVerified(int partnershipId, String signedContractPath) throws SQLException {
+        String sql = "UPDATE partnership SET is_signed = ?, signed_contract_file = ?, signed_at = ?, status = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setBoolean(1, true);
+            pstmt.setString(2, signedContractPath);
+            pstmt.setObject(3, LocalDateTime.now()); // Set signed_at to current time
+            pstmt.setString(4, "Signed"); // Update status to "Signed"
+            pstmt.setInt(5, partnershipId);
+            
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("[DEBUG] Partnership ID " + partnershipId + " marked as signed. Path: " + signedContractPath);
+                return true;
+            }
+            System.err.println("[ERROR] Failed to update signature status for partnership ID: " + partnershipId);
+            return false;
+        } catch (SQLException e) {
+            System.err.println("[ERROR] SQL Exception during signature update for partnership ID " + partnershipId + ": " + e.getMessage());
+            e.printStackTrace();
+            throw e; // Re-throw to be handled by the caller
+        }
+    }
+
+    // New method to delete all unsigned partnerships
+    public int deleteAllUnsignedPartnerships() {
+        List<Partnership> allPartnerships = readAll();
+        int deletedCount = 0;
+        if (allPartnerships == null || allPartnerships.isEmpty()) {
+            System.out.println("[INFO] No partnerships found in the database.");
+            return 0;
+        }
+
+        List<Partnership> toDelete = new ArrayList<>();
+        for (Partnership p : allPartnerships) {
+            if (!p.isSigned()) {
+                toDelete.add(p);
+            }
+        }
+
+        if (toDelete.isEmpty()) {
+            System.out.println("[INFO] No unsigned partnerships found to delete.");
+            return 0;
+        }
+
+        System.out.println("[INFO] Found " + toDelete.size() + " unsigned partnerships to delete.");
+        for (Partnership p : toDelete) {
+            System.out.println("[INFO] Deleting unsigned partnership with ID: " + p.getId() + ", Status: " + p.getStatus());
+            if (delete(p.getId())) {
+                deletedCount++;
+            } else {
+                System.err.println("[ERROR] Failed to delete partnership with ID: " + p.getId());
+            }
+        }
+        System.out.println("[INFO] Successfully deleted " + deletedCount + " unsigned partnerships.");
+        return deletedCount;
+    }
 }

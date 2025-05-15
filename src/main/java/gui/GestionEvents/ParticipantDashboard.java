@@ -162,14 +162,4 @@ public class ParticipantDashboard {
         stage.show();
     }
 
-    @FXML
-    void goToPartnerships(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
-        Parent root = loader.load();
-        Stage stage = (Stage) Collaborations.getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-    }
-
 }

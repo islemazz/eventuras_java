@@ -1,9 +1,9 @@
 /* Root style (applies to the entire scene) */
-.root {
-    -fx-background-image: url("Images/bakc6.png");
-    -fx-background-size: cover;  /* Makes the image cover the entire scene */
+.root, AnchorPane, BorderPane, VBox, HBox, StackPane, GridPane, FlowPane, TilePane {
+    -fx-background-image: url("images/final.png");
     -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
 }
 
 AnchorPane {
@@ -245,4 +245,57 @@ Label {
 
 .check-box:selected .box {
     -fx-background-color: #3498db;
+}
+
+/* User Profile Header Styles */
+.user-profile-header {
+    -fx-background-color: #FFFFFF; /* Light background for the card */
+    -fx-padding: 8px;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 10, 0.1, 0, 2); /* Subtle shadow for card effect */
+    -fx-alignment: center-right; /* Align items to the right */
+    -fx-spacing: 10px;
+}
+
+.user-profile-image {
+    -fx-border-radius: 50%; /* Make it circular */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 3, 0, 0, 1); 
+}
+
+.user-name-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 5px 0 0; /* Padding to the right of the name */
+}
+
+.user-actions-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 5px;
+    -fx-graphic: url("images/icons/settings_icon.png"); /* Corrected path */
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-min-width: 30px; /* Ensure enough space for the icon */
+    -fx-min-height: 30px;
+}
+
+.user-actions-button .arrow {
+    -fx-background-color: transparent; /* Hide the default arrow */
+    -fx-padding: 0;
+}
+
+.user-actions-button:hover {
+    -fx-background-color: #f0f0f0; /* Slight hover effect */
+    -fx-border-radius: 50%;
+}
+
+/* Style for MenuItems within the user actions button */
+.user-actions-button .menu-item .label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333333;
+}
+
+.user-actions-button .menu-item:hover {
+    -fx-background-color: #e0e0e0;
 }

@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 
-<AnchorPane fx:id="SelecPartnership" prefHeight="731.0" prefWidth="1305.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionPartner.AdminPartnershipController">
+<AnchorPane fx:id="SelecPartnership" prefHeight="731.0" prefWidth="1305.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionPartner.AdminPartnershipController">
    <children>
       <VBox spacing="20" styleClass="main-container">
          <padding>
@@ -39,7 +39,7 @@
             <TextField fx:id="partnerIdField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             
             <Label text="Organizer ID:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <TextField fx:id="organizerIdField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ComboBox fx:id="organizerComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             
             <Label text="Contract Type:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
             <ComboBox fx:id="contractTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />

@@ -20,8 +20,8 @@ public class PartnerService {
             throw new SQLException("Database connection is not available");
         }
 
-        String query = "INSERT INTO partner (name, type, description, email, phone, address, website, rating, rating_count, created_at, updated_at) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO partner (name, type, description, email, phone, address, website, rating, rating_count, image_path, video_path, created_at, updated_at) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, partner.getName());
@@ -33,8 +33,10 @@ public class PartnerService {
             statement.setString(7, partner.getWebsite());
             statement.setDouble(8, partner.getRating());
             statement.setInt(9, partner.getRatingCount());
-            statement.setTimestamp(10, Timestamp.valueOf(partner.getCreatedAt()));
-            statement.setTimestamp(11, Timestamp.valueOf(partner.getUpdatedAt()));
+            statement.setString(10, partner.getImagePath());
+            statement.setString(11, partner.getVideoPath());
+            statement.setTimestamp(12, Timestamp.valueOf(partner.getCreatedAt()));
+            statement.setTimestamp(13, Timestamp.valueOf(partner.getUpdatedAt()));
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
@@ -74,6 +76,8 @@ public class PartnerService {
                 partner.setWebsite(resultSet.getString("website"));
                 partner.setRating(resultSet.getDouble("rating"));
                 partner.setRatingCount(resultSet.getInt("rating_count"));
+                partner.setImagePath(resultSet.getString("image_path"));
+                partner.setVideoPath(resultSet.getString("video_path"));
                 partner.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 partner.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
                 partners.add(partner);
@@ -88,7 +92,7 @@ public class PartnerService {
         }
 
         String query = "UPDATE partner SET name=?, type=?, description=?, email=?, phone=?, address=?, website=?, " +
-                      "rating=?, rating_count=?, updated_at=? WHERE id=?";
+                      "rating=?, rating_count=?, image_path=?, video_path=?, updated_at=? WHERE id=?";
 
         try (PreparedStatement statement = connection.getConnection().prepareStatement(query)) {
             statement.setString(1, partner.getName());
@@ -100,8 +104,10 @@ public class PartnerService {
             statement.setString(7, partner.getWebsite());
             statement.setDouble(8, partner.getRating());
             statement.setInt(9, partner.getRatingCount());
-            statement.setTimestamp(10, Timestamp.valueOf(partner.getUpdatedAt()));
-            statement.setInt(11, partner.getId());
+            statement.setString(10, partner.getImagePath());
+            statement.setString(11, partner.getVideoPath());
+            statement.setTimestamp(12, Timestamp.valueOf(partner.getUpdatedAt()));
+            statement.setInt(13, partner.getId());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows == 0) {
@@ -146,6 +152,8 @@ public class PartnerService {
                     partner.setWebsite(resultSet.getString("website"));
                     partner.setRating(resultSet.getDouble("rating"));
                     partner.setRatingCount(resultSet.getInt("rating_count"));
+                    partner.setImagePath(resultSet.getString("image_path"));
+                    partner.setVideoPath(resultSet.getString("video_path"));
                     partner.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                     partner.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
                     return partner;
@@ -177,6 +185,8 @@ public class PartnerService {
                     partner.setWebsite(resultSet.getString("website"));
                     partner.setRating(resultSet.getDouble("rating"));
                     partner.setRatingCount(resultSet.getInt("rating_count"));
+                    partner.setImagePath(resultSet.getString("image_path"));
+                    partner.setVideoPath(resultSet.getString("video_path"));
                     partner.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                     partner.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
                     partners.add(partner);
