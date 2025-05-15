@@ -123,14 +123,27 @@ TableView{
 
 /* Card Styling */
 .card {
-    -fx-background-color: white;
-    -fx-border-color: black;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-padding: 10px;
-    -fx-spacing: 5px;
-    -fx-alignment: center;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 2, 2);
+    -fx-background-color: #F8F9FA;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 12, 0, 0, 4);
+    -fx-padding: 24px;
+    -fx-spacing: 16px;
+}
+
+.card-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222;
+}
+
+.stat-badge {
+    -fx-background-color: #F7FF88;
+    -fx-background-radius: 12px;
+    -fx-padding: 4px 12px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #222;
 }
 
 /* Ticket Number */
@@ -164,4 +177,13 @@ TableView{
     -fx-text-fill: white;
     -fx-padding: 5px 10px;
     -fx-border-radius: 3px;
+}
+
+.chart-container {
+    -fx-background-color: #FFFFFF; /* White background */
+    -fx-border-color: #BDBDBD; /* Light grey border */
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px; /* Rounded corners */
+    -fx-padding: 10px; /* Padding around the chart */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 2, 2); /* Subtle shadow */
 }

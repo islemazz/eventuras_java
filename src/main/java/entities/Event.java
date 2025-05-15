@@ -1,13 +1,11 @@
 package entities;
 
 import javafx.scene.control.TextField;
-import utils.Session;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 public class Event  {
     private int id_event;
@@ -26,7 +24,7 @@ public class Event  {
     public Event(int id, String title, String description, java.sql.Date date_event, String location, int user_id, int category_id, String category_name, List<String> activiteList){
     this.activiteList = new ArrayList<>();
     }
-    user currentUser = Session.getInstance().getCurrentUser();
+
     public Event(String title, String description, Date date_event, String location, int user_id, String category_name) {
         this.title = title;
         this.description = description;
@@ -34,7 +32,6 @@ public class Event  {
         this.location = location;
         this.user_id = user_id;
         this.category_name = category_name;
-
     }
 
     public Event(int id_event) {
@@ -52,7 +49,6 @@ public class Event  {
         this.category_name = category_name;
         this.image = image;
         this.activiteList = activiteList;
-
     }
     public Event(int id_event,String title, String description, Date date_event, String location,int user_id, int category_id,String image) {
         this.id_event = id_event;
@@ -64,7 +60,6 @@ public class Event  {
         this.category_id = category_id;
         this.image = image;
         this.activiteList = activiteList;
-
     }
 
     public Event(String title, String description, Date date_event, String location,int user_id, int category_id, String category_name,String image) {
@@ -77,7 +72,6 @@ public class Event  {
         this.category_name = category_name;
         this.image = image;
         this.activiteList = activiteList;
-
     }
     public Event(String title, String description, Date date_event, String location,int user_id, int category_id,String image) {
         this.title = title;
@@ -94,8 +88,6 @@ public class Event  {
     public Event(int id_event,String title){
         this.id_event = id_event;
         this.title = title;
-
-
     }
     /*Event event = new Event(title,description,date_event,location,price,category_name);*/
     public Event(String title,String dscription,Date date_event,String location,String category_name){
@@ -125,7 +117,7 @@ public class Event  {
         this.description = desc;
         this.location = loc;
         this.date_event = java.sql.Date.valueOf(String.valueOf(date));
-        this.user_id = user_id;
+        this.user_id = userId;
         this.category_id = categoryId;
         this.activiteList = activiteList;
     }
@@ -134,7 +126,6 @@ public class Event  {
         this.description = description;
         this.image = image;
         this.activiteList = activiteList;
-
     }
 
     public Event(int idEvent, TextField titleMod) {
@@ -157,7 +148,7 @@ public class Event  {
         this.description=description;
         this.date_event=dateEvent;
         this.location=location;
-        this.user_id = user_id;
+        this.user_id = userId;
         this.category_id=categoryId;
         this.category_name=categoryName;
         this.activiteList=activiteList;

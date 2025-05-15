@@ -1,6 +1,6 @@
 package entities;
 
-import utils.Session;
+import gui.GestionUser.UserSession;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -13,24 +13,24 @@ public class Participation {
     private String status;
     private String activities;
     private Timestamp part_date;
-    user currentUser = Session.getInstance().getCurrentUser();
+
     public Participation() {
 
     }
     public Participation(int id_part, int user_id, int event_id, String status) {
         this.id_part = id_part;
-        this.user_id = currentUser.getId();
+        this.user_id = user_id;
         this.event_id = event_id;
         this.status = status;
     }
-    public Participation(int user_id, int event_id,String status) {
-        this.user_id = currentUser.getId();
+    public Participation(int user_id, int event_id, String status) {
+        this.user_id = user_id;
         this.event_id = event_id;
         this.status = status;
     }
     public Participation(int id_part, int user_id, int event_id, String status, String activities) {
         this.id_part = id_part;
-        this.user_id = currentUser.getId();
+        this.user_id = user_id;
         this.event_id = event_id;
         this.status = status;
         this.activities = activities;
@@ -46,11 +46,11 @@ public class Participation {
     }
 
     public int getUser_id() {
-      return  this.user_id = currentUser.getId();
+        return user_id;
     }
 
     public void setUser_id(int user_id) {
-        this.user_id = currentUser.getId();
+        this.user_id = user_id;
     }
 
     public int getEvent_id() {
