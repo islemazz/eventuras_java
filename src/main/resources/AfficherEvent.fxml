@@ -10,6 +10,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.geometry.Insets?>
 
 <?import javafx.scene.control.Label?>
 <AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionEvents.AfficherEvent">
@@ -19,18 +21,29 @@
       <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
       <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
       <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
-      <VBox layoutX="280.0" layoutY="224.0" prefHeight="466.0" prefWidth="829.0">
+
+      <VBox layoutX="260.0" layoutY="120.0" prefWidth="900.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 15, 0, 0, 0);" alignment="TOP_CENTER">
+         <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+         </padding>
          <children>
-            <HBox fx:id="headerBox" prefHeight="100.0" prefWidth="200.0" spacing="25" />
-            <ListView fx:id="listView" prefHeight="471.0" prefWidth="829.0" />
+            <Label text="Liste des événements" style="-fx-font-size: 24; -fx-font-family: 'Britannic Bold'; -fx-text-fill: #1a237e; -fx-font-weight: bold;" alignment="CENTER_LEFT" />
+            <HBox spacing="0" alignment="CENTER_LEFT">
+               <children>
+                  <TextField fx:id="searchBar" promptText="Rechercher..." prefHeight="36.0" prefWidth="300.0" />
+                  <ComboBox fx:id="filterTypeComboBox" prefHeight="29.0" prefWidth="150.0" promptText="Filtrer par" />
+                  <DatePicker fx:id="datePicker" visible="false" />
+                  <ComboBox fx:id="categoryComboBox" visible="false" />
+               </children>
+            </HBox>
+            <HBox fx:id="headerBox" prefWidth="200.0" spacing="25" />
+            <ListView fx:id="listView" prefHeight="350.0" prefWidth="829.0" />
+            <Region prefHeight="15.0"/>
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+               <Button fx:id="modify" onAction="#modifierEvent" text="Modifier"/>
+               <Button fx:id="Supprimer" onAction="#deleteEvent" text="Supprimer"/>
+            </HBox>
          </children>
       </VBox>
-      <Button fx:id="modify" layoutX="1156.0" layoutY="332.0" mnemonicParsing="false" onAction="#modifierEvent" prefHeight="43.0" prefWidth="112.0" text="Modifier" />
-      <Button fx:id="Supprimer" layoutX="1156.0" layoutY="392.0" mnemonicParsing="false" onAction="#deleteEvent" text="Supprimer" />
-      <TextField fx:id="searchBar" layoutX="277.0" layoutY="176.0" prefHeight="36.0" prefWidth="387.0" />
-      <ComboBox fx:id="filterTypeComboBox" layoutX="673.0" layoutY="176.0" prefHeight="29.0" prefWidth="150.0" promptText="Filter by" />
-      <DatePicker fx:id="datePicker" layoutX="830.0" layoutY="176.0" visible="false" />
-      <ComboBox fx:id="categoryComboBox" layoutX="830.0" layoutY="176.0" visible="false" />
-
    </children>
 </AnchorPane>

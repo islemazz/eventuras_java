@@ -6,16 +6,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import services.ServiceCategorie;
 import services.ServiceEvent;
 import utils.MyConnection;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -52,6 +57,8 @@ public class AfficherEvent {
     private ObservableList<Event> observableEvents;
     private ObservableList<Event> originalEvents;
     private String currentFilterType = null;
+    private Stage stage;
+    private Scene scene;
     @FXML
     void initialize() {
         try {
@@ -413,7 +420,16 @@ public class AfficherEvent {
     public void goToTickets(ActionEvent event) {
     }
 
-    public void showAcceuil(ActionEvent event) {
+    public void showAcceuil(ActionEvent event) throws IOException {
+        // Load the AfficherEvent interface
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/organisateurDashboard.fxml"));
+        Parent root = loader.load();// Call the method to display last 3 events
+
+        // Switch to the AfficherEvent scene
+        stage = (Stage) Acceuil.getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+
     }
 
     public void goToReclams(ActionEvent event) {
