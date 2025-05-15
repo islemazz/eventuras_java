@@ -263,6 +263,26 @@ public class Service implements IService1<Reservation> {
         }
     }
 
+    public Ticket getTicketByReservation(int reservationId) throws SQLException {
+        String query = "SELECT id, ticket_code, seat_number FROM ticket WHERE reservation_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, reservationId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Ticket ticket = new Ticket();
+                    ticket.setTicketId(resultSet.getInt("id"));
+                    ticket.setTicketCode(resultSet.getString("ticket_code"));
+                    ticket.setSeatNumber(resultSet.getString("seat_number"));
+                    // Seuls les champs du ticket sont renseignés
+                    return ticket;
+                }
+            }
+        }
+        return null;
+    }
+
 
 
 
