@@ -57,6 +57,7 @@ public class DetailsMessage implements Initializable {
     }
 
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Populate ComboBox with possible subjects

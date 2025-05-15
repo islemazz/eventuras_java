@@ -151,7 +151,9 @@ TableView{
 /* ✅ Style for admin (right-aligned) messages */
 .message-right {
 //-fx-background-color: #e07564; /* Green for Admin */
-    -fx-background-color: #862341; /* Green for Admin */
+    //-fx-background-color: #862341; /* Green for Admin */
+    -fx-background-color: #E0E0E0; /* Gray for Participant */
+
 //-fx-background-color: #A004E2; /* Green for Admin */
 //2a004e
 
@@ -161,7 +163,8 @@ TableView{
 }
 /* ✅ Style for participant (left-aligned) messages */
 .message-left {
-    -fx-background-color: #E0E0E0; /* Gray for Participant */
+    -fx-background-color: #862341; /* Gray for Participant */
+
     -fx-text-fill: black;
     -fx-alignment: center-left;
 }

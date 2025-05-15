@@ -4,6 +4,8 @@ package services.Reclamation;
 import entities.ConversationMessage;
 import entities.ConversationMessageAttachment;
 import utils.MyConnection;
+import utils.Session;
+import gui.GestionUser.UserSession;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -64,12 +66,14 @@ public class MessageService {
     public void saveAttachments(int messageId, List<ConversationMessageAttachment> attachments) throws SQLException {
         if (attachments == null || attachments.isEmpty()) return;
 
-        String query = "INSERT INTO message_attachments (message_id, file_path) VALUES (?, ?)";
+        String query = "INSERT INTO message_attachments (message_id, file_path, uploaded_at) VALUES (?, ?, ?)";
 
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             for (ConversationMessageAttachment attachment : attachments) {
                 pst.setInt(1, messageId);
                 pst.setString(2, attachment.getFilePath());
+                pst.setString(3, attachment.getUploaded_at());
+
                 pst.executeUpdate();
             }
         }
@@ -107,7 +111,7 @@ public class MessageService {
     // ✅ Retrieve all attachments for a specific message
     public List<ConversationMessageAttachment> getAttachmentsByMessageId(int messageId) throws SQLException {
         List<ConversationMessageAttachment> attachments = new ArrayList<>();
-        String query = "SELECT id, file_path FROM message_attachments WHERE message_id = ?";
+        String query = "SELECT id, file_path, uploaded_at FROM message_attachments WHERE message_id = ?";
 
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setInt(1, messageId);
@@ -116,8 +120,9 @@ public class MessageService {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String filePath = rs.getString("file_path");
+                String uploaded_at = rs.getString("file_path");
 
-                attachments.add(new ConversationMessageAttachment(id, messageId, filePath));
+                attachments.add(new ConversationMessageAttachment(id, messageId, filePath, uploaded_at));
             }
         }
         return attachments;

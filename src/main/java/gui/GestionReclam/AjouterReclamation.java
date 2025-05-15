@@ -11,6 +11,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.Reclamation.ReclamationService;
 import utils.Session;
+import gui.GestionUser.UserSession;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +57,10 @@ public class AjouterReclamation {
         CBSuject.setValue("Sujet");
 
         // Fetch the logged-in user and set their ID in the TextField
-        int loggedInUserId = Session.getInstance().getCurrentUser().getId();
+        //int loggedInUserId = Session.getInstance().getCurrentUser().getId();
+        UserSession session = UserSession.getInstance();
+        int loggedInUserId = session.getId();
+
         TFId_user.setText(String.valueOf(loggedInUserId));
         TFId_user.setEditable(false); // Prevent manual editing
 

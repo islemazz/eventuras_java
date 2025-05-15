@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class ReclamationConversation {
+public class ReclamationConversationUser {
     private Reclamation currentReclamation;
 
     private List<ConversationMessageAttachment> selectedAttachments = new ArrayList<>();
@@ -86,14 +86,13 @@ public class ReclamationConversation {
 
         // ✅ Check if status is "Résolu"
         if ("Résolu".equals(reclamation.getStatus())) {
-            btnSatisfait.setVisible(false); // ✅ Hide the button
             txtMessage.setDisable(true); // ✅ Disable message input
             btnSend.setDisable(true); // ✅ Disable send button
         } else {
-            btnSatisfait.setVisible(true); // ✅ Show button if not resolved
             txtMessage.setDisable(false); // ✅ Enable message input
             btnSend.setDisable(false); // ✅ Enable send button
         }
+
 
         // ✅ Load messages
         loadConversation();
@@ -112,39 +111,39 @@ public class ReclamationConversation {
     }
 
 
-@FXML
-void sendMessage(ActionEvent event) {
-    String messageText = txtMessage.getText().trim();
-    if (messageText.isEmpty()) return;
+    @FXML
+    void sendMessage(ActionEvent event) {
+        String messageText = txtMessage.getText().trim();
+        if (messageText.isEmpty()) return;
 
-    // ✅ Get the logged-in user ID from the session
-    //int senderId = Session.getInstance().getCurrentUser().getId();
+        // ✅ Get the logged-in user ID from the session
+        //int senderId = Session.getInstance().getCurrentUser().getId();
 
-    UserSession session = UserSession.getInstance();
-    int senderId = session.getId();
+        UserSession session = UserSession.getInstance();
+        int senderId = session.getId();
 
-    // ✅ Current date/time
-    LocalDateTime now = LocalDateTime.now();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    String created_at = now.format(formatter);
+        // ✅ Current date/time
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String created_at = now.format(formatter);
 
-    txtMessage.clear();
+        txtMessage.clear();
 
-    // ✅ Create message with the logged-in user's ID as senderId
-    ConversationMessage msg = new ConversationMessage(conversationId, senderId, messageText, created_at, selectedAttachments);
+        // ✅ Create message with the logged-in user's ID as senderId
+        ConversationMessage msg = new ConversationMessage(conversationId, senderId, messageText, created_at, selectedAttachments);
 
-    try {
-        ms.sendMessage(msg);
-        System.out.println("Message added successfully with attachments!");
+        try {
+            ms.sendMessage(msg);
+            System.out.println("Message added successfully with attachments!");
 
-        loadConversation();
-    } catch (SQLException e) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erreur");
-        alert.setContentText("Erreur lors de l'envoi du message: " + e.getMessage());
-        alert.showAndWait();
+            loadConversation();
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setContentText("Erreur lors de l'envoi du message: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
-}
 
 
 
@@ -174,6 +173,7 @@ void sendMessage(ActionEvent event) {
                 LocalDateTime now = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 String uploaded_at = now.format(formatter);
+
                 // Or you could store the entire absolute path if you prefer
                 // But you're already using relative in your example.
                 ConversationMessageAttachment attachment = new ConversationMessageAttachment(0, 0, relativePath,uploaded_at);
@@ -306,14 +306,14 @@ void sendMessage(ActionEvent event) {
         container.setPadding(new Insets(5));
 
         if (senderId == loggedInUserId) {
-            System.out.println("✅ Aligning message left (Sent by logged-in user)");
+            System.out.println("✅ Aligning message RIGHT (Sent by logged-in user)");
             container.setAlignment(Pos.CENTER_LEFT);
             bubbleContent.getStyleClass().add("message-left");
 
             // ✅ Allow clicking only if the logged-in user sent the message
-            bubbleContent.setOnMouseClicked(event -> openMessageDetails(message));
+            //bubbleContent.setOnMouseClicked(event -> openMessageDetails(message));
         } else {
-            System.out.println("⬅ Aligning message right (Sent by someone else)");
+            System.out.println("⬅ Aligning message LEFT (Sent by someone else)");
             container.setAlignment(Pos.CENTER_RIGHT);
             bubbleContent.getStyleClass().add("message-right");
 
@@ -326,31 +326,7 @@ void sendMessage(ActionEvent event) {
 
 
 
-    private void openMessageDetails(ConversationMessage message) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/MessageDetails.fxml"));
-            Parent root = loader.load();
 
-            // ✅ Get the controller and pass the message data
-            DetailsMessage controller = loader.getController();
-            controller.setMessageData(message);
-
-            // ✅ Pass the current `ReclamationConversation` controller for refreshing messages
-            controller.setReclamationConversationController(this);
-
-            // ✅ Show as a new popup window
-            Stage stage = new Stage();
-            stage.setTitle("Message Details");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setContentText("Failed to open message details: " + e.getMessage());
-            alert.showAndWait();
-        }
-    }
 
 
 
@@ -399,7 +375,7 @@ void sendMessage(ActionEvent event) {
 
     private void goBack(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AfficherReclamationsAdmin.fxml")); // ✅ Change to your previous FXML file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/AfficherReclamations.fxml")); // ✅ Change to your previous FXML file
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -417,8 +393,8 @@ void sendMessage(ActionEvent event) {
 
 
 
-@FXML
-private GridPane mediaContainer ;
+    @FXML
+    private GridPane mediaContainer ;
 
 
     private void loadMediaAttachments(List<ConversationMessageAttachment> attachments) {
@@ -485,25 +461,6 @@ private GridPane mediaContainer ;
     private final ReclamationService rs = new ReclamationService();
 
 
-    @FXML private Button btnSatisfait;
-    @FXML
-    private void handleSatisfied() {
-        // ✅ Update the status to "Résolu"
-        changeReclamationStatus("Résolu");
-
-        // ✅ Hide the satisfied button and disable message input
-        Platform.runLater(() -> {
-            btnSatisfait.setVisible(false);
-            btnSatisfait.setManaged(false);
-            txtMessage.setDisable(true);
-            btnSend.setDisable(true);
-
-
-        });
-
-        // ✅ Reload the conversation to reflect the changes
-        loadConversation();
-    }
 
 
     private void changeReclamationStatus(String newStatus) {

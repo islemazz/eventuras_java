@@ -5,6 +5,7 @@ import entities.Reclamation;
 import entities.ReclamationAttachment;
 import utils.MyConnection;
 import utils.Session;
+import gui.GestionUser.UserSession;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ReclamationService implements IReclamation<Reclamation> {
 
     @Override
     public void create(Reclamation reclam) throws SQLException {
-        String query = "INSERT INTO reclamations (id_user, id_event, created_at, subject, description,status) VALUES (?, ?, ?, ?, ?,?)";
+        String query = "INSERT INTO reclamations (id_user, id_event, created_at, subject, description, status, is_rated) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pst = cnx.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             pst.setInt(1, reclam.getId_user());
@@ -31,7 +32,7 @@ public class ReclamationService implements IReclamation<Reclamation> {
             pst.setString(4, reclam.getSubject());
             pst.setString(5, reclam.getDescription());
             pst.setString(6, reclam.getStatus());
-
+            pst.setInt(7, 0); // Default value for is_rated
 
             pst.executeUpdate();
 
@@ -43,6 +44,7 @@ public class ReclamationService implements IReclamation<Reclamation> {
             }
         }
     }
+
 
     // Method to Save Attachments
     private void saveAttachments(int reclamationId, List<ReclamationAttachment> attachments) throws SQLException {
@@ -142,7 +144,12 @@ public class ReclamationService implements IReclamation<Reclamation> {
         List<Reclamation> reclams = new ArrayList<>();
 
         // Get the logged-in user's ID
-        int loggedInUserId = Session.getInstance().getCurrentUser().getId();
+        //int loggedInUserId = Session.getInstance().getCurrentUser().getId();
+
+        UserSession session = UserSession.getInstance();
+        int loggedInUserId = session.getId();
+
+
 
         // SQL query to filter reclamations by user ID
         String query = "SELECT * FROM reclamations WHERE id_user = ?";

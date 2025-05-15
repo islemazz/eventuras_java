@@ -12,10 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -135,11 +138,11 @@ public class AfficherReclamations {
 
         // ✅ Handle "Suivre" button click
         detailsButton.setOnAction(event -> {
-            if ("En cours".equals(rec.getStatus())) {
-                // ✅ If status is "En cours", navigate to conversation
+            if ("En cours".equals(rec.getStatus()) || "Résolu".equals(rec.getStatus())) {
+                // ✅ Allow navigation if status is "En cours" OR "Résolu"
                 goToConversation(event, rec);
             } else {
-                // ✅ Show alert if status isn't "En cours"
+                // ❌ Otherwise show alert
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Réclamation non acceptée");
                 alert.setHeaderText(null);
@@ -147,6 +150,7 @@ public class AfficherReclamations {
                 alert.showAndWait();
             }
         });
+
 
         card.getChildren().addAll(ticketNumber, ticketDate, ticketDescription, ticketStatus, actionButtons);
         return card;
@@ -180,9 +184,32 @@ public class AfficherReclamations {
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Loading Error");
-            alert.setContentText("Error while loading add reclamation: " + e.getMessage());
+            alert.setHeaderText("An error occurred while loading the page.");
+
+            // Create a TextArea with the full stack trace
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String exceptionText = sw.toString();
+
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+            GridPane content = new GridPane();
+            content.setMaxWidth(Double.MAX_VALUE);
+            content.add(new Label("The exception stacktrace was:"), 0, 0);
+            content.add(textArea, 0, 1);
+
+            alert.getDialogPane().setContent(content);
             alert.showAndWait();
         }
+
     }
 
     private void goToEditPage(javafx.event.ActionEvent event, Reclamation rec) {
@@ -221,7 +248,7 @@ public class AfficherReclamations {
     public void refreshReclamationsDisplayAfterDelete() {
         Platform.runLater(() -> { // Ensure UI update runs on JavaFX thread
             try {
-                List<Reclamation> reclamations = rs.readAll(); // Fetch updated list
+                List<Reclamation> reclamations = rs.readAllById(); // Fetch updated list
                 reclamationsGrid.getChildren().clear(); // Clear previous items
 
                 int column = 0;
@@ -262,11 +289,11 @@ public class AfficherReclamations {
 
     public void goToConversation(ActionEvent event, Reclamation rec) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/ReclamationConversation.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Reclamation/ReclamationConversationUser.fxml"));
             Parent root = loader.load();
 
             // ✅ Get the controller instance
-            ReclamationConversation controller = loader.getController();
+            ReclamationConversationUser controller = loader.getController();
 
             // ✅ Pass the selected reclamation data
             controller.setReclamationData(rec);
