@@ -24,8 +24,6 @@ public class MainGUI extends Application {
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            // Test the PartnershipService
-            testPartnershipService();
         } catch (IOException e) {
             System.err.println("Erreur de l'application (IOException):");
             e.printStackTrace();
@@ -36,24 +34,4 @@ public class MainGUI extends Application {
         }
     }
 
-    private void testPartnershipService() {
-        PartnershipService service = new PartnershipService();
-        Partnership partnership = new Partnership();
-        partnership.setPartnerId(1);
-        partnership.setOrganizerId(1);
-        partnership.setContractType("Standard");
-        partnership.setDescription("Test partnership");
-        partnership.setSigned(false);
-        partnership.setStatus("Pending");
-        partnership.setCreatedAt(LocalDateTime.now());
-        partnership.setSignedContractFile(null);
-        partnership.setSignedAt(null);
-
-        Partnership created = service.create(partnership);
-        if (created != null) {
-            System.out.println("Partnership created: " + created);
-        } else {
-            System.out.println("Failed to create partnership");
-        }
-    }
 }

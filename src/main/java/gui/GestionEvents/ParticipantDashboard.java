@@ -35,7 +35,7 @@ public class ParticipantDashboard {
     @FXML public Button reclam;
     @FXML public Text scrolling_text;
     @FXML public Pane news_pane;
-
+    public Button forum;
     @FXML public Label username;
     @FXML public Label role;
     @FXML public Label level;
@@ -45,7 +45,6 @@ public class ParticipantDashboard {
     user CurrentUser;
 
   @FXML
-    @FXML
     public void initialize() {
         try {
           UserSession session = UserSession.getInstance();
