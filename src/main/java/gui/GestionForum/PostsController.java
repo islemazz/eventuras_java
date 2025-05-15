@@ -1,5 +1,6 @@
 package gui;
 
+import gui.GestionUser.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -206,8 +207,8 @@ public class PostsController {
 
         // 7. Système de like (affichage du nombre de likes dans le bouton)
         services.ServiceLike serviceLike = new services.ServiceLike();
-        user currentUser = utils.Session.getInstance().getCurrentUser();
-        int currentUserId = (currentUser != null) ? currentUser.getId() : -1;
+        UserSession session = UserSession.getInstance();
+        int currentUserId = session.getId();
         int likeCount = serviceLike.getNombreLikes(post.getId());
         boolean alreadyLiked = (currentUserId != -1) && serviceLike.aDejaLike(currentUserId, post.getId());
         Button likeButton = new Button((alreadyLiked ? "Unlike" : "Like") + " (" + likeCount + ")");
@@ -256,7 +257,7 @@ public class PostsController {
         HBox editDeleteBox = new HBox();
         editDeleteBox.setSpacing(10);
         editDeleteBox.setAlignment(Pos.CENTER_LEFT);
-        if (currentUser != null && currentUser.getId() == post.getUser_id()) {
+        if (session != null && currentUserId == post.getUser_id()) {
             Button btnModifier = new Button("Modifier");
             Button btnSupprimer = new Button("Supprimer");
 
@@ -382,7 +383,12 @@ public class PostsController {
         commenterImageView.setFitWidth(30);
         commenterImageView.setFitHeight(30);
         if (commenter != null && commenter.getPicture() != null && !commenter.getPicture().isEmpty()) {
-            Image commenterImage = new Image(getClass().getResourceAsStream("/Images/" + commenter.getPicture()));
+            String path = "/images/" + commenter.getPicture();
+            InputStream is = getClass().getResourceAsStream(path);
+            if (is == null) {
+                is = getClass().getResourceAsStream("/images/profil.png");
+            }
+            Image commenterImage = new Image(is);
             if (!commenterImage.isError()) {
                 commenterImageView.setImage(commenterImage);
                 // Arrondir l'image
@@ -426,8 +432,9 @@ public class PostsController {
         HBox actionButtonsBox = new HBox();
         actionButtonsBox.setSpacing(5);
         actionButtonsBox.setAlignment(Pos.CENTER_LEFT);
-        user currentUser = utils.Session.getInstance().getCurrentUser();
-        if (currentUser != null && currentUser.getId() == c.getUser_id()) {
+        UserSession session = UserSession.getInstance();
+        int currentUserId = session.getId();
+        if (session != null && currentUserId == c.getUser_id()) {
             Button btnModifier = new Button("Modifier");
             Button btnSupprimer = new Button("Supprimer");
 
@@ -579,13 +586,8 @@ public class PostsController {
             String newCommentText = TFNewComment.getText().trim();
             if (!newCommentText.isEmpty()) {
                 try {
-                    user currentUser = utils.Session.getInstance().getCurrentUser();
-                    if (currentUser == null) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING, "Aucun utilisateur connecté !");
-                        alert.showAndWait();
-                        return;
-                    }
-                    int currentUserId = currentUser.getId();
+                    UserSession session = UserSession.getInstance();
+                    int currentUserId = session.getId();
                     Comment newComment = new Comment(0, post.getId(), currentUserId, newCommentText, new Date());
                     ServiceComment serviceComment2 = new ServiceComment();
                     serviceComment2.ajouter(newComment);
@@ -618,16 +620,9 @@ public class PostsController {
         }
 
         // Récupérer l'utilisateur courant depuis la session
-        user currentUser = utils.Session.getInstance().getCurrentUser();
-        int currentUserId = 25;
-        if (currentUser == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Aucun utilisateur connecté !");
-            alert.show();
-            //return;
-        }
-        else{
-            currentUserId = currentUser.getId();
-        }
+        UserSession session = UserSession.getInstance();
+        int currentUserId = session.getId();
+
         try {
             Timestamp createdAt = new Timestamp(System.currentTimeMillis());
             // Utiliser l'ID de l'utilisateur courant au lieu de la valeur fixe "1"
@@ -643,7 +638,6 @@ public class PostsController {
         }
     }
 
-
     @FXML
     private void uploadImage() {
         FileChooser fileChooser = new FileChooser();
@@ -655,7 +649,6 @@ public class PostsController {
             imageView.setImage(img);
         }
     }
-
 
     private String getRelativeTime(Date date) {
         long diffMillis = System.currentTimeMillis() - date.getTime();
