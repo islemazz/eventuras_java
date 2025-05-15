@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MyConnection {
-    private final String URL = "jdbc:mysql://localhost:3306/eventurasweb";
+    private final String URL = "jdbc:mysql://localhost:3306/eventuras";
     private final String USER = "root";
     private final String PASS = "";
     private Connection connection;
