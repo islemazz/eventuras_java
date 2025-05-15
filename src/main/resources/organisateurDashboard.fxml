@@ -10,6 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.Label?>
 <AnchorPane prefHeight="731.0" prefWidth="1305.0" stylesheets="@interface.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionEvents.OrganisateurDashboard">
    <children>
       <Button fx:id="GoToEvents" layoutX="25.0" layoutY="280.0" mnemonicParsing="false" onAction="#showEvents2" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
@@ -24,7 +25,9 @@
             <Font name="Britannic Bold" size="29.0" />
          </font>
       </Text>
-      <Pane layoutX="278.0" layoutY="275.0" prefHeight="255.0" prefWidth="294.0">
+
+
+       <Pane layoutX="278.0" layoutY="275.0" prefHeight="255.0" prefWidth="294.0">
          <children>
             <BarChart fx:id="monthlyEventsChart" prefHeight="255.0" prefWidth="294.0">
               <xAxis>
@@ -54,4 +57,8 @@
          </children>
       </Pane>
    </children>
+    <Label fx:id="username" text="username" visible="false" managed="false" />
+    <Label fx:id="role" text="role" visible="false" managed="false" />
+    <Label fx:id="level" text="level" visible="false" managed="false" />
+
 </AnchorPane>
