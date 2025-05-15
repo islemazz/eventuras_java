@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="552.0" prefWidth="736.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.GestionProduit.AjouterProduit">
+   <children>
+      <Label layoutX="223.0" layoutY="14.0" prefHeight="55.0" prefWidth="328.0" text="Ajouter un produit" textFill="#131111">
+         <font>
+            <Font size="54.0" />
+         </font>
+      </Label>
+      <Label layoutX="188.0" layoutY="97.0" text="Nom:" />
+      <Label layoutX="161.0" layoutY="146.0" text="Description:" />
+      <Label layoutX="188.0" layoutY="254.0" text="Prix:" />
+      <Label layoutX="169.0" layoutY="308.0" text="Quantite:" />
+      <Label layoutX="179.0" layoutY="371.0" text="Image:" />
+      <TextField fx:id="NameField" layoutX="264.0" layoutY="94.0" prefHeight="35.0" prefWidth="268.0" />
+      <TextField fx:id="DescriptionField" layoutX="277.0" layoutY="146.0" prefHeight="83.0" prefWidth="254.0" />
+      <TextField fx:id="PriceField" layoutX="264.0" layoutY="251.0" prefHeight="35.0" prefWidth="268.0" />
+      <TextField fx:id="QuantityField" layoutX="264.0" layoutY="305.0" prefHeight="35.0" prefWidth="268.0" />
+      <Button fx:id="btnsubmit" layoutX="494.0" layoutY="405.0" mnemonicParsing="false" onAction="#addProduit" text="Ajouter" textFill="#f70505" />
+      <Button fx:id="ImageB" layoutX="260.0" layoutY="356.0" mnemonicParsing="false" onAction="#handleImportImage" prefHeight="42.0" prefWidth="268.0" text="Importer une image" />
+      <Button fx:id="Acceuil" layoutX="5.0" layoutY="139.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="42.0" prefWidth="145.0" text="Accueil" />
+      <Button fx:id="GoToEvents" layoutX="5.0" layoutY="188.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="42.0" prefWidth="145.0" text="Evenements" />
+      <Button fx:id="Collaborations" layoutX="5.0" layoutY="240.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="42.0" prefWidth="145.0" text="Collaborations" />
+      <Button fx:id="reclam" layoutX="5.0" layoutY="294.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="42.0" prefWidth="145.0" text="Réclamations" />
+      <Button fx:id="Boutique" layoutX="4.0" layoutY="350.0" mnemonicParsing="false" onAction="#goToBoutique" prefHeight="42.0" prefWidth="145.0" text="Boutique" />
+   </children>
+   <stylesheets>
+      <URL value="@styles.css" />
+      <URL value="@interface.css" />
+   </stylesheets>
+</Pane>

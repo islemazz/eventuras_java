@@ -1,31 +1,29 @@
-package gui.GestionReclam;
+package gui.GestionProduit;
 
-import entities.Event;
+import entities.*;
 import gui.GestionEvents.AfficherEventHOME;
 import gui.GestionEvents.AjouterParticipation;
-import gui.GestionProduit.AfficherProduit;
-import javafx.application.Platform;
+import gui.GestionPartner.PartnershipCellController;
+import gui.GestionReclam.AfficherReclamations;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.event.ActionEvent;
+import services.ProduitService;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-import entities.Reclamation;
-import services.ReclamationService;
 import services.ServiceEvent;
 
 import java.io.File;
@@ -33,272 +31,138 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
+public class AjouterProduit {
 
-public class AfficherReclamations {
+    @FXML
+    private TextField NameField;
+    @FXML
+    private TextField DescriptionField;
+    @FXML
+    private TextField PriceField;
+    @FXML
+    private TextField QuantityField;
+    @FXML
+    private Button ImageB;
+    @FXML
+    private Button btnsubmit;
 
-    private final ReclamationService rs = new ReclamationService();
     public Button GoToEvents;
     public Button Collaborations;
     public Button Acceuil;
-    public Button tickets;
     public Button reclam;
-    public Button adminpage;
-
 
     public Button Boutique;
 
     public VBox eventContainer;
 
+    private File selectedImageFile;
+    private final ProduitService produitService = new ProduitService();
     public final ServiceEvent sE=new ServiceEvent();
-    
-    @FXML
-    private GridPane reclamationsGrid; // GridPane to hold all cards
 
     @FXML
-    void initialize() {
-        refreshReclamationsDisplay();
+    public void initialize() {
+        // Ajout d'un gestionnaire d'événements pour l'importation d'image
+        ImageB.setOnAction(this::handleImportImage);
+        btnsubmit.setOnAction(this::handleAddAndRedirect);
     }
 
-    @FXML
-    public VBox createReclamationCard(Reclamation rec) {
-        VBox card = new VBox(5);
-        card.getStyleClass().add("card");
-        card.setPrefWidth(200);
-
-        Label ticketNumber = new Label("Ticket #" + rec.getId());
-        ticketNumber.getStyleClass().add("ticket-number");
-
-        Label ticketDate = new Label("Créé à: " + rec.getCreated_at());
-        ticketDate.getStyleClass().add("ticket-date");
-
-        Label ticketDescription = new Label("Description: " + rec.getDescription());
-        ticketDescription.getStyleClass().add("ticket-description");
-
-        // Action Buttons (hidden by default)
-        HBox actionButtons = new HBox(10);
-        Button editButton = new Button("Modifier");
-        Button detailsButton = new Button("Détails");
-
-        editButton.getStyleClass().add("modifier-btn");
-        detailsButton.getStyleClass().add("details-btn");
-
-        actionButtons.getChildren().addAll(editButton, detailsButton);
-        actionButtons.setOpacity(0);
-
-        // Show the buttons on hover
-        card.setOnMouseEntered(event -> actionButtons.setOpacity(1));
-        card.setOnMouseExited(event -> actionButtons.setOpacity(0));
-
-        // "Modifier" leads to the details page
-        editButton.setOnAction(event -> goToEditPage(event, rec));
-        // Alternatively, "Détails" can do the same or different
-
-        card.getChildren().addAll(ticketNumber, ticketDate, ticketDescription, actionButtons);
-        return card;
-    }
-
-    public void goToAjouterPage(MouseEvent mouseEvent) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterReclamation.fxml"));
-            Parent root = loader.load();
-
-            // Get the controller
-            AjouterReclamation controller = loader.getController();
-            // Pass reference of this controller so we can refresh after adding
-            controller.setAfficherReclamationsController(this);
-
-            Stage stage = new Stage();
-            stage.setTitle("Ajouter Réclamation");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Loading Error");
-            alert.setContentText("Error while loading add reclamation: " + e.getMessage());
-            alert.showAndWait();
+    private void handleAddAndRedirect(ActionEvent event) {
+        if (addProduit()) {
+            redirectToShop(event);
         }
     }
 
-    private void goToEditPage(javafx.event.ActionEvent event, Reclamation rec) {
+    @FXML
+    private boolean addProduit() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DetailsReclamation.fxml"));
-            Parent root = loader.load();
+            String nom = NameField.getText().trim();
+            String description = DescriptionField.getText().trim();
+            double prix = Double.parseDouble(PriceField.getText().trim());
+            int quantite = Integer.parseInt(QuantityField.getText().trim());
 
-            DetailsReclamation controller = loader.getController();
-            controller.setReclamationData(rec);
-            controller.setAfficherReclamationsController(this); // 🔹 Pass controller reference
-
-            Stage stage = new Stage();
-            stage.setTitle("Modifier Reclamation");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Loading Error");
-            alert.setContentText("Error while loading DetailsReclamation: " + e.getMessage());
-            alert.showAndWait();
-        }
-    }
-    public void refreshReclamationsDisplay() {
-        try {
-            List<Reclamation> reclamations = rs.readAll(); // Fetch updated list
-            reclamationsGrid.getChildren().clear(); // Clear previous items
-
-            int column = 0;
-            int row = 0;
-
-            for (Reclamation rec : reclamations) {
-                VBox card = createReclamationCard(rec);
-                reclamationsGrid.add(card, column, row);
-
-                column++;
-                if (column == 3) {
-                    column = 0;
-                    row++;
-                }
+            // Vérification si des champs sont vides
+            if (nom.isEmpty() || description.isEmpty() || selectedImageFile == null) {
+                showAlert(Alert.AlertType.WARNING, "Champs manquants", "Veuillez remplir tous les champs et importer une image.");
+                return false;
             }
 
+            String imagePath = selectedImageFile.toURI().toString(); // On récupère le chemin de l'image
+            Produit newProduit = new Produit(0, nom, description, prix, quantite, imagePath);
+            produitService.create(newProduit); // Ajouter le produit dans la base de données
+
+            return true;
+
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur de format", "Prix ou quantité invalide.");
         } catch (SQLException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setContentText("Erreur lors du chargement des réclamations: " + e.getMessage());
-            alert.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Erreur SQL", "Échec lors de l'ajout : " + e.getMessage());
+        }
+        return false;
+    }
+
+    @FXML
+    public void handleImportImage(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            // On garde la référence du fichier sélectionné
+            selectedImageFile = file;
         }
     }
 
-
-    public void refreshReclamationsDisplayAfterDelete() {
-        Platform.runLater(() -> { // Ensure UI update runs on JavaFX thread
-            try {
-                List<Reclamation> reclamations = rs.readAll(); // Fetch updated list
-                reclamationsGrid.getChildren().clear(); // Clear previous items
-
-                int column = 0;
-                int row = 0;
-
-                for (Reclamation rec : reclamations) {
-                    VBox card = createReclamationCard(rec);
-                    reclamationsGrid.add(card, column, row);
-
-                    column++;
-                    if (column == 3) {
-                        column = 0;
-                        row++;
-                    }
-                }
-
-                System.out.println("✅ Reclamations successfully refreshed after delete!");
-
-            } catch (SQLException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Erreur");
-                alert.setContentText("Erreur lors du chargement des réclamations: " + e.getMessage());
-                alert.showAndWait();
-            }
-        });
-    }
-
-
-    public void goToAjouterReservation(MouseEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamationsAdmin.fxml"));
-        Parent root = loader.load();
-
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
-        stage.show();
-    }
-
-/*
-    public void showEvents(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showAllEvents(); // Call the method to display all events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) GoToEvents.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    //display last 3 events in the home section
-    public void showAcceuil(ActionEvent event) throws IOException {
-        // Load the AfficherEvent interface
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherEventHOME.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Acceuil.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-
-    }
-
-    public void goToCollabs(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParticipPartner.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) Collaborations.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
-    public void goToTickets(ActionEvent event) throws IOException {
-
-    }
-
-    public void goToReclams(ActionEvent event) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherReclamations.fxml"));
-        Parent root = loader.load();
-
-        AfficherEventHOME afficherEventController = loader.getController();
-        afficherEventController.showLastThreeEvents(); // Call the method to display last 3 events
-
-        // Switch to the AfficherEvent scene
-        stage = (Stage) reclam.getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-    }
-
- */
-@FXML
-public void goToBoutique() {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProduit.fxml"));
-        Parent root = loader.load();
-
-        // Facultatif : Appelle une méthode dans le contrôleur si besoin
-        AfficherProduit controller = loader.getController();
-        controller.loadProducts(); // Appelle ta méthode d'initialisation si elle existe
-
-        // Changement de scène
-        Stage stage = (Stage) Boutique.getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
-
-    } catch (IOException e) {
-        e.printStackTrace();
-        // Optionnel : alerte utilisateur
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erreur");
-        alert.setHeaderText("Impossible de charger la boutique");
-        alert.setContentText(e.getMessage());
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
-}
+
+    private void redirectToShop(ActionEvent event) {
+        try {
+            // Chargement de la page de la boutique après ajout du produit
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProduit.fxml"));
+            Parent shopRoot = loader.load();
+
+            // Récupérer le contrôleur de la page de la boutique pour rafraîchir les produits
+            AfficherProduit afficherProduitController = loader.getController();
+            afficherProduitController.loadProducts();  // Rafraîchir les produits après l'ajout
+
+            Stage stage = (Stage) btnsubmit.getScene().getWindow();
+            stage.setScene(new Scene(shopRoot));
+        } catch (IOException ex) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger la boutique.");
+        }
+    }
+
+    @FXML
+    public void goToBoutique() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AfficherProduit.fxml"));
+            Parent root = loader.load();
+
+            // Facultatif : Appelle une méthode dans le contrôleur si besoin
+            AfficherProduit controller = loader.getController();
+            controller.loadProducts(); // Appelle ta méthode d'initialisation si elle existe
+
+            // Changement de scène
+            Stage stage = (Stage) Boutique.getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Optionnel : alerte utilisateur
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Impossible de charger la boutique");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
 
     public void showEvents(ActionEvent event) throws IOException {
         // Load the AfficherEvent interface
@@ -321,8 +185,10 @@ public void goToBoutique() {
             Parent root = loader.load();
 
             // Facultatif : Appelle une méthode dans le contrôleur si besoin
-            AfficherProduit controller = loader.getController();
-            controller.loadProducts(); // Appelle ta méthode d'initialisation si elle existe
+            PartnershipCellController controller = loader.getController();
+
+
+            //controller.initializeCell(Partner p, Partnership ps); // Appelle ta méthode d'initialisation si elle existe
 
             // Changement de scène
             Stage stage = (Stage)  Collaborations.getScene().getWindow();
@@ -503,8 +369,9 @@ public void goToBoutique() {
             Parent root = loader.load();
 
             // Facultatif : Appelle une méthode dans le contrôleur si besoin
-            AfficherProduit controller = loader.getController();
-            controller.loadProducts(); // Appelle ta méthode d'initialisation si elle existe
+            AfficherReclamations controller = loader.getController();
+            Reclamation rec = new Reclamation();
+            controller.createReclamationCard(rec) ; // Appelle ta méthode d'initialisation si elle existe
 
             // Changement de scène
             Stage stage = (Stage) reclam.getScene().getWindow();
@@ -551,4 +418,3 @@ public void goToBoutique() {
         }
     }
 }
-

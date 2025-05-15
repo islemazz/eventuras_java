@@ -13,7 +13,7 @@
 
     <Button fx:id="GoToEvents" layoutX="24.0" layoutY="291.0" mnemonicParsing="false" onAction="#showEvents" prefHeight="40.0" prefWidth="177.0" text="Evenements" />
     <Button fx:id="Collaborations" layoutX="24.0" layoutY="353.0" mnemonicParsing="false" onAction="#goToCollabs" prefHeight="40.0" prefWidth="177.0" text="Collaborations" />
-    <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToTickets" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
+    <Button fx:id="tickets" layoutX="24.0" layoutY="475.0" mnemonicParsing="false" onAction="#goToBoutique" prefHeight="40.0" prefWidth="177.0" text="Tickets" />
     <Button fx:id="Acceuil" layoutX="24.0" layoutY="233.0" mnemonicParsing="false" onAction="#showAcceuil" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
     <Button fx:id="reclam" layoutX="24.0" layoutY="414.0" mnemonicParsing="false" onAction="#goToReclams" prefHeight="40.0" prefWidth="177.0" text="Réclamations" />
     <Button fx:id="adminpage" onMouseClicked="#goToAjouterReservation" layoutX="24.0" layoutY="533.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="177.0" text="Acceuil" />
